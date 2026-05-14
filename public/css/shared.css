@@ -38,16 +38,14 @@ a:hover {
   --border: #dedad3;
   --border-strong: #c8c4bc;
 
-  /* Terminal colors */
-  --term-green: #2d8a3d;
-  /* Darkened for accessibility in light mode */
-  --term-dim: #4a8f54;
-  --term-cmd: #d4d0c8;
-  --term-link: #3a7a5d;
-  /* Darkened for accessibility */
-  --term-data: #4a6a8a;
-  /* Darkened for accessibility */
-  --term-cursor: #2d8a3d;
+  /* Terminal colors — always vivid; terminal bg is always dark (#151512) */
+  --term-green: #72d980;
+  --term-dim: #4a9456;
+  --term-cmd: #c8c4bc;
+  --term-link: #7ac4a2;
+  --term-data: #90b8cc;
+  --term-cursor: #72d980;
+  --term-desc: rgba(200, 196, 188, 0.7);
 
   /* Fonts */
   --font-display: 'Cormorant Garamond', Georgia, serif;
@@ -94,13 +92,6 @@ a:hover {
     /* State colors */
     --bg-hover-green: rgba(114, 217, 128, 0.05);
 
-    /* Terminal colors */
-    --term-green: #72d980;
-    --term-dim: #4a9456;
-    --term-cmd: #c8c4bc;
-    --term-link: #7ac4a2;
-    --term-data: #90b8cc;
-    --term-cursor: #72d980;
   }
 }
 

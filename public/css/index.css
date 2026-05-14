@@ -68,7 +68,7 @@
 .term-line.divider { color: var(--term-dim); opacity: 0; }
 .term-line.divider.visible { opacity: 0.3; }
 .term-line.welcome { color: var(--term-green); font-weight: 500; font-size: 0.875rem; }
-.term-line.desc { color: rgba(200,196,188,0.7); }
+.term-line.desc { color: var(--term-desc); }
 .term-line.nav { color: var(--term-link); }
 .term-line.empty { color: transparent; user-select: none; height: 1.2em; }
 
