@@ -65,7 +65,7 @@ function renderList() {
 }
 
 // ── Show article ─────────────────────────────────────────────
-function showArticle(id) {
+function showArticle(id, pushState = true) {
   const write = writesMeta.find(w => w.id === id);
   if (!write) return;
 
@@ -88,15 +88,15 @@ function showArticle(id) {
   document.getElementById('article-view').classList.add('active');
 
   window.scrollTo({ top: 0 });
-  history.pushState({ article: id }, '', `#${id}`);
+  if (pushState) history.pushState({ article: id }, '', `#${id}`);
 }
 
 // ── Show list ────────────────────────────────────────────────
-function showList() {
+function showList(pushState = true) {
   document.getElementById('article-view').classList.remove('active');
   document.getElementById('list-view').classList.remove('hidden');
   window.scrollTo({ top: 0 });
-  history.pushState({}, '', '/writes/');
+  if (pushState) history.pushState({}, '', '/writes/');
 }
 
 // ── Wire back button ─────────────────────────────────────────
@@ -105,8 +105,8 @@ document.getElementById('back-btn').addEventListener('click', showList);
 // ── Handle back/forward ──────────────────────────────────────
 window.addEventListener('popstate', () => {
   const hash = window.location.hash.slice(1);
-  if (hash) showArticle(hash);
-  else showList();
+  if (hash) showArticle(hash, false);
+  else showList(false);
 });
 
 // ── Init ─────────────────────────────────────────────────────
