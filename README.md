@@ -9,6 +9,7 @@ Personal research hub and digital laboratory focused on network diagnostics, sec
 - **`/api/info`** — JSON endpoint with IP, city, region, country, timezone, ASN, and edge colo
 - **Speed Test** — edge-native network throughput and latency diagnostics
 - **Link Inspector** — traces redirect chains, scores URL safety (0–100 A–F), and surfaces domain intelligence; all fetching happens on the edge (SSRF-protected)
+- **Email Header Analyzer** — paste raw email headers to score authentication (SPF/DKIM/DMARC), detect spoofing signals, and trace the relay chain; 100% client-side
 - **OSINT Footprint** — investigates IPs, domains, usernames, and emails; email mode includes DKIM, DMARC, MTA-STS, TLS-RPT, and BIMI analysis
 - **EXIF Inspector** — extract and strip hidden metadata (GPS, device, timestamps) from photos; 100% in-browser, nothing uploaded
 - **Browser Fingerprint** — reveals HTTP headers, TLS ciphers, and browser fingerprinting data your connection leaks
@@ -39,6 +40,7 @@ kapadia-site/
 │   │   ├── curl-ip-selfhost.md
 │   │   ├── tool-speed.md
 │   │   ├── tool-link.md
+│   │   ├── tool-email.md
 │   │   ├── tool-exif.md
 │   │   ├── tool-osint.md
 │   │   ├── tool-dns.md
@@ -83,6 +85,7 @@ kapadia-site/
     │   ├── index.html        ← tools directory page
     │   ├── speed/
     │   ├── link/
+    │   ├── email/
     │   ├── exif/
     │   ├── leak/
     │   ├── hash/

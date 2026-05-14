@@ -1,0 +1,280 @@
+/* ── Email Header Analyzer — tool-specific styles ─────────────────────────── */
+
+/* ── How-to copy headers disclosure ─────────────────────────────────────────── */
+.email-how-to {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--text-faint);
+  line-height: 1.6;
+  border: var(--border-w) solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 1.75rem;
+}
+
+.email-how-to summary {
+  padding: 0.625rem 1rem;
+  cursor: pointer;
+  color: var(--text-muted);
+  list-style: none;
+  user-select: none;
+}
+
+.email-how-to summary::-webkit-details-marker {
+  display: none;
+}
+
+.email-how-to summary::before {
+  content: '▶';
+  font-size: 0.5rem;
+  margin-right: 0.5rem;
+  display: inline-block;
+  transition: transform 0.15s;
+  vertical-align: middle;
+}
+
+.email-how-to[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.email-how-to ul {
+  margin: 0;
+  padding: 0 1rem 0.75rem 2.25rem;
+}
+
+.email-how-to li {
+  margin-bottom: 0.25rem;
+}
+
+.email-how-to strong {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* ── Textarea override ───────────────────────────────────────────────────────── */
+.email-textarea {
+  min-height: 14rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+/* ── Section spacing ─────────────────────────────────────────────────────────── */
+.email-auth-section,
+.email-signals,
+.email-summary-section,
+.email-chain-section,
+.email-identity-section {
+  margin-bottom: 1.5rem;
+}
+
+/* ── Authentication results list ─────────────────────────────────────────────── */
+.email-auth-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.email-auth-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.email-auth-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  min-width: 3.5rem;
+  flex-shrink: 0;
+}
+
+.email-auth-detail {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-faint);
+  flex: 1;
+  word-break: break-all;
+}
+
+/* ── Authentication verdict badges ───────────────────────────────────────────── */
+.email-verdict {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  padding: 0.125rem 0.4375rem;
+  border-radius: 0.125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.email-verdict--pass {
+  color: var(--term-green);
+  border: var(--border-w) solid color-mix(in srgb, var(--term-green) 40%, transparent);
+  background: color-mix(in srgb, var(--term-green) 10%, transparent);
+}
+
+.email-verdict--fail {
+  color: var(--color-error);
+  border: var(--border-w) solid var(--color-error-border);
+  background: var(--color-error-bg);
+}
+
+.email-verdict--warn {
+  color: var(--color-warning);
+  border: var(--border-w) solid rgba(207, 177, 111, 0.4);
+  background: rgba(207, 177, 111, 0.08);
+}
+
+.email-verdict--none {
+  color: var(--text-faint);
+  border: var(--border-w) solid var(--border);
+  background: transparent;
+}
+
+/* ── Received chain table ────────────────────────────────────────────────────── */
+.email-hop-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  overflow-x: auto;
+}
+
+.email-hop-row {
+  display: grid;
+  grid-template-columns: 1.75rem 1fr 1fr 6.5rem 3rem;
+  gap: 0.5rem 0.75rem;
+  align-items: start;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius);
+}
+
+.email-hop-header {
+  border-bottom: var(--border-w) solid var(--border);
+  padding-bottom: 0.4375rem;
+  margin-bottom: 0.125rem;
+}
+
+.email-hop-header span {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  color: var(--term-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.email-hop-first {
+  border: var(--border-w) solid color-mix(in srgb, var(--term-green) 25%, transparent);
+  background: color-mix(in srgb, var(--term-green) 4%, transparent);
+}
+
+.email-hop-num {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--text-faint);
+  padding-top: 0.125rem;
+}
+
+.email-hop-from,
+.email-hop-by {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1875rem;
+  min-width: 0;
+}
+
+.email-hop-host {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--term-data);
+  word-break: break-all;
+}
+
+.email-hop-ip {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--text-faint);
+}
+
+.email-hop-by {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--term-data);
+  word-break: break-all;
+}
+
+.email-hop-proto {
+  display: flex;
+  align-items: flex-start;
+  padding-top: 0.125rem;
+}
+
+.email-hop-delay {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-faint);
+  padding-top: 0.125rem;
+}
+
+/* ── TLS protocol badges ─────────────────────────────────────────────────────── */
+.email-tls-badge {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  padding: 0.0625rem 0.3125rem;
+  border-radius: 0.125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.email-tls-on {
+  color: var(--term-green);
+  border: var(--border-w) solid color-mix(in srgb, var(--term-green) 35%, transparent);
+}
+
+.email-tls-off {
+  color: var(--color-warning-alt);
+  border: var(--border-w) solid rgba(207, 154, 111, 0.35);
+}
+
+/* ── OSINT link ──────────────────────────────────────────────────────────────── */
+.email-osint-link {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--term-link);
+  text-decoration: none;
+  transition: opacity var(--transition);
+}
+
+.email-osint-link:hover {
+  text-decoration: underline;
+  opacity: 0.8;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────────── */
+@media (max-width: 40rem) {
+  .email-hop-row {
+    grid-template-columns: 1.5rem 1fr 6rem;
+    grid-template-rows: auto auto;
+  }
+
+  .email-hop-header {
+    display: none;
+  }
+
+  .email-hop-by,
+  .email-hop-proto,
+  .email-hop-delay {
+    display: none;
+  }
+
+  .email-hop-first .email-hop-by,
+  .email-hop-first .email-hop-proto,
+  .email-hop-first .email-hop-delay {
+    display: none;
+  }
+
+  .email-textarea {
+    min-height: 10rem;
+  }
+}

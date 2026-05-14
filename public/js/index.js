@@ -13,6 +13,7 @@ const COMMANDS = Object.freeze({
   'tools/hash':   '/tools/hash/',
   'tools/jwt':    '/tools/jwt/',
   'tools/leak':   '/tools/leak/',
+  'tools/email':  '/tools/email/',
   'tools/link':   '/tools/link/',
   'tools/osint':  '/tools/osint/',
   'tools/speed':  '/tools/speed/',
@@ -252,16 +253,16 @@ function initInput(staticCursor) {
     tabIndex = -1;
   }
 
-  function cycleTab() {
+  function cycleTab(dir = 1) {
     if (!tabCycling || tabMatches.length === 0) {
       const val = hidden.value;
       const matches = CMD_KEYS.filter(k => k.startsWith(val)).sort();
       if (matches.length === 0) return;
       tabMatches = matches;
-      tabIndex = 0;
+      tabIndex = dir === 1 ? 0 : matches.length - 1;
       tabCycling = true;
     } else {
-      tabIndex = (tabIndex + 1) % tabMatches.length;
+      tabIndex = (tabIndex + dir + tabMatches.length) % tabMatches.length;
     }
     const chosen = tabMatches[tabIndex];
     hidden.value = sanitizeInput(chosen + '/');
@@ -300,7 +301,7 @@ function initInput(staticCursor) {
       requestAnimationFrame(scrollRowIntoView);
     } else if (e.key === 'Tab') {
       e.preventDefault();
-      cycleTab();
+      cycleTab(e.shiftKey ? -1 : 1);
     }
   });
 
@@ -360,7 +361,7 @@ function initInput(staticCursor) {
   termEl.addEventListener('touchend', (e) => {
     const dx = e.changedTouches[0].clientX - swipeStartX;
     const dy = e.changedTouches[0].clientY - swipeStartY;
-    if (dx > 60 && Math.abs(dy) < 40) cycleTab();
+    if (Math.abs(dx) > 60 && Math.abs(dy) < 40) cycleTab(dx > 0 ? 1 : -1);
   }, { passive: true });
 }
 

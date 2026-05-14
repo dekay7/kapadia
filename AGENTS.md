@@ -660,7 +660,16 @@ sidebar_order: <next integer>
 
 Run `npm run render` to regenerate `docs-content.js`.
 
-### Step 8 — Security review before shipping
+### Step 8a — Update site structure documentation
+
+Whenever a new page or tool is added, update these files in the same commit:
+
+- `AGENTS.md` Section 18 Quick Reference: add a row to the tools table.
+- `README.md`: update the Features list and the Project Structure tree under `public/tools/`.
+
+Failing to update these causes documentation drift and misleads future agents reading them for context.
+
+### Step 8b — Security review before shipping
 
 Before committing, answer each question:
 1. What is every path by which user input enters the system?
@@ -800,6 +809,7 @@ Before every commit, verify:
 - [ ] The `.tool-disclaimer` block is present on all tool pages
 - [ ] New Markdown content has been rendered (`npm run render`) and `*-content.js` is committed
 - [ ] The new tool/page is listed in the tools index if applicable
+- [ ] `AGENTS.md` Section 18 and `README.md` updated to include the new tool/page
 - [ ] No `console.log` in committed code
 - [ ] No cookies, localStorage, sessionStorage
 
@@ -811,6 +821,7 @@ Before every commit, verify:
 |---|---|---|---|
 | Speed Test | `/tools/speed/` | Client + Cloudflare servers | None |
 | Link Inspector | `/tools/link/` | Edge | `/api/link` |
+| Email Header Analyzer | `/tools/email/` | Client only | None |
 | OSINT Footprint | `/tools/osint/` | Edge | `/api/osint` |
 | EXIF Inspector | `/tools/exif/` | Client only | None |
 | Browser Fingerprint | `/tools/leak/` | Client + edge headers | `/api/leak` |
