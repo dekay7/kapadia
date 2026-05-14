@@ -9,10 +9,10 @@ Personal research hub and digital laboratory focused on network diagnostics, sec
 - **`/api/info`** — JSON endpoint with IP, city, region, country, timezone, ASN, and edge colo
 - **Speed Test** — edge-native network throughput and latency diagnostics
 - **Link Inspector** — traces redirect chains, scores URL safety (0–100 A–F), and surfaces domain intelligence; all fetching happens on the edge (SSRF-protected)
+- **OSINT Footprint** — investigates IPs, domains, usernames, and emails; email mode includes DKIM, DMARC, MTA-STS, TLS-RPT, and BIMI analysis
 - **EXIF Inspector** — extract and strip hidden metadata (GPS, device, timestamps) from photos; 100% in-browser, nothing uploaded
 - **Browser Fingerprint** — reveals HTTP headers, TLS ciphers, and browser fingerprinting data your connection leaks
 - **Hash Generator** — SHA-1/256/512 and MD5 hashing via Web Crypto API and SparkMD5
-- **OSINT Footprint** — investigates IPs, domains, usernames, and emails; email mode includes DKIM, DMARC, MTA-STS, TLS-RPT, and BIMI analysis
 - **DNS Analyzer** — record lookups (A, AAAA, MX, TXT, CNAME) via a secure DNS-over-HTTPS resolver
 - **JWT Decoder** — decode and inspect JSON Web Tokens; 100% offline
 - **Payload Encoder** — Base64, URL, Hex, and HTML encoding/decoding; no server involved
