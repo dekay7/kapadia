@@ -5,14 +5,10 @@
 
 /* ── Accent colours for each metric ──────────────────────────────────────── */
 :root {
-  --speed-dl: #6fcf7c;
-  /* download  — term-green  */
-  --speed-ul: #90b8cc;
-  /* upload    — term-data   */
-  --speed-ping: #78b89c;
-  /* ping      — term-link   */
+  --speed-dl:     var(--term-green);
+  --speed-ul:     var(--term-data);
+  --speed-ping:   var(--color-success);
   --speed-jitter: #a899c4;
-  /* jitter    — soft violet */
 }
 
 /* ── Gauge row ───────────────────────────────────────────────────────────── */

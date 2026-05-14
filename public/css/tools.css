@@ -275,18 +275,6 @@
   color: var(--color-warning);
 }
 
-/* In light mode the output-block and output-textarea backgrounds stay dark
-   (#151512). Override terminal colors so text remains readable against that
-   dark surface — the page-level values are intentionally muted for light bg. */
-@media (prefers-color-scheme: light) {
-  .output-block,
-  .form-textarea-output {
-    --term-green: #72d980;
-    --term-dim:   #4a9456;
-    --term-data:  #90b8cc;
-  }
-}
-
 /* ── Risk level badges (shared across tools) ─────────────────────────────── */
 .risk-badge {
   font-family: var(--font-mono);
@@ -319,8 +307,8 @@
 
 .risk-low {
   color: var(--term-data);
-  border: var(--border-w) solid rgba(74, 106, 138, 0.35);
-  background: rgba(74, 106, 138, 0.08);
+  border: var(--border-w) solid color-mix(in srgb, var(--term-data) 35%, transparent);
+  background: color-mix(in srgb, var(--term-data) 8%, transparent);
 }
 
 .risk-info {

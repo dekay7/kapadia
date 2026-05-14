@@ -190,7 +190,7 @@
 
 .link-hop-status--ok {
   color: var(--link-hop-ok);
-  border: var(--border-w) solid rgba(45, 138, 61, 0.3);
+  border: var(--border-w) solid color-mix(in srgb, var(--link-hop-ok) 30%, transparent);
 }
 
 .link-hop-status--redirect {
