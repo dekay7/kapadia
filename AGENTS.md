@@ -10,7 +10,7 @@ kapadia.org is a **personal digital laboratory** — a privacy-first, edge-nativ
 
 1. **Lean over capable.** No feature, abstraction, or dependency that isn't required. Three explicit lines beat one "clever" helper. Never add a library when a browser API exists.
 2. **Secure by default.** Security is not a checklist — it is the first design constraint, not the last review step. Every feature must be threat-modelled before implementation.
-3. **Accessible to everyone.** Screen readers, keyboard-only users, and users who have disabled JavaScript must get a meaningful experience wherever possible.
+3. **Accessible to everyone.** Screen readers, keyboard-only users, mobile users, and users who have disabled JavaScript must get a meaningful experience wherever possible.
 4. **Future-iteration friendly.** New tools, docs, and writes should slot in with minimal friction. Shared patterns must not diverge between pages.
 
 If a proposed change cannot be justified against all four axioms simultaneously, rethink the approach before implementing it.
