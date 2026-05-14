@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description"
+    content="kapadia.org — network speed test. Measure download, upload, latency, jitter, and more." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://kapadia.org/tools/speed/" />
+  <meta property="og:title" content="Speed Test — kapadia.org" />
+  <meta property="og:description"
+    content="Measures your internet connection speed and latency using an edge-native diagnostic engine." />
+  <meta property="og:site_name" content="kapadia.org" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Speed Test — kapadia.org" />
+  <meta name="twitter:description"
+    content="Measures your internet connection speed and latency using an edge-native diagnostic engine." />
+  <title>Speed Test — kapadia.org</title>
+  <link rel="canonical" href="https://kapadia.org/tools/speed/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="/css/shared.css" />
+  <link rel="stylesheet" href="/css/tools.css" />
+  <link rel="stylesheet" href="/css/speed.css" />
+</head>
+
+<body>
+
+  <noscript>
+    <div class="noscript-msg">This tool requires JavaScript to function.<br>Enable JS and reload to use it.</div>
+  </noscript>
+
+  <nav aria-label="Main Navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo" aria-label="kapadia.org homepage">kapadia<span>.org</span></a>
+      <ul class="nav-links">
+        <li><a href="/">~</a></li>
+        <li><a href="/tools/" aria-current="page">tools</a></li>
+        <li><a href="/docs/">docs</a></li>
+        <li><a href="/writes/">writes</a></li>
+        <li><a href="/about/">about</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container tools-page">
+
+      <div class="tool-container">
+        <div class="tool-header">
+          <h1>Speed Test</h1>
+          <p class="tool-desc">Measure download, upload, latency, and jitter against Cloudflare's edge network.</p>
+        </div>
+
+        <div class="speed-ip-wrap">
+          <span class="speed-ip-label">your ip&nbsp;&nbsp;</span><span id="speed-ip" class="speed-ip-value"></span>
+        </div>
+
+        <div class="tool-disclaimer">
+          <strong>Privacy:</strong> Test traffic goes directly from your browser to
+          <code>speed.cloudflare.com</code> — your IP is visible to Cloudflare and subject to their
+          <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">privacy policy</a>.
+          No results are logged or stored by kapadia.org.
+        </div>
+
+        <!-- Gauge row -->
+        <div class="gauge-row">
+
+          <!-- Download -->
+          <div class="gauge" id="gauge-dl">
+            <div class="gauge-wrap">
+              <svg class="gauge-svg" viewBox="0 0 152 152" aria-hidden="true">
+                <circle class="gauge-track" cx="76" cy="76" r="64" />
+                <circle class="gauge-fill dl" cx="76" cy="76" r="64" id="arc-dl" />
+              </svg>
+              <div class="gauge-center" aria-live="polite">
+                <span class="gauge-label">Download</span>
+                <span class="gauge-value" id="val-dl">--</span>
+                <span class="gauge-unit">Mbps</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Upload -->
+          <div class="gauge" id="gauge-ul">
+            <div class="gauge-wrap">
+              <svg class="gauge-svg" viewBox="0 0 152 152" aria-hidden="true">
+                <circle class="gauge-track" cx="76" cy="76" r="64" />
+                <circle class="gauge-fill ul" cx="76" cy="76" r="64" id="arc-ul" />
+              </svg>
+              <div class="gauge-center" aria-live="polite">
+                <span class="gauge-label">Upload</span>
+                <span class="gauge-value" id="val-ul">--</span>
+                <span class="gauge-unit">Mbps</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ping -->
+          <div class="gauge" id="gauge-ping">
+            <div class="gauge-wrap">
+              <svg class="gauge-svg" viewBox="0 0 152 152" aria-hidden="true">
+                <circle class="gauge-track" cx="76" cy="76" r="64" />
+                <circle class="gauge-fill ping" cx="76" cy="76" r="64" id="arc-ping" />
+              </svg>
+              <div class="gauge-center" aria-live="polite">
+                <span class="gauge-label">Ping</span>
+                <span class="gauge-value" id="val-ping">--</span>
+                <span class="gauge-unit">ms</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Jitter -->
+          <div class="gauge" id="gauge-jitter">
+            <div class="gauge-wrap">
+              <svg class="gauge-svg" viewBox="0 0 152 152" aria-hidden="true">
+                <circle class="gauge-track" cx="76" cy="76" r="64" />
+                <circle class="gauge-fill jitter" cx="76" cy="76" r="64" id="arc-jitter" />
+              </svg>
+              <div class="gauge-center" aria-live="polite">
+                <span class="gauge-label">Jitter</span>
+                <span class="gauge-value" id="val-jitter">--</span>
+                <span class="gauge-unit">ms</span>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /.gauge-row -->
+
+        <!-- Run button -->
+        <div class="run-btn-wrap">
+          <button type="button" id="btn-run">Run Test</button>
+          <span class="phase-label" id="phase-label" aria-live="polite"></span>
+        </div>
+
+        <hr class="speed-divider" />
+
+        <!-- Secondary metrics -->
+        <div class="details-section" id="details-section">
+          <p class="details-heading">Details</p>
+          <div class="details-grid" id="details-grid">
+
+            <div class="detail-card">
+              <span class="detail-label">Packet Loss</span>
+              <span class="detail-value" id="det-loss">--</span>
+            </div>
+
+            <div class="detail-card">
+              <span class="detail-label">Edge Center</span>
+              <span class="detail-value" id="det-pop">--</span>
+            </div>
+
+            <div class="detail-card">
+              <span class="detail-label">Time to First Byte</span>
+              <span class="detail-value" id="det-ttfb">--</span>
+            </div>
+
+            <div class="detail-card">
+              <span class="detail-label">DNS Lookup</span>
+              <span class="detail-value" id="det-dns">--</span>
+            </div>
+
+            <div class="detail-card">
+              <span class="detail-label">TLS Handshake</span>
+              <span class="detail-value" id="det-tls">--</span>
+            </div>
+
+            <div class="detail-card">
+              <span class="detail-label">Network</span>
+              <span class="detail-value" id="det-asn">--</span>
+            </div>
+
+            <div class="detail-card">
+              <span class="detail-label">Location</span>
+              <span class="detail-value" id="det-loc">--</span>
+            </div>
+
+            <div class="detail-card">
+              <span class="detail-label">Connection Type</span>
+              <span class="detail-value" id="det-conntype">--</span>
+            </div>
+
+            <div class="detail-card">
+              <span class="detail-label">Bandwidth Hint</span>
+              <span class="detail-value" id="det-downlink">--</span>
+            </div>
+
+            <div class="detail-card">
+              <span class="detail-label">Tested Against</span>
+              <span class="detail-value" id="det-host">speed.cloudflare.com</span>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- CLI tool -->
+        <div class="details-section visible cli-section-wrap">
+          <p class="details-heading">CLI Tool</p>
+          <div class="detail-card detail-card--wide">
+            <span class="detail-label">Run directly from your terminal</span>
+            <span class="detail-value cli-value">
+              curl -sL https://kapadia.org/tools/speed/kapadia-speed.sh | sh
+            </span>
+          </div>
+          <div class="detail-card detail-card--wide">
+            <span class="detail-label">Download and run</span>
+            <span class="detail-value cli-value">
+              curl -O https://kapadia.org/tools/speed/kapadia-speed.sh<br>
+              sh kapadia-speed.sh
+            </span>
+          </div>
+          <p class="cli-footnote">
+            Requires: curl &middot; awk &middot; dd &nbsp;&nbsp;
+            <a href="/tools/speed/kapadia-speed.sh" download>download script</a>
+          </p>
+        </div>
+
+      </div><!-- /.tool-container -->
+
+    </div><!-- /.container -->
+  </main>
+
+  <footer role="contentinfo" aria-label="Site Footer">
+    <div class="footer-inner">
+      <span class="footer-left">© kapadia.org</span>
+      <nav class="footer-right" aria-label="Footer Navigation">
+        <a href="/">~</a>
+        <a href="/tools/" aria-current="page">tools</a>
+        <a href="/docs/">docs</a>
+        <a href="/writes/">writes</a>
+        <a href="/about/">about</a>
+        <a href="/privacy/">privacy</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="/js/speed.js" defer></script>
+</body>
+
+</html>

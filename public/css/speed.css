@@ -1,0 +1,386 @@
+/* ════════════════════════════════════════════════════════════════════════════
+   SPEED.CSS — /speed/ page styles
+   Depends on shared.css for variables, nav, footer, animations.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Accent colours for each metric ──────────────────────────────────────── */
+:root {
+  --speed-dl: #6fcf7c;
+  /* download  — term-green  */
+  --speed-ul: #90b8cc;
+  /* upload    — term-data   */
+  --speed-ping: #78b89c;
+  /* ping      — term-link   */
+  --speed-jitter: #a899c4;
+  /* jitter    — soft violet */
+}
+
+/* ── Gauge row ───────────────────────────────────────────────────────────── */
+.gauge-row {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+}
+
+/* ── Individual gauge ────────────────────────────────────────────────────── */
+.gauge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.625rem;
+  width: 9.5rem;
+}
+
+.gauge-svg {
+  width: 9.5rem;
+  height: 9.5rem;
+  overflow: visible;
+}
+
+/* Background track ring */
+.gauge-track {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 7;
+  /* 270-degree arc: r=64, circumference=402.1, arc=301.6, gap=100.5 */
+  stroke-dasharray: 301.6 100.5;
+  transform: rotate(135deg);
+  transform-origin: center;
+  transition: stroke var(--transition);
+}
+
+/* Filled arc */
+.gauge-fill {
+  fill: none;
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-dasharray: 301.6 100.5;
+  stroke-dashoffset: 301.6;
+  /* starts empty */
+  transform: rotate(135deg);
+  transform-origin: center;
+  transition: stroke-dashoffset 0.4s ease, stroke var(--transition);
+}
+
+.gauge-fill.dl {
+  stroke: var(--speed-dl);
+}
+
+.gauge-fill.ul {
+  stroke: var(--speed-ul);
+}
+
+.gauge-fill.ping {
+  stroke: var(--speed-ping);
+}
+
+.gauge-fill.jitter {
+  stroke: var(--speed-jitter);
+}
+
+/* Center value overlay */
+.gauge-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+}
+
+/* Wrapper to allow absolute positioning of center over SVG */
+.gauge-wrap {
+  position: relative;
+  width: 9.5rem;
+  height: 9.5rem;
+}
+
+.gauge-value {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 1.375rem;
+  font-weight: 400;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  transition: color var(--transition);
+}
+
+.gauge-unit {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  color: var(--text-faint);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-top: 0.125rem;
+}
+
+.gauge-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
+  transition: color var(--transition);
+}
+
+/* Active state — label takes metric colour */
+.gauge.active .gauge-label {
+  color: var(--text);
+}
+
+/* ── Run button ──────────────────────────────────────────────────────────── */
+.run-btn-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.875rem;
+}
+
+#btn-run {
+  font-family: var(--font-mono);
+  font-size: 0.78125rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: none;
+  border: var(--border-w) solid var(--border-strong);
+  color: var(--text-muted);
+  padding: 0.6875rem 2.25rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: color var(--transition), border-color var(--transition),
+    background var(--transition);
+}
+
+#btn-run:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--text-muted);
+  background: var(--bg-raised);
+}
+
+#btn-run:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.phase-label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--text-faint);
+  letter-spacing: 0.06em;
+  min-height: 1.4em;
+}
+
+/* Phase label pulse while running */
+@keyframes pulse-text {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.phase-label.running {
+  animation: pulse-text 1.4s ease-in-out infinite;
+  color: var(--text-muted);
+}
+
+.phase-label.complete {
+  color: var(--speed-dl);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  animation: pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes pop-in {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ── Divider ─────────────────────────────────────────────────────────────── */
+.speed-divider {
+  border: none;
+  border-top: var(--border-w) solid var(--border);
+  margin: 3rem 0;
+}
+
+/* ── Detail cards grid ───────────────────────────────────────────────────── */
+.details-section {
+  opacity: 0;
+  transform: translateY(0.625rem);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  pointer-events: none;
+}
+
+.details-section.visible {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+.details-heading {
+  font-family: var(--font-mono);
+  font-size: 0.65625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 1.125rem;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11.5625rem, 1fr));
+  gap: 0.75rem;
+}
+
+.detail-card {
+  background: var(--bg-raised);
+  border: var(--border-w) solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.125rem;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.detail-label {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  display: block;
+  margin-bottom: 0.375rem;
+}
+
+.detail-value {
+  font-family: var(--font-mono);
+  font-size: 0.9375rem;
+  color: var(--text);
+  display: block;
+  word-break: break-all;
+}
+
+.detail-na {
+  color: var(--text-faint);
+  font-size: 0.75rem;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 40rem) {
+  .gauge-row {
+    gap: 1.25rem;
+  }
+
+  .gauge,
+  .gauge-wrap,
+  .gauge-svg {
+    width: 8.125rem;
+    height: 8.125rem;
+  }
+
+  .gauge-value {
+    font-size: 1.1875rem;
+  }
+
+  .details-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 25rem) {
+  .gauge-row {
+    gap: 0.875rem;
+  }
+
+  .gauge,
+  .gauge-wrap,
+  .gauge-svg {
+    width: 7.25rem;
+    height: 7.25rem;
+  }
+
+  .gauge-value {
+    font-size: 1.0625rem;
+  }
+}
+
+/* ── Specific classes for no-inline styles ───────────────────────────────── */
+.speed-ip-wrap {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  margin-bottom: 0;
+  text-align: center;
+  transition: max-height 0.4s ease, opacity 0.4s ease, margin-bottom 0.4s ease;
+}
+
+.speed-ip-wrap.visible {
+  max-height: 2rem;
+  opacity: 1;
+  margin-bottom: 1rem;
+}
+
+.speed-ip-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-faint);
+}
+
+.speed-ip-value {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.cli-section-wrap {
+  margin-top: 2rem;
+}
+
+.detail-card--wide {
+  max-width: 32.5rem;
+}
+
+.detail-card--wide+.detail-card--wide {
+  margin-top: 0.625rem;
+}
+
+.cli-value {
+  font-size: 0.75rem;
+  margin-top: 0.5rem;
+  display: block;
+  line-height: 2;
+}
+
+.cli-comment {
+  color: var(--text-faint);
+}
+
+.cli-footnote {
+  margin-top: 0.875rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--text-faint);
+}
+
+.cli-footnote a {
+  color: inherit;
+}
+

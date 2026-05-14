@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="EXIF Metadata Inspector. See and strip hidden GPS, device, and timestamp data from your photos. 100% in your browser — nothing is uploaded." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://kapadia.org/tools/exif/" />
+  <meta property="og:title" content="EXIF Inspector — Tools — kapadia.org" />
+  <meta property="og:description" content="Inspect and strip hidden metadata from photos. GPS, device info, timestamps — all revealed and removable. Nothing is uploaded." />
+  <meta property="og:site_name" content="kapadia.org" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="EXIF Inspector — Tools — kapadia.org" />
+  <meta name="twitter:description" content="Inspect and strip hidden metadata from photos. GPS, device info, timestamps — all revealed and removable." />
+  <title>EXIF Inspector — kapadia.org</title>
+  <link rel="canonical" href="https://kapadia.org/tools/exif/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/shared.css" />
+  <link rel="stylesheet" href="/css/tools.css" />
+  <link rel="stylesheet" href="/css/exif.css" />
+</head>
+<body>
+
+  <noscript>
+    <div class="noscript-msg">This tool requires JavaScript to function.<br>Enable JS and reload to use it.</div>
+  </noscript>
+
+  <nav aria-label="Main Navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo" aria-label="kapadia.org homepage">kapadia<span>.org</span></a>
+      <ul class="nav-links">
+        <li><a href="/">~</a></li>
+        <li><a href="/tools/" aria-current="page">tools</a></li>
+        <li><a href="/docs/">docs</a></li>
+        <li><a href="/writes/">writes</a></li>
+        <li><a href="/about/">about</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container tools-page">
+      <div class="tool-container">
+
+        <div class="tool-header">
+          <h1>EXIF Inspector</h1>
+          <p class="tool-desc">Strip hidden photo metadata — GPS coordinates, device info, and timestamps. Runs entirely in your browser — nothing is uploaded.</p>
+        </div>
+
+        <div class="tool-disclaimer">
+          <strong>Privacy:</strong> Files are read locally by your browser's FileReader API — nothing is
+          uploaded to any server. EXIF parsing uses the <code>exifr</code> library, self-hosted on this domain
+          (no CDN). Clicking a GPS coordinate link opens OpenStreetMap in a new tab — OpenStreetMap only
+          receives your IP if you click the link.
+        </div>
+
+        <!-- Drop zone -->
+        <div id="exif-dropzone" class="drop-zone" role="region" aria-label="File drop zone">
+          <input
+            type="file"
+            id="exif-input"
+            multiple
+            accept="image/jpeg,image/png,image/webp,image/tiff,image/heic,image/heif,image/avif"
+            aria-label="Select image files"
+          />
+          <div class="drop-label">
+            <span class="drop-icon" aria-hidden="true">↓</span>
+            <span class="drop-primary">Drop images here or click to select</span>
+            <span class="drop-secondary">JPEG &middot; PNG &middot; WebP &middot; HEIC &middot; TIFF &middot; AVIF</span>
+            <span class="drop-secondary">Up to 10 files &middot; 50 MB each</span>
+          </div>
+        </div>
+
+        <!-- Error banner -->
+        <div id="exif-error" class="exif-error u-hidden" role="alert" aria-live="polite"></div>
+
+        <!-- Loading -->
+        <div id="exif-loading" class="u-hidden" style="display: none;" aria-live="polite" aria-label="Loading">
+          <span class="exif-spinner" aria-hidden="true"></span>
+          <span id="exif-loading-label" class="u-mono u-small u-text-dim"></span>
+        </div>
+
+        <!-- Results -->
+        <div id="exif-results" class="u-hidden">
+          <div class="exif-layout" id="exif-layout">
+
+            <!-- Sidebar: file list -->
+            <aside class="exif-sidebar" aria-label="File list">
+              <div id="exif-file-list"></div>
+              <button id="exif-clear-btn" class="exif-clear-btn" type="button">Clear all</button>
+            </aside>
+
+            <!-- Detail panel -->
+            <section class="exif-detail" id="exif-detail-panel" aria-label="File metadata">
+              <!-- injected by JS -->
+            </section>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer role="contentinfo" aria-label="Site Footer">
+    <div class="footer-inner">
+      <span class="footer-left">© kapadia.org</span>
+      <nav class="footer-right" aria-label="Footer Navigation">
+        <a href="/">~</a>
+        <a href="/tools/" aria-current="page">tools</a>
+        <a href="/docs/">docs</a>
+        <a href="/writes/">writes</a>
+        <a href="/about/">about</a>
+        <a href="/privacy/">privacy</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="/js/vendor/exifr.min.js" integrity="sha512-abJe6cyoEw76aWM3cnNObBMzgq4C6P6VWQVb9pjrJX+CifAQp7PY9vWqFKnJb5TgZdH6zy6ItuSWhTayP7Bb1A==" crossorigin="anonymous" defer></script>
+  <script src="/js/tools/exif.js" defer></script>
+</body>
+</html>

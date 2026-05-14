@@ -1,0 +1,238 @@
+/* ════════════════════════════════════════════════════════════════════════════
+   INDEX.CSS — Homepage-specific styles
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Terminal Box ──────────────────────────────────────────────────────────── */
+.terminal {
+  background: var(--bg-terminal);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 var(--border-w) rgba(255,255,255,0.06),
+    0 0.625rem 2.5rem rgba(0,0,0,0.3),
+    0 1.25rem 5rem rgba(0,0,0,0.2);
+  font-family: var(--font-mono);
+  max-width: 100%;
+  margin: 0 auto;
+  opacity: 0;
+  animation: fadeUp var(--anim-reveal) 0.1s;
+}
+
+.terminal-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.25rem;
+  background: rgba(255,255,255,0.05);
+  border-bottom: var(--border-w) solid rgba(255,255,255,0.08);
+}
+
+.dot {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+}
+.dot-red { background: #ff5f57; }
+.dot-yellow { background: #ffbd2e; }
+.dot-green { background: #28c840; }
+
+.terminal-title {
+  font-size: 0.6875rem;
+  color: rgba(255,255,255,0.3);
+  margin-left: 0.625rem;
+  letter-spacing: 0.05em;
+}
+
+.terminal-body {
+  padding: 1.75rem 2rem 2.25rem;
+  min-height: 18.75rem;
+}
+
+.term-line {
+  font-size: 0.8125rem;
+  line-height: 1.9;
+  white-space: pre-wrap;
+  word-break: break-word;
+  opacity: 0;
+  transform: translateY(0.25rem);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.term-line.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.term-line.cmd { color: var(--term-cmd); }
+.term-line.data { color: var(--term-data); }
+.term-line.meta { color: var(--term-dim); }
+.term-line.divider { color: var(--term-dim); opacity: 0; }
+.term-line.divider.visible { opacity: 0.3; }
+.term-line.welcome { color: var(--term-green); font-weight: 500; font-size: 0.875rem; }
+.term-line.desc { color: rgba(200,196,188,0.7); }
+.term-line.nav { color: var(--term-link); }
+.term-line.empty { color: transparent; user-select: none; height: 1.2em; }
+
+/* Link inside nav lines (injected by index.js) */
+.term-nav-link {
+  color: inherit;
+  border-bottom: var(--border-w) solid var(--term-link);
+}
+
+.cursor {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.9375rem;
+  background: var(--term-cursor);
+  vertical-align: middle;
+  margin-left: 0.125rem;
+  animation: blink 1s step-end infinite;
+  box-shadow: 0 0 0.5rem var(--term-cursor);
+}
+
+/* ── Terminal Input ────────────────────────────────────────────────────────── */
+
+/* Hidden <input> — captures keystrokes, never rendered on screen.
+   position:absolute in document space so iOS scrolls to the active terminal
+   row (set by focusAtRow()) rather than an off-screen coordinate. */
+.term-hidden-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  border: none;
+  outline: none;
+  pointer-events: none;
+  background: transparent;
+  color: transparent;
+}
+
+/* Input prompt row */
+.term-input-row {
+  display: flex;
+  align-items: center;
+}
+
+.term-input-prompt,
+.term-input-typed {
+  color: var(--term-cmd);
+  white-space: pre;
+}
+
+/* Ghost/autocomplete suggestion — inline hint overlapping the cursor.
+   Negative margin pulls the text left by the cursor's width so the
+   first ghost character starts at the cursor's left edge.
+   color-mix() derives the dim color from --term-cmd (which shared.css
+   already adjusts per theme), so no separate dark-mode override is needed. */
+.term-input-ghost {
+  color: color-mix(in srgb, var(--term-cmd) 28%, transparent);
+  white-space: pre;
+}
+.term-input-ghost:not(:empty) {
+  margin-left: -0.5rem; /* = .cursor width; aligns ghost under cursor */
+}
+
+/* ── Section Grid ──────────────────────────────────────────────────────────── */
+.sections {
+  margin: 3.75rem 0 3.75rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.0625rem;
+  background: var(--border);
+  border: var(--border-w) solid var(--border);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  opacity: 0;
+  animation: fadeIn 0.8s var(--anim-ease) 0.3s forwards;
+}
+
+.section-card {
+  background: var(--bg);
+  padding: 2.25rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  transition: all var(--transition);
+  opacity: 0;
+  animation: fadeUp var(--anim-reveal);
+}
+
+.section-card:nth-child(1) { animation-delay: 0.35s; }
+.section-card:nth-child(2) { animation-delay: 0.40s; }
+.section-card:nth-child(3) { animation-delay: 0.45s; }
+.section-card:nth-child(4) { animation-delay: 0.50s; }
+
+.section-card:hover {
+  background: var(--bg-raised);
+}
+
+.card-icon {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--text-faint);
+  letter-spacing: 0.08em;
+}
+
+.card-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.card-desc {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+.card-arrow {
+  margin-top: 2rem;
+  font-size: 1.125rem;
+  color: var(--text-faint);
+  transition: transform var(--transition), color var(--transition);
+}
+.section-card:hover .card-arrow {
+  transform: translateX(0.375rem);
+  color: var(--text-muted);
+}
+
+/* ── Hero layout helpers (replaces inline styles in index.html) ───────────── */
+.hero-spacer {
+  padding-top: 3rem;
+}
+
+.hero-header {
+  padding: 0;
+  margin-bottom: 3.25rem;
+}
+
+/* ── Responsive ────────────────────────────────────────────────────────────── */
+@media (max-width: 64rem) {
+  .sections {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 40rem) {
+  .terminal {
+    border-radius: 0.5rem;
+  }
+  .terminal-body {
+    padding: 1.25rem;
+    min-height: 16.25rem;
+  }
+  .sections {
+    grid-template-columns: 1fr;
+    margin-top: 4rem;
+  }
+  .section-card {
+    padding: 1.75rem;
+  }
+}
+
+

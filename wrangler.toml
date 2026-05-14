@@ -1,0 +1,4 @@
+name                   = "kapadia"
+compatibility_date     = "2025-05-10"
+pages_build_output_dir = "./public"
+

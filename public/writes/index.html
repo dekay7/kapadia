@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="kapadia.org — essays and write-ups" />
+  <meta property="og:type"        content="website" />
+  <meta property="og:url"         content="https://kapadia.org/writes/" />
+  <meta property="og:title"       content="Writes — kapadia.org" />
+  <meta property="og:description" content="Essays, technical explorations, and notes." />
+  <meta property="og:site_name"   content="kapadia.org" />
+  <meta name="twitter:card"        content="summary" />
+  <meta name="twitter:title"       content="Writes — kapadia.org" />
+  <meta name="twitter:description" content="Essays, technical explorations, and notes." />
+  <title>Writes — kapadia.org</title>
+  <link rel="canonical" href="https://kapadia.org/writes/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/shared.css" />
+  <link rel="stylesheet" href="/css/writes.css" />
+</head>
+<body>
+
+  <noscript>
+    <div class="noscript-msg">JavaScript is required to render write-ups.<br>Enable JS and reload to read the content.</div>
+  </noscript>
+
+  <nav aria-label="Main Navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo" aria-label="kapadia.org homepage">kapadia<span>.org</span></a>
+      <ul class="nav-links">
+        <li><a href="/">~</a></li>
+        <li><a href="/tools/">tools</a></li>
+        <li><a href="/docs/">docs</a></li>
+        <li><a href="/writes/" aria-current="page">writes</a></li>
+        <li><a href="/about/">about</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <!-- ── List View ──────────────────────────────────────────────── -->
+    <div id="list-view">
+      <div class="container">
+  
+        <header class="page-header page-header-center">
+          <p class="page-eyebrow muted">kapadia.org &nbsp;·&nbsp; writes</p>
+          <h1 class="page-title">Technical Writing</h1>
+          <p class="page-sub page-sub-center">Technical essays and explorations in security, networking, and software design.</p>
+        </header>
+  
+        <div class="writes-list" id="writes-list">
+          <!-- Populated by JS -->
+        </div>
+  
+      </div>
+    </div>
+  
+    <!-- ── Article View ───────────────────────────────────────────── -->
+    <div id="article-view">
+      <div class="container">
+  
+        <header class="article-header">
+          <button class="back-btn" id="back-btn">← writes</button>
+          <div class="article-tags" id="article-tags"></div>
+          <h1 class="article-title" id="article-title"></h1>
+          <p class="article-meta" id="article-meta"></p>
+        </header>
+  
+        <div class="article-body" id="article-body"></div>
+  
+      </div>
+    </div>
+  </main>
+
+  <footer role="contentinfo" aria-label="Site Footer">
+    <div class="footer-inner">
+      <span class="footer-left">© kapadia.org</span>
+      <nav class="footer-right" aria-label="Footer Navigation">
+        <a href="/">~</a>
+        <a href="/tools/">tools</a>
+        <a href="/docs/">docs</a>
+        <a href="/writes/" aria-current="page">writes</a>
+        <a href="/about/">about</a>
+        <a href="/privacy/">privacy</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="/js/vendor/dompurify.min.js"></script>
+  <script type="module" src="/js/writes.js"></script>
+</body>
+</html>

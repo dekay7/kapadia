@@ -1,0 +1,92 @@
+.privacy-page {
+  padding-bottom: 8rem;
+}
+
+.privacy-updated {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-faint);
+}
+
+.privacy-content {
+  max-width: 100%;
+  opacity: 0;
+  animation: fadeUp var(--anim-reveal) 0.2s;
+}
+
+.privacy-content section {
+  margin-bottom: 4rem;
+}
+
+.privacy-content h2 {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 400;
+  margin-bottom: 1.5rem;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.privacy-content h3 {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  margin-top: 2.5rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.privacy-content p {
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.privacy-content ul {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 2rem;
+}
+
+.privacy-content li {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  font-size: 1rem;
+}
+
+.privacy-content li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--term-green);
+  font-family: var(--font-mono);
+}
+
+.privacy-content strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.privacy-content a {
+  color: var(--term-green);
+  text-decoration: none;
+  border-bottom: var(--border-w) solid transparent;
+  transition: border-color var(--transition);
+}
+
+.privacy-content a:hover {
+  border-bottom-color: var(--term-green);
+}
+
+/* Absorbs inline style previously on the privacy page header */
+.privacy-page > .page-header {
+  margin-bottom: 3.5rem;
+  border-bottom: var(--border-w) solid var(--border);
+  padding-bottom: 1.5rem;
+}

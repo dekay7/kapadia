@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description"
+    content="OSINT Digital Footprint Checker — investigate IP addresses, domains, usernames, and email addresses using open-source intelligence techniques. Powered by a global edge network." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://kapadia.org/tools/osint/" />
+  <meta property="og:title" content="OSINT Footprint Checker — kapadia.org" />
+  <meta property="og:description"
+    content="Investigate IP addresses, domains, usernames, and email addresses using open-source intelligence." />
+  <meta property="og:site_name" content="kapadia.org" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="OSINT Footprint Checker — kapadia.org" />
+  <meta name="twitter:description" content="Investigate IP addresses, domains, usernames, and email addresses using open-source intelligence." />
+  <title>OSINT Footprint Checker — kapadia.org</title>
+  <link rel="canonical" href="https://kapadia.org/tools/osint/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="/css/shared.css" />
+  <link rel="stylesheet" href="/css/tools.css" />
+  <link rel="stylesheet" href="/css/osint.css" />
+</head>
+
+<body>
+
+  <noscript>
+    <div class="noscript-msg">This tool requires JavaScript to function.<br>Enable JS and reload to use it.</div>
+  </noscript>
+
+  <nav aria-label="Main Navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo" aria-label="kapadia.org homepage">kapadia<span>.org</span></a>
+      <ul class="nav-links">
+        <li><a href="/">~</a></li>
+        <li><a href="/tools/" aria-current="page">tools</a></li>
+        <li><a href="/docs/">docs</a></li>
+        <li><a href="/writes/">writes</a></li>
+        <li><a href="/about/">about</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container tools-page">
+
+      <div class="tool-container">
+        <div class="tool-header">
+          <h1>OSINT Footprint Checker</h1>
+          <p class="tool-desc">Investigate IPs, domains, usernames, and email addresses using open-source intelligence. All lookups route through the edge — no data is stored.</p>
+        </div>
+
+        <div class="tool-disclaimer">
+          <strong>Privacy:</strong> Lookups run via a Cloudflare edge function — your IP is not exposed to
+          third-party services; they see the edge IP. Sources used per mode:
+          <em>IP</em> — ipwho.is, Cloudflare DoH;
+          <em>Domain</em> — RDAP (rdap.org), Cloudflare DoH, crt.sh;
+          <em>Username</em> — GitHub, GitLab, Hacker News, Docker Hub, npm (may include publicly-set email);
+          <em>Email</em> — Cloudflare DoH.
+          No queries or results are logged or stored. See <a href="/docs/#tool-osint">documentation</a> for full details.
+        </div>
+
+        <!-- Quick self-check -->
+        <div class="osint-self-strip">
+          <span class="self-strip-label">Investigate <span>your own IP</span> instantly →</span>
+          <button type="button" class="btn btn-secondary" id="osint-self-btn">Check My IP</button>
+        </div>
+
+        <!-- Mode tabs -->
+        <div class="osint-tabs" role="tablist" aria-label="Investigation mode">
+          <button type="button" class="osint-tab active" data-mode="ip">IP Intelligence</button>
+          <button type="button" class="osint-tab" data-mode="domain">Domain Footprint</button>
+          <button type="button" class="osint-tab" data-mode="username">Username Lookup</button>
+          <button type="button" class="osint-tab" data-mode="email">Email Analysis</button>
+        </div>
+
+        <!-- ── IP Mode ──────────────────────────────────────────────────── -->
+        <div class="mode-panel active" data-panel="ip">
+          <div class="form-group">
+            <label class="form-label" for="osint-ip-input">IP Address</label>
+            <div class="form-input-group">
+              <input type="text" id="osint-ip-input" class="form-input" placeholder="8.8.8.8 or 2001:4860:4860::8888"
+                spellcheck="false" autocomplete="off" />
+              <button type="button" id="osint-ip-btn" class="btn" data-mode="ip">Investigate</button>
+            </div>
+          </div>
+          <p class="mode-panel-desc">
+            Retrieves geolocation, ASN, reverse DNS, and IP classification.
+          </p>
+        </div>
+
+        <!-- ── Domain Mode ──────────────────────────────────────────────── -->
+        <div class="mode-panel" data-panel="domain">
+          <div class="form-group">
+            <label class="form-label" for="osint-domain-input">Domain Name</label>
+            <div class="form-input-group">
+              <input type="text" id="osint-domain-input" class="form-input" placeholder="example.com" spellcheck="false"
+                autocomplete="off" />
+              <button type="button" id="osint-domain-btn" class="btn" data-mode="domain">Investigate</button>
+            </div>
+          </div>
+          <p class="mode-panel-desc">
+            WHOIS/RDAP registration data, all DNS records, email security (SPF/DMARC), and certificate transparency
+            subdomains.
+          </p>
+        </div>
+
+        <!-- ── Username Mode ────────────────────────────────────────────── -->
+        <div class="mode-panel" data-panel="username">
+          <div class="form-group">
+            <label class="form-label" for="osint-username-input">Username</label>
+            <div class="form-input-group">
+              <input type="text" id="osint-username-input" class="form-input" placeholder="johndoe" spellcheck="false"
+                autocomplete="off" />
+              <button type="button" id="osint-username-btn" class="btn" data-mode="username">Investigate</button>
+            </div>
+          </div>
+          <p class="mode-panel-desc">
+            Checks for account existence across GitHub, GitLab, Hacker News, Docker Hub, and npm.
+          </p>
+        </div>
+
+        <!-- ── Email Mode ────────────────────────────────────────────────── -->
+        <div class="mode-panel" data-panel="email">
+          <div class="form-group">
+            <label class="form-label" for="osint-email-input">Email Address</label>
+            <div class="form-input-group">
+              <input type="email" id="osint-email-input" class="form-input" placeholder="user@example.com"
+                spellcheck="false" autocomplete="off" />
+              <button type="button" id="osint-email-btn" class="btn" data-mode="email">Investigate</button>
+            </div>
+          </div>
+          <p class="mode-panel-desc">
+            Analyses the email domain's MX records, SPF/DMARC configuration, and mail provider.
+          </p>
+        </div>
+
+        <!-- Loading -->
+        <div class="osint-loading" id="osint-loading">
+          <div class="osint-spinner"></div>
+          <span>Running OSINT checks via edge (may take a while)...</span>
+        </div>
+
+        <!-- Error -->
+        <div class="osint-error" id="osint-error" role="alert" aria-live="assertive"></div>
+
+        <!-- Results -->
+        <div class="osint-results" id="osint-results" aria-live="polite" aria-atomic="false">
+          <div id="osint-results-body"></div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <footer role="contentinfo" aria-label="Site Footer">
+    <div class="footer-inner">
+      <span class="footer-left">© kapadia.org</span>
+      <nav class="footer-right" aria-label="Footer Navigation">
+        <a href="/">~</a>
+        <a href="/tools/" aria-current="page">tools</a>
+        <a href="/docs/">docs</a>
+        <a href="/writes/">writes</a>
+        <a href="/about/">about</a>
+        <a href="/privacy/">privacy</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="/js/tools/osint.js" defer></script>
+</body>
+
+</html>
