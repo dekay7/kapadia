@@ -40,10 +40,11 @@ You can paste the **full email source** (headers + body) or just the headers —
 
 The score starts at **100** and deductions are applied for each issue detected:
 
-### Authentication (up to −55)
+### Authentication (up to −60)
 
 | Signal | Deduction |
 |---|---|
+| No authentication headers found | −15 |
 | DMARC check failed | −25 |
 | DMARC result missing | −15 |
 | DKIM signature failed | −20 |
@@ -51,6 +52,8 @@ The score starts at **100** and deductions are applied for each issue detected:
 | SPF check failed | −15 |
 | SPF softfail | −8 |
 | SPF result missing | −5 |
+
+The "no authentication headers found" signal fires when the pasted headers contain no `Authentication-Results` data at all, and replaces the individual SPF / DKIM / DMARC signals — they do not stack.
 
 ### Identity Consistency (up to −35)
 
@@ -76,11 +79,11 @@ Comparisons use the **organizational domain** (last two labels, e.g. `glassdoor.
 
 | Score | Grade | Verdict |
 |---|---|---|
-| 90–100 | A | Strong authentication |
-| 75–89  | B | Authentication passed with minor concerns |
-| 55–74  | C | Authentication issues detected |
-| 35–54  | D | Multiple authentication failures |
-| 0–34   | F | Severe failures — likely spoofed |
+| 90–100 | A | Looks genuine — all security checks passed |
+| 75–89  | B | Mostly genuine — minor issues detected |
+| 55–74  | C | Some concerns — review the security signals below |
+| 35–54  | D | Multiple failures — treat this email with caution |
+| 0–34   | F | High risk — this email may be spoofed or malicious |
 
 ---
 
@@ -106,6 +109,9 @@ The originating server's IP includes a **→ OSINT** link to investigate it with
 
 ### Identity Analysis
 A side-by-side comparison of the From domain against the DKIM signing domain, Return-Path domain, Reply-To domain, and Message-ID domain. Mismatches are flagged at the organizational domain level — `mail9.glassdoor.com` is treated as the same organization as `glassdoor.com` and will not trigger a warning. Cross-organization mismatches (e.g. `glassdoor.com` vs `glassdoor.net`) are highlighted in amber and are the core signal of email spoofing.
+
+### OSINT Deep Dive
+An optional, user-triggered section that queries the site's OSINT API for two targets: the originating IP address (geolocation, ASN, known mail service identification) and the sender domain (spoofability, registration date, registrar). This is the only part of the tool that sends data to a server. Click **Run OSINT Analysis** to fetch results; the button becomes **Refresh** after the first run.
 
 ---
 
@@ -139,7 +145,7 @@ DMARC ties SPF and DKIM together and adds policy enforcement. For a DMARC check 
 |---|---|
 | **Display name spoofing** | Friendly From name hides a mismatched domain in Email Summary |
 | **Domain spoofing** | SPF or DKIM fail, From ≠ DKIM domain in Identity Analysis |
-| **Cousin domain** | From domain is a typosquat (e.g. `paypa1.com`) — visible in Identity Analysis |
+| **Cousin domain** | From domain is a lookalike (e.g. `paypa1.com` for `paypal.com`) — inspect the From address in Email Summary visually; the tool surfaces the raw domain but does not automatically detect lookalikes |
 | **Reply-To hijacking** | Reply-To domain mismatch flagged as a signal |
 | **Forwarded phishing** | SPF may fail after forwarding; check DKIM separately |
 | **Compromised relay** | Unexpected hop in Received chain with no TLS |
