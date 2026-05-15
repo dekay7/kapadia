@@ -41,6 +41,31 @@ function parseFrontmatter(source) {
   return { meta, body: match[2] };
 }
 
+function renderToolsMeta(contentDir, outputFile) {
+  const dir = join(root, contentDir);
+  const files = readdirSync(dir).filter(f => f.startsWith('tool-') && f.endsWith('.md'));
+  const toolsMeta = [];
+  for (const file of files) {
+    const slug = basename(file, '.md').slice(5); // 'tool-dns' → 'dns'
+    const source = readFileSync(join(dir, file), 'utf-8');
+    const { meta } = parseFrontmatter(source);
+    if (!meta.tool_desc) continue;
+    toolsMeta.push({
+      slug,
+      title: meta.title || slug,
+      desc: meta.tool_desc,
+      suffix: meta.tool_suffix || '',
+      order: parseInt(meta.sidebar_order, 10) || 99,
+    });
+  }
+  toolsMeta.sort((a, b) => a.order - b.order);
+  const out =
+    `// AUTO-GENERATED — run npm run render to update\n` +
+    `export const toolsMeta = ${JSON.stringify(toolsMeta, null, 2)};\n`;
+  writeFileSync(join(root, outputFile), out, 'utf-8');
+  console.log(`Rendered tools-meta: ${toolsMeta.map(t => t.slug).join(', ')}`);
+}
+
 function renderDocs(contentDir, outputFile) {
   const dir = join(root, contentDir);
   const files = readdirSync(dir).filter(f => f.endsWith('.md'));
@@ -92,3 +117,4 @@ function renderWrites(contentDir, outputFile) {
 
 renderDocs('content/docs',   'public/js/docs-content.js');
 renderWrites('content/writes', 'public/js/writes-content.js');
+renderToolsMeta('content/docs', 'public/js/tools-meta.js');

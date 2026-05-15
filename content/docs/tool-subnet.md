@@ -3,6 +3,8 @@ title: Subnet Calculator
 breadcrumb: docs / tools
 sidebar_section: Technology Tools
 sidebar_order: 9
+tool_desc: Calculate network boundaries and host ranges from any IP/CIDR.
+tool_suffix: No data sent.
 ---
 
 # Subnet Calculator

@@ -3,6 +3,8 @@ title: JWT Decoder
 breadcrumb: docs / tools
 sidebar_section: Technology Tools
 sidebar_order: 7
+tool_desc: Decode and inspect JWTs.
+tool_suffix: No data sent.
 ---
 
 # JWT Decoder

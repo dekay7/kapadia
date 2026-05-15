@@ -669,12 +669,7 @@ Run `npm run render` to regenerate `docs-content.js`.
 
 ### Step 8a — Update site structure documentation
 
-Whenever a new page or tool is added, update these files in the same commit:
-
-- `AGENTS.md` Section 18 Quick Reference: add a row to the tools table.
-- `README.md`: update the Features list and the Project Structure tree under `public/tools/`.
-
-Failing to update these causes documentation drift and misleads future agents reading them for context.
+Whenever a new page or tool is added, update `README.md` in the same commit: add a bullet to the Features list and an entry to the Project Structure tree under `public/tools/`. The tools hub card and terminal tab-completion are auto-generated from the doc frontmatter — no other files need updating.
 
 ### Step 8b — Security review before shipping
 
@@ -815,32 +810,13 @@ Before every commit, verify:
 - [ ] The `<noscript>` fallback is present on all tool pages
 - [ ] The `.tool-disclaimer` block is present on all tool pages
 - [ ] New Markdown content has been rendered (`npm run render`) and `*-content.js` is committed
-- [ ] The new tool/page is listed in the tools index if applicable
-- [ ] `AGENTS.md` Section 18 and `README.md` updated to include the new tool/page
+- [ ] `README.md` updated to include the new tool/page (features list + project structure tree)
 - [ ] No `console.log` in committed code
 - [ ] No cookies, localStorage, sessionStorage
 
 ---
 
-## 18. Quick Reference: Existing Tools
-
-| Tool | Route | Computation | Worker |
-|---|---|---|---|
-| Speed Test | `/tools/speed/` | Client + Cloudflare servers | None |
-| Link Inspector | `/tools/link/` | Edge | `/api/link` |
-| Email Analyzer | `/tools/email/` | Client only | None |
-| OSINT Footprint | `/tools/osint/` | Edge | `/api/osint` |
-| EXIF Inspector | `/tools/exif/` | Client only | None |
-| Browser Fingerprint | `/tools/leak/` | Client + edge headers | `/api/leak` |
-| Hash Generator | `/tools/hash/` | Client only | None |
-| DNS Analyzer | `/tools/dns/` | Edge | `/api/dns` |
-| JWT Decoder | `/tools/jwt/` | Client only | None |
-| Payload Encoder | `/tools/encode/` | Client only | None |
-| Subnet Calculator | `/tools/subnet/` | Client only | None |
-
----
-
-## 19. Local Environment Quick-Start
+## 18. Local Environment Quick-Start
 
 ```bash
 # Install devDependencies (marked, wrangler)

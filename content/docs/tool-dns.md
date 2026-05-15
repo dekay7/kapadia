@@ -3,6 +3,8 @@ title: DNS Analyzer
 breadcrumb: docs / tools
 sidebar_section: Technology Tools
 sidebar_order: 6
+tool_desc: Query DNS records over HTTPS — A, AAAA, MX, TXT, CNAME.
+tool_suffix: Self-hosted.
 ---
 
 # DNS Analyzer

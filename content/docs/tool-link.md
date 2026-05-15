@@ -3,6 +3,8 @@ title: Link Inspector
 breadcrumb: docs / tools
 sidebar_section: Technology Tools
 sidebar_order: 1
+tool_desc: Trace redirects and surface safety signals before you click.
+tool_suffix: Self-hosted.
 ---
 
 # Link Inspector

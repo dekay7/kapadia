@@ -3,6 +3,8 @@ title: Email Analyzer
 breadcrumb: docs / tools
 sidebar_section: Technology Tools
 sidebar_order: 2
+tool_desc: Check if an email is genuine and spot spoofing.
+tool_suffix: No data sent.
 ---
 
 # Email Analyzer

@@ -3,6 +3,8 @@ title: Hash Generator
 breadcrumb: docs / tools
 sidebar_section: Technology Tools
 sidebar_order: 5
+tool_desc: Hash text with MD5, SHA-1, SHA-256, or SHA-512.
+tool_suffix: No data sent.
 ---
 
 # Hash Generator

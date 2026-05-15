@@ -178,3 +178,127 @@ Resolves DNS records for a given domain using a secure DNS-over-HTTPS (DoH) reso
 
 - **CORS**: Enabled (`https://kapadia.org`).
 - **Caching**: Disabled (`no-store`).
+
+---
+
+## GET /api/leak
+
+Dumps the HTTP request headers and Cloudflare TLS connection properties as seen by the edge. Used by the Browser Fingerprint tool to expose what your browser reveals at the network layer.
+
+No parameters.
+
+### Example Response
+
+```json
+{
+  "httpProtocol": "HTTP/2",
+  "tlsCipher": "AEAD-AES128-GCM-SHA256",
+  "tlsVersion": "TLSv1.3",
+  "clientTcpRtt": 12,
+  "ip": "203.0.113.42",
+  "colo": "ORD",
+  "headers": {
+    "accept": "text/html,application/xhtml+xml,...",
+    "accept-encoding": "gzip, deflate, br",
+    "accept-language": "en-US,en;q=0.9",
+    "user-agent": "Mozilla/5.0 ..."
+  }
+}
+```
+
+### Technical Notes
+
+- **Filtered headers**: `authorization`, `cookie`, `cf-access-jwt-assertion`, and `cf-access-token` are stripped before the response is returned.
+- **CORS**: Enabled (`https://kapadia.org`).
+- **Caching**: Disabled (`no-store`).
+
+---
+
+## GET /api/chain
+
+Supply chain audit endpoint. Fetches a page's HTML server-side, extracts all cross-origin scripts and stylesheets, and evaluates each one for SRI coverage, hash integrity, npm registry cross-reference, and consensus across two independent fetches.
+
+### Parameters
+
+| Parameter | Required | Description |
+|---|---|---|
+| `url` | Yes | The page URL to audit (URL-encoded) |
+
+### Example Request
+
+```bash
+curl "https://kapadia.org/api/chain?url=https%3A%2F%2Fexample.com"
+```
+
+### Top-Level Response Fields
+
+```json
+{
+  "url": "https://example.com",
+  "fetched_url": "https://example.com/",
+  "truncated": false,
+  "resource_count": 3,
+  "unprotected_count": 2,
+  "has_auth_form": false,
+  "has_payment_form": false,
+  "overall_score": 20,
+  "overall_risk": "high",
+  "timestamp": "2025-05-11T16:00:00.000Z",
+  "resources": [ ... ]
+}
+```
+
+| Field | Description |
+|---|---|
+| `truncated` | `true` if the page HTML exceeded 128 KB and was cut off before parsing |
+| `unprotected_count` | Number of cross-origin resources loaded without any SRI hash |
+| `has_auth_form` | `true` if the page contains a password or email input — raises the overall risk multiplier |
+| `has_payment_form` | `true` if the page contains payment-related keywords — raises the overall risk multiplier further |
+| `overall_score` | Numeric aggregate risk score across all resources (higher = riskier) |
+| `overall_risk` | `"low"`, `"medium"`, `"high"`, or `"critical"` |
+
+### Per-Resource Object
+
+Each entry in `resources` contains:
+
+```json
+{
+  "src": "https://cdn.example.com/lib.js",
+  "sha256": "a1b2c3...",
+  "sha256b64": "obLD...",
+  "sha512": "d4e5f6...",
+  "sha512b64": "1K3m...",
+  "sri_expected": "sha256-obLD...",
+  "sri_present": true,
+  "sri_match": true,
+  "consensus_match": true,
+  "npm": {
+    "cdn": "jsdelivr",
+    "pkg": "some-lib",
+    "version": "1.2.3",
+    "file": "dist/lib.min.js",
+    "integrity": "sha512-...",
+    "integrity_type": "tarball"
+  },
+  "risk": "low",
+  "risk_score": 0,
+  "error": null
+}
+```
+
+| Field | Description |
+|---|---|
+| `sri_present` | Whether the page HTML included an `integrity` attribute for this resource |
+| `sri_match` | `true` if the fetched file matches the declared SRI hash; `false` if it doesn't; `null` if no SRI was declared |
+| `consensus_match` | `true` if two independent fetches returned identical content; `false` if the content changed between fetches (possible tampering); `null` if the second fetch failed |
+| `npm` | npm/CDN registry metadata for jsDelivr, unpkg, and cdnjs resources; `null` for other origins |
+| `risk` | Per-resource risk level: `"low"`, `"medium"`, `"high"`, `"critical"`, or `"unknown"` |
+| `error` | `null` on success; a string describing why analysis failed (e.g., `"fetch_failed"`) |
+
+### Technical Notes
+
+- **SSRF prevention**: Both the target page URL and every extracted resource URL are validated for scheme and checked against private/reserved IP ranges via DoH pre-resolution.
+- **Limits**: Up to 20 cross-origin resources are analyzed. The page HTML is capped at 128 KB; each resource body is capped at 256 KB.
+- **Same-origin resources are excluded**: Only cross-origin scripts and stylesheets are audited.
+- **CORS**: Enabled (`https://kapadia.org`).
+- **Caching**: Disabled (`no-store`).

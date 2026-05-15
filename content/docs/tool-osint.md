@@ -4,6 +4,8 @@ breadcrumb: docs / tools
 sidebar_section: Technology Tools
 sidebar_order: 2
 sidebar_label: OSINT Footprint
+tool_desc: Look up IPs, domains, usernames, and emails across public sources.
+tool_suffix: Self-hosted.
 ---
 
 # OSINT Footprint Checker

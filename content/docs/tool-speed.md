@@ -3,6 +3,8 @@ title: Speed Test
 breadcrumb: docs / tools
 sidebar_section: Technology Tools
 sidebar_order: 0
+tool_desc: Measure network throughput and latency.
+tool_suffix:
 ---
 
 # Speed Test

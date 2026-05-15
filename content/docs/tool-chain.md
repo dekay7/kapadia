@@ -3,6 +3,8 @@ title: Supply Chain Auditor
 breadcrumb: docs / tools
 sidebar_section: Technology Tools
 sidebar_order: 10
+tool_desc: Audit third-party scripts on any page for SRI integrity and supply chain risk.
+tool_suffix: Self-hosted.
 ---
 
 # Supply Chain Auditor

@@ -1,26 +1,17 @@
+import { toolsMeta } from '/js/tools-meta.js';
+
 // ── Terminal animation ───────────────────────────────────────
 const termBody = document.getElementById('term-body');
 
 // ── Command allowlist ────────────────────────────────────────
 const COMMANDS = Object.freeze({
-  'tools':        '/tools/',
-  'docs':         '/docs/',
-  'writes':       '/writes/',
-  'about':        '/about/',
-  'tools/dns':    '/tools/dns/',
-  'tools/email':  '/tools/email/',
-  'tools/encode': '/tools/encode/',
-  'tools/exif':   '/tools/exif/',
-  'tools/hash':   '/tools/hash/',
-  'tools/jwt':    '/tools/jwt/',
-  'tools/leak':   '/tools/leak/',
-  'tools/link':   '/tools/link/',
-  'tools/osint':  '/tools/osint/',
-  'tools/speed':  '/tools/speed/',
-  'tools/subnet': '/tools/subnet/',
-  'tools/chain':  '/tools/chain/',
-  'about/cv':     '/about/cv/',
-  'privacy':      '/privacy/',
+  'tools':    '/tools/',
+  'docs':     '/docs/',
+  'writes':   '/writes/',
+  'about':    '/about/',
+  ...Object.fromEntries(toolsMeta.map(t => [`tools/${t.slug}`, `/tools/${t.slug}/`])),
+  'about/cv': '/about/cv/',
+  'privacy':  '/privacy/',
 });
 const CMD_KEYS = Object.keys(COMMANDS);
 
