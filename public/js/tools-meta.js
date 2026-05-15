@@ -16,7 +16,7 @@ export const toolsMeta = [
   },
   {
     "slug": "email",
-    "title": "Email Analyzer",
+    "title": "Email Header Analyzer",
     "desc": "Check if an email is genuine and spot spoofing.",
     "suffix": "No data sent.",
     "order": 2

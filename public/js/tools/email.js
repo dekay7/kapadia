@@ -1,5 +1,5 @@
 /**
- * Email Analyzer — kapadia.org
+ * Email Header Analyzer — kapadia.org
  *
  * Security notes:
  *   - All parsed values rendered via textContent — never innerHTML
