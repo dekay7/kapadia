@@ -50,6 +50,30 @@
     return wrapper;
   }
 
+  // ── OSINT result helpers (mirrors osint.js section/grid/row/tag) ──────────────
+
+  function osintSection(title) {
+    const wrap = el('div', 'osint-section');
+    wrap.appendChild(el('h3', 'osint-section-title', title));
+    return wrap;
+  }
+
+  function osintGrid() {
+    const block = el('div', 'output-block');
+    block.appendChild(el('div', 'output-grid'));
+    return block;
+  }
+
+  function osintRow(blockEl, label, valueEl) {
+    const g = blockEl.querySelector('.output-grid') || blockEl;
+    g.appendChild(el('span', 'output-label osint-label', label));
+    g.appendChild(valueEl);
+  }
+
+  function osintTag(value, type) {
+    return el('span', 'output-value osint-val-' + (type || 'data'), value);
+  }
+
   // ── Header parsing ────────────────────────────────────────────────────────────
 
   function parseRawHeaders(raw) {
@@ -576,65 +600,39 @@
   }
 
   function renderOsintIpResult(data, target) {
-    const wrapper = el('div', 'email-osint-block');
-
-    const head = el('div', 'email-osint-block-head');
-    head.appendChild(el('span', 'email-osint-block-label', 'Originating IP'));
-    head.appendChild(el('span', 'email-osint-block-target', target));
-    wrapper.appendChild(head);
-
-    const block = el('div', 'output-block');
-    const grid  = el('div', 'output-grid link-info-grid');
+    const section = osintSection('Originating IP — ' + target);
+    const g = osintGrid();
 
     const geo = data.geo;
     const location = geo ? [geo.city, geo.region, geo.country].filter(Boolean).join(', ') : null;
-    if (location) {
-      grid.appendChild(el('span', 'output-label', 'Location'));
-      grid.appendChild(el('span', 'output-value', location));
-    }
+    if (location) osintRow(g, 'Location', osintTag(location, 'data'));
 
     const infra = interpretSendingInfrastructure(geo?.org, data.reverseDns);
     if (infra) {
-      grid.appendChild(el('span', 'output-label', 'Sent via'));
-      grid.appendChild(el('span', 'output-value', infra.label));
+      osintRow(g, 'Sent via', osintTag(infra.label, 'data'));
     } else if (geo?.org) {
-      const orgClean = geo.org.replace(/^AS\d+\s+/, '');
-      grid.appendChild(el('span', 'output-label', 'Sent via'));
-      grid.appendChild(el('span', 'output-value', orgClean));
+      osintRow(g, 'Sent via', osintTag(geo.org.replace(/^AS\d+\s+/, ''), 'data'));
     }
-
-    if (data.reverseDns) {
-      grid.appendChild(el('span', 'output-label', 'Hostname'));
-      grid.appendChild(el('span', 'output-value', data.reverseDns));
-    }
-
-    block.appendChild(grid);
+    if (data.reverseDns) osintRow(g, 'Hostname', osintTag(data.reverseDns, 'faint'));
 
     if (infra?.type === 'cloud') {
-      block.appendChild(el('p', 'email-osint-note',
-        'Cloud hosting is commonly used by bulk mail and marketing services. If this email claims to be personal or from a recognised brand, that is worth noting.'));
+      osintRow(g, 'Assessment', osintTag('⚠ Cloud hosting — verify the sender is legitimate', 'warn'));
+    } else if (infra?.type === 'mail') {
+      osintRow(g, 'Assessment', osintTag('✓ Known mail service', 'good'));
     }
 
-    wrapper.appendChild(block);
-    return wrapper;
+    section.appendChild(g);
+    return section;
   }
 
   function renderOsintDomainResult(data, target) {
-    const wrapper = el('div', 'email-osint-block');
+    const section = osintSection('Sender Domain — ' + target);
+    const g = osintGrid();
 
-    const head = el('div', 'email-osint-block-head');
-    head.appendChild(el('span', 'email-osint-block-label', 'Sender Domain'));
-    head.appendChild(el('span', 'email-osint-block-target', target));
-    wrapper.appendChild(head);
-
-    const block = el('div', 'output-block');
-    const grid  = el('div', 'output-grid link-info-grid');
-
-    grid.appendChild(el('span', 'output-label', 'Spoofable'));
-    grid.appendChild(el('span', data.isSpoofable ? 'output-value output-value--warn' : 'output-value',
+    osintRow(g, 'Spoof Protection',
       data.isSpoofable
-        ? 'Yes — anyone can spoof email from this domain'
-        : 'No — domain policy blocks spoofed email'));
+        ? osintTag('⚠ None — anyone can send mail as this domain', 'warn')
+        : osintTag('✓ Protected — domain policy blocks spoofed mail', 'good'));
 
     if (data.rdap) {
       const reg = data.rdap.events?.registration;
@@ -649,21 +647,17 @@
           else if (months < 12) age = months + (months === 1 ? ' month' : ' months') + ' old';
           else                  age = years + (years === 1 ? ' year' : ' years') + ' old';
           const isFresh = diffDays < 180;
-          grid.appendChild(el('span', 'output-label', 'Registered'));
-          grid.appendChild(el('span', isFresh ? 'output-value output-value--warn' : 'output-value',
-            reg.substring(0, 10) + ' (' + age + ')' + (isFresh ? ' — recently registered' : '')));
+          osintRow(g, 'Registered',
+            osintTag(reg.substring(0, 10) + ' (' + age + ')' + (isFresh ? ' — recently registered' : ''), isFresh ? 'warn' : 'data'));
         }
       }
-
       if (data.rdap.registrar) {
-        grid.appendChild(el('span', 'output-label', 'Registrar'));
-        grid.appendChild(el('span', 'output-value', data.rdap.registrar));
+        osintRow(g, 'Registrar', osintTag(data.rdap.registrar, 'faint'));
       }
     }
 
-    block.appendChild(grid);
-    wrapper.appendChild(block);
-    return wrapper;
+    section.appendChild(g);
+    return section;
   }
 
   function renderOsint(originatingIp, fromDomain) {
