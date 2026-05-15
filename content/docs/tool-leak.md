@@ -2,7 +2,7 @@
 title: Browser Fingerprint
 breadcrumb: docs / tools
 sidebar_section: Technology Tools
-sidebar_order: 4
+sidebar_order: 5
 tool_desc: See what headers, TLS ciphers, and signals your browser is leaking.
 tool_suffix: Self-hosted.
 ---

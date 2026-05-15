@@ -55,7 +55,7 @@ function renderToolsMeta(contentDir, outputFile) {
       title: meta.title || slug,
       desc: meta.tool_desc,
       suffix: meta.tool_suffix || '',
-      order: parseInt(meta.sidebar_order, 10) || 99,
+      order: meta.sidebar_order !== undefined ? parseInt(meta.sidebar_order, 10) : 99,
     });
   }
   toolsMeta.sort((a, b) => a.order - b.order);

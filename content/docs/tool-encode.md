@@ -2,7 +2,7 @@
 title: Payload Encoder
 breadcrumb: docs / tools
 sidebar_section: Technology Tools
-sidebar_order: 8
+sidebar_order: 9
 tool_desc: Encode and decode Base64, URL, and Hex strings.
 tool_suffix: No data sent.
 ---

@@ -2,7 +2,7 @@
 title: EXIF Inspector
 breadcrumb: docs / tools
 sidebar_section: Technology Tools
-sidebar_order: 3
+sidebar_order: 4
 tool_desc: Extract and strip photo metadata from images.
 tool_suffix: No data sent.
 ---
