@@ -4,6 +4,14 @@ import { join, basename } from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
+function escHtml(str) {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, '..');
 
@@ -64,6 +72,33 @@ function renderToolsMeta(contentDir, outputFile) {
     `export const toolsMeta = ${JSON.stringify(toolsMeta, null, 2)};\n`;
   writeFileSync(join(root, outputFile), out, 'utf-8');
   console.log(`Rendered tools-meta: ${toolsMeta.map(t => t.slug).join(', ')}`);
+  return toolsMeta;
+}
+
+function renderToolsHtml(toolsMeta, htmlFile) {
+  const html = readFileSync(join(root, htmlFile), 'utf-8');
+  const cards = toolsMeta.map(tool => {
+    const desc = tool.suffix
+      ? `${escHtml(tool.desc)} ${escHtml(tool.suffix)}`
+      : escHtml(tool.desc);
+    return [
+      `        <a href="/tools/${escHtml(tool.slug)}/" class="tool-card">`,
+      `          <span class="tool-icon">~/${escHtml(tool.slug)}</span>`,
+      `          <h2 class="tool-title">${escHtml(tool.title)}</h2>`,
+      `          <p class="tool-desc">${desc}</p>`,
+      `        </a>`,
+    ].join('\n');
+  }).join('\n');
+  const updated = html.replace(
+    /<div class="tools-grid" id="tools-grid">[\s\S]*?<\/div>/,
+    `<div class="tools-grid" id="tools-grid">\n${cards}\n      </div>`
+  );
+  if (updated === html) {
+    console.warn('renderToolsHtml: tools-grid placeholder not found in', htmlFile);
+    return;
+  }
+  writeFileSync(join(root, htmlFile), updated, 'utf-8');
+  console.log(`Rendered tools grid into ${htmlFile}: ${toolsMeta.map(t => t.slug).join(', ')}`);
 }
 
 function renderDocs(contentDir, outputFile) {
@@ -117,4 +152,5 @@ function renderWrites(contentDir, outputFile) {
 
 renderDocs('content/docs',   'public/js/docs-content.js');
 renderWrites('content/writes', 'public/js/writes-content.js');
-renderToolsMeta('content/docs', 'public/js/tools-meta.js');
+const toolsMeta = renderToolsMeta('content/docs', 'public/js/tools-meta.js');
+renderToolsHtml(toolsMeta, 'public/tools/index.html');

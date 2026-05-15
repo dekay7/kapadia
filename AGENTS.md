@@ -468,7 +468,7 @@ The `.risk-badge` system is defined in `tools.css` and must be used consistently
 
 ### 9.1 Module Pattern
 
-All client-side scripts use an IIFE or a top-level `DOMContentLoaded` listener. No ES module imports — the CSP does not allow `type="module"` unless it is explicitly added to `script-src` (it is not currently). Keep it as `defer` scripts.
+Most client-side scripts use an IIFE or a top-level `DOMContentLoaded` listener. The homepage (`index.js`) is the only exception: it uses `type="module"` to import `toolsMeta` from `tools-meta.js` for terminal tab-completion. This is CSP-safe — `script-src 'self'` covers same-origin module scripts. Do not introduce `type="module"` on other pages without a compelling reason; the default pattern is `defer` scripts.
 
 ```javascript
 // Pattern A — for tools that run entirely after DOM load
@@ -618,36 +618,26 @@ Create `public/js/tools/<toolname>.js`. Follow the conventions in Section 9. Key
 
 ### Step 5 — Add to the tools index
 
-Open `public/tools/index.html` and add a new `.tool-card` in the grid. Follow the existing card pattern:
+The tool card is **auto-generated** — no edits to `public/tools/index.html` are needed beyond running the build. `render.js` reads the doc frontmatter (Step 7), writes `tools-meta.js` (for the homepage terminal), and also injects the card HTML directly into `public/tools/index.html`. The card appears automatically after you run `npm run render`. Commit both the `.md` file and the regenerated `public/tools/index.html`.
 
-```html
-<a href="/tools/<toolname>/" class="tool-card">
-  <span class="tool-icon">## &nbsp;/tools/<toolname></span>
-  <h2 class="tool-title">Tool Display Name</h2>
-  <p class="tool-desc">One-sentence description of what the tool does.</p>
-  <span class="card-arrow">&rarr;</span>
-</a>
-```
+Ensure the doc file (Step 7) includes the `tool_desc` and `tool_suffix` frontmatter fields. These drive the card description:
 
-The `##` in `tool-icon` is a two-digit sequential number. Use the next available number.
-
-**`.tool-desc` rules:**
-- One short sentence. No em dashes.
-- End with exactly one of these suffixes based on where computation runs:
+**`tool_desc` / `tool_suffix` rules:**
+- `tool_desc`: one short sentence. No em dashes.
+- `tool_suffix`: end with exactly one of these based on where computation runs:
   - `No data sent.` — tool runs entirely in the browser; nothing leaves the device.
   - `Self-hosted.` — data is sent to kapadia.org's own edge infrastructure (a Worker function).
-  - No suffix — data is sent to a third-party service (e.g., Speed Test uses Cloudflare's servers).
+  - Omit the field entirely — data is sent to a third-party service (e.g., Speed Test uses Cloudflare's servers).
 
-### Step 6 — Add to navigation tab-completion (optional)
+### Step 6 — Navigation tab-completion (auto)
 
-If the tool should be reachable by typing `cd tools` or `cd <toolname>` in the homepage terminal, add it to the `COMMANDS` map in `public/js/index.js`:
+Tool paths (`cd tools/<toolname>`) are **auto-derived** from `toolsMeta` in `public/js/index.js` — no manual edit is required:
 
 ```javascript
-const COMMANDS = Object.freeze({
-  '<toolname>': '/tools/<toolname>/',
-  // ...
-});
+...Object.fromEntries(toolsMeta.map(t => [`tools/${t.slug}`, `/tools/${t.slug}/`])),
 ```
+
+No action needed for tools. If you are adding a non-tool top-level path (e.g. a new section), add it manually to the `COMMANDS` map in `public/js/index.js`.
 
 ### Step 7 — Add documentation
 
@@ -659,10 +649,14 @@ title: Tool Name
 breadcrumb: docs / tools / tool-name
 sidebar_section: Technology Tools
 sidebar_order: <next integer>
+tool_desc: One-sentence description (no em dashes). Used for the tools hub card.
+tool_suffix: Self-hosted.
 ---
 ```
 
-Run `npm run render` to regenerate `docs-content.js`.
+`tool_desc` and `tool_suffix` are required for the tool card to appear in the hub. `tool_suffix` should be `No data sent.`, `Self-hosted.`, or omitted (for third-party services) — see Step 5.
+
+Run `npm run render` to regenerate `docs-content.js` and `tools-meta.js`.
 
 ### Step 8a — Update site structure documentation
 
