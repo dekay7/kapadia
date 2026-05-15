@@ -4,6 +4,7 @@
  */
 
 const CORS_HEADERS = {
+  'Cache-Control': 'no-store',
   'Access-Control-Allow-Origin': 'https://kapadia.org',
 };
 

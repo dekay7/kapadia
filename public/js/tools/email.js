@@ -126,12 +126,19 @@
     return at >= 0 ? email.slice(at + 1).toLowerCase() : null;
   }
 
-  // Returns the organizational domain (last two labels), matching DMARC relaxed alignment.
-  // e.g. mail9.glassdoor.com → glassdoor.com
+  // Returns the organizational domain, matching DMARC relaxed alignment.
+  // e.g. mail9.glassdoor.com → glassdoor.com, mail.bbc.co.uk → bbc.co.uk
+  const TWO_LEVEL_TLDS = new Set([
+    'co.uk', 'com.au', 'co.jp', 'co.nz', 'org.uk', 'me.uk',
+    'net.au', 'com.br', 'co.in', 'co.za', 'co.kr', 'com.mx',
+  ]);
+
   function orgDomain(domain) {
     if (!domain) return null;
     const parts = domain.split('.');
-    return parts.length >= 2 ? parts.slice(-2).join('.') : domain;
+    if (parts.length <= 2) return domain;
+    const last2 = parts.slice(-2).join('.');
+    return TWO_LEVEL_TLDS.has(last2) ? parts.slice(-3).join('.') : last2;
   }
 
   // ── Authentication-Results parser ─────────────────────────────────────────────
@@ -555,7 +562,7 @@
         grid.appendChild(el('span', 'output-value output-value--null', '—'));
         return;
       }
-      const mismatch = refDomain !== null && domain !== refDomain;
+      const mismatch = refDomain !== null && orgDomain(domain) !== orgDomain(refDomain);
       const valueEl = el('span', mismatch ? 'output-value output-value--warn' : 'output-value',
         domain + (mismatch ? ' ← mismatch' : ''));
       grid.appendChild(valueEl);
@@ -752,7 +759,9 @@
 
     const originatingIp = result.hopsOrdered.length > 0 ? result.hopsOrdered[0].ip : null;
 
-    resultsEl.appendChild(renderScore(result.score, result.grade, result.verdict));
+    const scoreEl = renderScore(result.score, result.grade, result.verdict);
+    scoreEl.tabIndex = -1;
+    resultsEl.appendChild(scoreEl);
     resultsEl.appendChild(renderAuth(result.auth));
 
     const signals = renderSignals(result.signals);
@@ -772,10 +781,7 @@
     resultsEl.appendChild(renderPrivacy());
 
     resultsEl.classList.remove('u-hidden');
-    requestAnimationFrame(() => {
-      resultsEl.focus({ preventScroll: true });
-      resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
+    requestAnimationFrame(() => scoreEl.focus());
   }
 
   // ── Main analyze function ─────────────────────────────────────────────────────

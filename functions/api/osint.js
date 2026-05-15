@@ -10,17 +10,26 @@
  *   target=self → automatically uses the connecting IP
  */
 
-import { parseIPv4 } from '../lib/ip.js';
+import { parseIPv4, isPrivateIPv4, isPrivateIPv6 } from '../lib/ip.js';
 
 const DOH_BASE = 'https://cloudflare-dns.com/dns-query';
 const DEFAULT_HEADERS = { 'User-Agent': 'kapadia.org-osint/1.0 (https://kapadia.org/tools/osint/)' };
+
+const DOH_TIMEOUT_MS      = 4000;
+const GEO_TIMEOUT_MS      = 5000;
+const RDAP_TIMEOUT_MS     = 5000;
+const CERT_TIMEOUT_MS     = 8000;
+const PLATFORM_TIMEOUT_MS = 5000;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 async function dohQuery(name, type) {
   try {
     const url = `${DOH_BASE}?name=${encodeURIComponent(name)}&type=${type}`;
-    const res = await fetch(url, { headers: { Accept: 'application/dns-json' } });
+    const res = await fetch(url, {
+      headers: { Accept: 'application/dns-json' },
+      signal: AbortSignal.timeout(DOH_TIMEOUT_MS),
+    });
     if (!res.ok) return [];
     const data = await res.json();
     return data.Answer || [];
@@ -229,6 +238,7 @@ async function checkIP(ip, cfData = null) {
     // Primary: ipwho.is (more reliable for Cloudflare Workers)
     fetch(`https://ipwho.is/${encodeURIComponent(ip)}`, {
       headers: DEFAULT_HEADERS,
+      signal: AbortSignal.timeout(GEO_TIMEOUT_MS),
     }),
     dohQuery(ptrDomain, 'PTR'),
   ]);
@@ -265,6 +275,7 @@ async function checkIP(ip, cfData = null) {
     try {
       const res = await fetch(`https://ipapi.co/${encodeURIComponent(ip)}/json/`, {
         headers: DEFAULT_HEADERS,
+        signal: AbortSignal.timeout(GEO_TIMEOUT_MS),
       });
       if (res.ok) {
         const raw = await res.json();
@@ -324,27 +335,17 @@ function expandIPv6(ip) {
 }
 
 function classifyIP(ip) {
-  const privateRanges = [
-    /^10\./,
-    /^172\.(1[6-9]|2\d|3[01])\./,
-    /^192\.168\./,
-    /^127\./,
-    /^::1$/,
-    /^fc00:/,
-    /^fe80:/,
-  ];
-  if (privateRanges.some(r => r.test(ip))) return 'private';
-
-  const specialRanges = [
-    { range: /^100\.(6[4-9]|[7-9]\d|1[0-1]\d|12[0-7])\./, label: 'cgnat' },
-    { range: /^169\.254\./, label: 'link-local' },
-    { range: /^0\./, label: 'unspecified' },
-    { range: /^255\.255\.255\.255$/, label: 'broadcast' },
-  ];
-  for (const { range, label } of specialRanges) {
-    if (range.test(ip)) return label;
+  const o = parseIPv4(ip);
+  if (o) {
+    const [a, b] = o;
+    if (a === 255) return 'broadcast';
+    if (a === 169 && b === 254) return 'link-local';
+    if (a === 100 && b >= 64 && b <= 127) return 'cgnat';
+    if (a === 0) return 'unspecified';
+    if (isPrivateIPv4(o)) return 'private';
+    return 'public';
   }
-
+  if (isPrivateIPv6(ip)) return 'private';
   return 'public';
 }
 
@@ -368,12 +369,13 @@ async function checkDomain(domain) {
     // RDAP (WHOIS replacement)
     fetch(`https://rdap.org/domain/${encodeURIComponent(domain)}`, {
       headers: { ...DEFAULT_HEADERS, Accept: 'application/rdap+json' },
+      signal: AbortSignal.timeout(RDAP_TIMEOUT_MS),
     }),
 
     // Certificate transparency (subdomains via crt.sh)
     fetch(
       `https://crt.sh/?q=%.${encodeURIComponent(domain)}&output=json`,
-      { headers: { ...DEFAULT_HEADERS, Accept: 'application/json' } }
+      { headers: { ...DEFAULT_HEADERS, Accept: 'application/json' }, signal: AbortSignal.timeout(CERT_TIMEOUT_MS) }
     ),
 
     // DMARC record (specifically)
@@ -599,7 +601,7 @@ async function checkUsername(username) {
 
   const results = await Promise.allSettled(
     platforms.map(async (p) => {
-      const res = await fetch(p.apiUrl, { headers: DEFAULT_HEADERS });
+      const res = await fetch(p.apiUrl, { headers: DEFAULT_HEADERS, signal: AbortSignal.timeout(PLATFORM_TIMEOUT_MS) });
       const { found, data } = await p.parse(res);
       return { id: p.id, label: p.label, found, data, profileUrl: p.profileUrl };
     })
@@ -823,7 +825,7 @@ export async function onRequestGet(context) {
     return cors({ mode, target, timestamp: new Date().toISOString(), data });
 
   } catch (err) {
-    return cors({ error: err.message || 'Internal error during OSINT check' }, 500);
+    return cors({ error: 'Internal error during OSINT check.' }, 500);
   }
 }
 
