@@ -15,6 +15,7 @@
  */
 
 import { parseIPv4, isPrivateIPv4, isPrivateIPv6, isPrivateAddress } from '../lib/ip.js';
+import { cors, corsOptions } from '../lib/cors.js';
 
 const DOH_BASE   = 'https://cloudflare-dns.com/dns-query';
 const RDAP_BASE  = 'https://rdap.org/domain/';
@@ -516,18 +517,6 @@ function computeScore({
   return { score, grade, verdict, signals };
 }
 
-// ── CORS helper ───────────────────────────────────────────────────────────────
-
-function cors(body, status = 200) {
-  return Response.json(body, {
-    status,
-    headers: {
-      'Cache-Control': 'no-store',
-      'Access-Control-Allow-Origin': 'https://kapadia.org',
-    },
-  });
-}
-
 // ── Handlers ──────────────────────────────────────────────────────────────────
 
 export async function onRequestGet(context) {
@@ -636,14 +625,4 @@ export async function onRequestGet(context) {
   });
 }
 
-export async function onRequestOptions() {
-  return new Response(null, {
-    status: 204,
-    headers: {
-      'Access-Control-Allow-Origin':  'https://kapadia.org',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-      'Access-Control-Max-Age':       '86400',
-    },
-  });
-}
+export { corsOptions as onRequestOptions };

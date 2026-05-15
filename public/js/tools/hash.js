@@ -17,9 +17,12 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentFile = null;
 
   // Helpers
-  const buf2hex = (buffer) => {
-    return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('');
-  };
+  const buf2hex = (buffer) =>
+    Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+
+  function sanitizeName(name) {
+    return name.replace(/[^a-zA-Z0-9._\-() ]/g, '_');
+  }
 
   const clearOutputs = () => {
     outMd5.textContent = '...';
@@ -50,27 +53,23 @@ document.addEventListener('DOMContentLoaded', () => {
       clearOutputs();
       return;
     }
-    
-    // MD5 (using spark-md5)
+
     outMd5.textContent = SparkMD5.hash(text);
 
-    // Web Crypto API for SHA
     const encoder = new TextEncoder();
     const data = encoder.encode(text);
 
     try {
-      const hash1 = await crypto.subtle.digest('SHA-1', data);
+      const [hash1, hash256, hash512] = await Promise.all([
+        crypto.subtle.digest('SHA-1', data),
+        crypto.subtle.digest('SHA-256', data),
+        crypto.subtle.digest('SHA-512', data),
+      ]);
       outSha1.textContent = buf2hex(hash1);
-
-      const hash256 = await crypto.subtle.digest('SHA-256', data);
       outSha256.textContent = buf2hex(hash256);
-
-      const hash512 = await crypto.subtle.digest('SHA-512', data);
       outSha512.textContent = buf2hex(hash512);
-
       checkCompare();
-    } catch (e) {
-      console.error(e);
+    } catch {
       outSha1.textContent = 'Error';
       outSha256.textContent = 'Error';
       outSha512.textContent = 'Error';
@@ -82,30 +81,28 @@ document.addEventListener('DOMContentLoaded', () => {
     outSha1.textContent = 'Processing...';
     outSha256.textContent = 'Processing...';
     outSha512.textContent = 'Processing...';
+    fileInfo.setAttribute('aria-busy', 'true');
 
     const reader = new FileReader();
     reader.onload = async (e) => {
       const buffer = e.target.result;
-      
-      // MD5 (using spark-md5 ArrayBuffer)
       outMd5.textContent = SparkMD5.ArrayBuffer.hash(buffer);
-
       try {
-        const hash1 = await crypto.subtle.digest('SHA-1', buffer);
+        const [hash1, hash256, hash512] = await Promise.all([
+          crypto.subtle.digest('SHA-1', buffer),
+          crypto.subtle.digest('SHA-256', buffer),
+          crypto.subtle.digest('SHA-512', buffer),
+        ]);
         outSha1.textContent = buf2hex(hash1);
-
-        const hash256 = await crypto.subtle.digest('SHA-256', buffer);
         outSha256.textContent = buf2hex(hash256);
-
-        const hash512 = await crypto.subtle.digest('SHA-512', buffer);
         outSha512.textContent = buf2hex(hash512);
-
         checkCompare();
-      } catch (err) {
-        console.error(err);
+      } catch {
         outSha1.textContent = 'Error';
         outSha256.textContent = 'Error';
         outSha512.textContent = 'Error';
+      } finally {
+        fileInfo.removeAttribute('aria-busy');
       }
     };
     reader.readAsArrayBuffer(file);
@@ -135,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
     inputText.value = ''; // clear text
     dropZone.classList.add('u-hidden');
     fileInfo.classList.remove('u-hidden');
-    fileNameDisplay.textContent = `${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+    fileNameDisplay.textContent = `${sanitizeName(file.name)} (${(file.size / 1024).toFixed(2)} KB)`;
     calculateFileHashes(file);
   };
 

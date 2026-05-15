@@ -1,3 +1,5 @@
+import { cors, corsOptions } from '../lib/cors.js';
+
 /**
  * GET /api/info
  * Returns visitor IP (split into ipv4 / ipv6) and Cloudflare geo data as JSON.
@@ -49,22 +51,7 @@ export async function onRequestGet(context) {
     colo:           cf.colo           || null,
   };
 
-  return Response.json(payload, {
-    headers: {
-      'Cache-Control': 'no-store',
-      'Access-Control-Allow-Origin': 'https://kapadia.org',
-    },
-  });
+  return cors(payload);
 }
 
-export async function onRequestOptions() {
-  return new Response(null, {
-    status: 204,
-    headers: {
-      'Access-Control-Allow-Origin':  'https://kapadia.org',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-      'Access-Control-Max-Age':       '86400',
-    },
-  });
-}
+export { corsOptions as onRequestOptions };

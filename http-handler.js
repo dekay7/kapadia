@@ -17,22 +17,26 @@ export default {
     const url = new URL(request.url);
     const ua  = (request.headers.get('User-Agent') || '').toLowerCase();
 
-    const isCli  = ua.startsWith('curl/') || ua.startsWith('wget/') || ua.startsWith('httpie/');
     const isRoot = url.pathname === '/' || url.pathname === '' || url.pathname === '/index.html';
 
-    // NOTE: ipVersion and getConnectingIP are intentionally copied from
+    // NOTE: isCliClient, ipVersion, and getConnectingIP are intentionally copied from
     // functions/_middleware.js. Pages Functions and standalone Workers cannot
     // share module files, so any changes here must be mirrored there.
-    // Helper: classify IP as 'v4' or 'v6'
+    // check-sync.js verifies these functions stay in sync at build time.
+    function isCliClient(ua) {
+      return ua.startsWith('curl/') || ua.startsWith('wget/') || ua.startsWith('httpie/') || ua === 'httpie';
+    }
+
     function ipVersion(ip) {
       if (!ip || ip === 'unknown') return null;
       return ip.includes(':') ? 'v6' : 'v4';
     }
 
-    // Helper: pull connecting IP with same fallback as _middleware.js
     function getConnectingIP(request) {
       return request.headers.get('CF-Connecting-IP') || null;
     }
+
+    const isCli = isCliClient(ua);
 
     if (isCli && isRoot) {
       const ip = getConnectingIP(request) || 'unknown';

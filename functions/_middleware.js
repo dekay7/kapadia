@@ -18,17 +18,17 @@ function getConnectingIP(request) {
   return request.headers.get('CF-Connecting-IP') || null;
 }
 
+/** Return true if the User-Agent belongs to a CLI HTTP client. */
+function isCliClient(ua) {
+  return ua.startsWith('curl/') || ua.startsWith('wget/') || ua.startsWith('httpie/') || ua === 'httpie';
+}
+
 export async function onRequest(context) {
   const { request, next } = context;
   const url = new URL(request.url);
   const ua = (request.headers.get('User-Agent') || '').toLowerCase();
 
-  // Detect CLI HTTP clients
-  const isCli =
-    ua.startsWith('curl/') ||
-    ua.startsWith('wget/') ||
-    ua.startsWith('httpie/') ||
-    ua === 'httpie';
+  const isCli = isCliClient(ua);
 
   // Match / and /index.html on the apex domain
   const isRoot =

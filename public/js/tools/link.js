@@ -330,7 +330,7 @@
   // ── Full results render ───────────────────────────────────────────────────────
 
   function renderResults(data) {
-    resultsEl.textContent = '';
+    resultsEl.replaceChildren();
 
     resultsEl.appendChild(renderScore(data));
 

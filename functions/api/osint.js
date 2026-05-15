@@ -11,6 +11,7 @@
  */
 
 import { parseIPv4, isPrivateIPv4, isPrivateIPv6 } from '../lib/ip.js';
+import { cors, corsOptions } from '../lib/cors.js';
 
 const DOH_BASE = 'https://cloudflare-dns.com/dns-query';
 const DEFAULT_HEADERS = { 'User-Agent': 'kapadia.org-osint/1.0 (https://kapadia.org/tools/osint/)' };
@@ -177,7 +178,7 @@ async function probeDKIM(domain) {
         } catch {}
       }
 
-      return { selector, found: true, keyBits, record: record.data };
+      return { selector, found: true, keyBits };
     })
   );
 
@@ -189,16 +190,6 @@ async function probeDKIM(domain) {
   });
 
   return { found, checkedCount: SELECTORS.length };
-}
-
-function cors(body, status = 200) {
-  return Response.json(body, {
-    status,
-    headers: {
-      'Cache-Control': 'no-store',
-      'Access-Control-Allow-Origin': 'https://kapadia.org',
-    },
-  });
 }
 
 // ── Mode: IP Intelligence ─────────────────────────────────────────────────────
@@ -399,13 +390,9 @@ async function checkDomain(domain) {
   // Extract useful parsed values
   const spf   = dns.TXT?.find(r => r.data.includes('v=spf1'))?.data || null;
 
+  // DMARC records must be at _dmarc.<domain> per RFC 7489 — do not check root TXT
   let dmarc = null;
-  if (dnsResult.status === 'fulfilled') {
-    // Check root TXT records first (some misconfigured domains put it there)
-    dmarc = dns.TXT?.find(r => r.data.includes('v=DMARC1'))?.data || null;
-  }
-  // Then check the specific DMARC lookup result
-  if (!dmarc && dmarcResult.status === 'fulfilled') {
+  if (dmarcResult.status === 'fulfilled') {
     dmarc = dmarcResult.value.find(r => r.data.includes('v=DMARC1'))?.data || null;
   }
 
@@ -592,7 +579,7 @@ async function checkUsername(username) {
       id:         'npm',
       label:      'npm',
       apiUrl:     `https://registry.npmjs.org/-/user/org.couchdb.user:${encodeURIComponent(username)}`,
-      profileUrl: `https://www.npmjs.com/~${username}`,
+      profileUrl: `https://www.npmjs.com/~${encodeURIComponent(username)}`,
       async parse(res) {
         if (res.status === 404) return { found: false };
         if (!res.ok)            return { found: false };
@@ -844,14 +831,4 @@ export async function onRequestGet(context) {
   }
 }
 
-export async function onRequestOptions() {
-  return new Response(null, {
-    status: 204,
-    headers: {
-      'Access-Control-Allow-Origin':  'https://kapadia.org',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-      'Access-Control-Max-Age':       '86400',
-    },
-  });
-}
+export { corsOptions as onRequestOptions };

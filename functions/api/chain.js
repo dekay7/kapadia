@@ -15,6 +15,7 @@
  */
 
 import { parseIPv4, isPrivateIPv4, isPrivateIPv6, isPrivateAddress } from '../lib/ip.js';
+import { cors, corsOptions } from '../lib/cors.js';
 
 const DOH_BASE       = 'https://cloudflare-dns.com/dns-query';
 const SERVICE_UA     = 'kapadia.org-chain/1.0 (https://kapadia.org/tools/chain/)';
@@ -99,18 +100,6 @@ async function ssrfCheck(url) {
     return await checkHostnameSSRF(host);
   }
   return null;
-}
-
-// ── CORS response helper ──────────────────────────────────────────────────────
-
-function cors(body, status = 200) {
-  return Response.json(body, {
-    status,
-    headers: {
-      'Cache-Control': 'no-store',
-      'Access-Control-Allow-Origin': 'https://kapadia.org',
-    },
-  });
 }
 
 // ── Streaming body reader with cap ────────────────────────────────────────────
@@ -377,18 +366,20 @@ async function analyzeResource(resourceUrl, sriMap) {
   const sriPresent = sriExpected !== null;
   const sriMatch = sriPresent ? checkSri(hashes1, sriExpected) : null;
 
-  // Second fetch for consensus check
+  // Second fetch for consensus check — skipped when SRI already confirmed a match
   let consensusMatch = null;
-  try {
-    const res2 = await fetch(resourceUrl, {
-      signal: AbortSignal.timeout(RES_TIMEOUT),
-      headers: { 'Accept-Encoding': 'identity', 'User-Agent': SERVICE_UA },
-      redirect: 'follow',
-    });
-    const { buf: buf2 } = await readCapped(res2, RES_CAP_BYTES);
-    const hashes2 = await computeHashes(buf2.buffer);
-    consensusMatch = hashes1.sha256 === hashes2.sha256;
-  } catch { /* leave as null — network hiccup, not evidence of tampering */ }
+  if (!(sriPresent && sriMatch === true)) {
+    try {
+      const res2 = await fetch(resourceUrl, {
+        signal: AbortSignal.timeout(RES_TIMEOUT),
+        headers: { 'Accept-Encoding': 'identity', 'User-Agent': SERVICE_UA },
+        redirect: 'follow',
+      });
+      const { buf: buf2 } = await readCapped(res2, RES_CAP_BYTES);
+      const hashes2 = await computeHashes(buf2.buffer);
+      consensusMatch = hashes1.sha256 === hashes2.sha256;
+    } catch { /* leave as null — network hiccup, not evidence of tampering */ }
+  }
 
   // npm registry cross-reference
   const npmInfo = await npmResolve(resourceUrl);
@@ -452,6 +443,9 @@ export async function onRequestGet({ request }) {
   try {
     const res = await fetch(rawUrl, {
       signal: AbortSignal.timeout(HTML_TIMEOUT),
+      // redirect: 'follow' is intentional here — we want the final HTML, not the redirect chain.
+      // Cloudflare Workers block fetches to private IP ranges at the network level, so redirect
+      // targets that resolve to private IPs are rejected by the platform without further SSRF checks.
       redirect: 'follow',
       headers: { 'User-Agent': SERVICE_UA, Accept: 'text/html,*/*' },
     });
@@ -495,14 +489,4 @@ export async function onRequestGet({ request }) {
   });
 }
 
-export async function onRequestOptions() {
-  return new Response(null, {
-    status: 204,
-    headers: {
-      'Access-Control-Allow-Origin':  'https://kapadia.org',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-      'Access-Control-Max-Age':       '86400',
-    },
-  });
-}
+export { corsOptions as onRequestOptions };

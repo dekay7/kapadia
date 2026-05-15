@@ -1,6 +1,6 @@
 /**
- * Build-time check: verifies that the ipVersion and getConnectingIP helper
- * functions in functions/_middleware.js and http-handler.js are identical.
+ * Build-time check: verifies that the isCliClient, ipVersion, and getConnectingIP
+ * helper functions in functions/_middleware.js and http-handler.js are identical.
  *
  * These functions are intentionally duplicated because Cloudflare Pages
  * Functions and standalone Workers cannot share module files. This script
@@ -39,7 +39,7 @@ function hash(str) {
 const middlewareSrc = readFileSync(join(root, 'functions/_middleware.js'), 'utf-8');
 const handlerSrc    = readFileSync(join(root, 'http-handler.js'),           'utf-8');
 
-const funcs = ['ipVersion', 'getConnectingIP'];
+const funcs = ['isCliClient', 'ipVersion', 'getConnectingIP'];
 let failed = false;
 
 for (const name of funcs) {
@@ -56,5 +56,5 @@ for (const name of funcs) {
 if (failed) {
   process.exit(1);
 } else {
-  console.log('[check-sync] OK: ipVersion and getConnectingIP are in sync.');
+  console.log('[check-sync] OK: isCliClient, ipVersion, and getConnectingIP are in sync.');
 }
