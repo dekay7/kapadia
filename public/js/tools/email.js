@@ -772,7 +772,10 @@
     resultsEl.appendChild(renderPrivacy());
 
     resultsEl.classList.remove('u-hidden');
-    requestAnimationFrame(() => resultsEl.focus());
+    requestAnimationFrame(() => {
+      resultsEl.focus({ preventScroll: true });
+      resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
   }
 
   // ── Main analyze function ─────────────────────────────────────────────────────
