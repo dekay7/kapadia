@@ -44,11 +44,8 @@ kapadia-site/
 │   ├── lib/
 │   │   └── ip.js      ← Shared IP parsing utilities
 │   └── api/
-│       ├── info.js    ← GET /api/info
-│       ├── link.js    ← GET /api/link
-│       ├── osint.js   ← GET /api/osint
-│       ├── dns.js     ← GET /api/dns
-│       └── leak.js    ← GET /api/leak
+│       ├── info.js    ← GET /api/info (visitor metadata)
+│       └── <name>.js  ← GET /api/<name> — one file per edge-side tool
 ├── scripts/
 │   ├── check-sync.js  ← Build guard: verifies _middleware.js / http-handler.js parity
 │   └── render.js      ← Build script: Markdown → *-content.js
