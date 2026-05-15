@@ -78,6 +78,8 @@ Queries the public APIs of several platforms in parallel to check for account ex
 
 When a profile is found, available public metadata (name, bio, location, join date, follower count, etc.) is displayed.
 
+Platforms that time out during the request window are listed separately as **Timed out** in the Platform Summary rather than counted as "Not found."
+
 > [!NOTE]
 > npm's CouchDB user registry may include the account's email address in its public API response if the owner chose to make it public on npm. This tool surfaces it only when present in that public response — it is data the subject published themselves.
 
@@ -151,6 +153,8 @@ For each selector found, the RSA key length is extracted from the `p=` base64 va
 The checker is implemented as a **serverless edge function** at `/functions/api/osint.js`. All four modes fan out their sub-checks in parallel using `Promise.allSettled()`, so a single slow or failing external API never blocks the rest of the response.
 
 The email mode runs 8 DNS queries in parallel per request: MX, A, TXT (SPF), DMARC, MTA-STS, TLS-RPT, BIMI, and 12 concurrent DKIM selector probes via `Promise.allSettled()`.
+
+When a sub-check times out specifically (as opposed to a generic network error), the UI surfaces a distinct ⚠ warning rather than a generic "unavailable" message. Affected lookups: geolocation (IP mode), RDAP registration data and crt.sh subdomain enumeration (domain mode), and individual platform checks (username mode).
 
 ---
 

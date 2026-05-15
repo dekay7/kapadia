@@ -243,8 +243,11 @@ async function checkIP(ip, cfData = null) {
     dohQuery(ptrDomain, 'PTR'),
   ]);
 
+  const isTimedOut = (r) => r.name === 'TimeoutError' || r.name === 'AbortError';
+
   // Geolocation Mapping (ipwho.is)
   let geo = null;
+  let geoTimedOut = geoResult.status === 'rejected' && isTimedOut(geoResult.reason);
   if (geoResult.status === 'fulfilled' && geoResult.value.ok) {
     try {
       const raw = await geoResult.value.json();
@@ -280,6 +283,7 @@ async function checkIP(ip, cfData = null) {
       if (res.ok) {
         const raw = await res.json();
         if (!raw.error) {
+          geoTimedOut = false;
           geo = {
             ip:           raw.ip,
             city:         raw.city || null,
@@ -299,7 +303,9 @@ async function checkIP(ip, cfData = null) {
           };
         }
       }
-    } catch { /* ignore */ }
+    } catch (err) {
+      if (isTimedOut(err)) geoTimedOut = true;
+    }
   }
 
   // Reverse DNS (PTR)
@@ -308,7 +314,7 @@ async function checkIP(ip, cfData = null) {
     reverseDns = ptrResult.value[0].data.replace(/\.$/, '');
   }
 
-  return { ip, geo, reverseDns, classification: classifyIP(ip) };
+  return { ip, geo, geoTimedOut, reverseDns, classification: classifyIP(ip) };
 }
 
 /** Formats an IPv6 address for reverse DNS lookup (ip6.arpa). */
@@ -438,9 +444,13 @@ async function checkDomain(domain) {
     } catch { /* swallow */ }
   }
 
+  const isTimedOut = (r) => r?.name === 'TimeoutError' || r?.name === 'AbortError';
+  const rdapTimedOut = rdapResult.status === 'rejected' && isTimedOut(rdapResult.reason);
+
   // ── Certificate transparency
   let subdomains = [];
   let certCount  = 0;
+  const subdomainsTimedOut = certsResult.status === 'rejected' && isTimedOut(certsResult.reason);
   if (certsResult.status === 'fulfilled' && certsResult.value.ok) {
     try {
       const certs = await certsResult.value.json();
@@ -476,13 +486,15 @@ async function checkDomain(domain) {
   return {
     dns,
     rdap,
+    rdapTimedOut,
     spf,
     dmarc,
     isSpoofable: security.isSpoofable,
     spfStatus:   security.spf.detail,
     dmarcStatus: security.dmarc.detail,
     subdomains,
-    certCount
+    certCount,
+    subdomainsTimedOut,
   };
 }
 
@@ -607,13 +619,16 @@ async function checkUsername(username) {
     })
   );
 
+  const isTimedOut = (r) => r?.name === 'TimeoutError' || r?.name === 'AbortError';
+
   const output = {};
   results.forEach((r, i) => {
     const { id, label, profileUrl } = platforms[i];
     if (r.status === 'fulfilled') {
       output[id] = { label, found: r.value.found, data: r.value.data, profileUrl };
     } else {
-      output[id] = { label, found: false, data: null, profileUrl, error: 'request failed' };
+      const timedOut = isTimedOut(r.reason);
+      output[id] = { label, found: false, data: null, profileUrl, timedOut, error: timedOut ? 'timeout' : 'request failed' };
     }
   });
 

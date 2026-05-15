@@ -613,6 +613,7 @@
     const geo = data.geo;
     const location = geo ? [geo.city, geo.region, geo.country].filter(Boolean).join(', ') : null;
     if (location) osintRow(g, 'Location', osintTag(location, 'data'));
+    else if (data.geoTimedOut) osintRow(g, 'Location', osintTag('⚠ Lookup timed out', 'warn'));
 
     const infra = interpretSendingInfrastructure(geo?.org, data.reverseDns);
     if (infra) {
@@ -661,6 +662,8 @@
       if (data.rdap.registrar) {
         osintRow(g, 'Registrar', osintTag(data.rdap.registrar, 'faint'));
       }
+    } else if (data.rdapTimedOut) {
+      osintRow(g, 'Registered', osintTag('⚠ RDAP lookup timed out', 'warn'));
     }
 
     section.appendChild(g);

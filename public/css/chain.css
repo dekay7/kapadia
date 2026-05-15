@@ -1,0 +1,243 @@
+/* ── Supply Chain Auditor — tool-specific styles ────────────────────────────── */
+
+/* ── Progress indicator ──────────────────────────────────────────────────────── */
+.chain-progress {
+  display: none;
+  align-items: center;
+  gap: 0.625rem;
+  margin: 1rem 0;
+}
+
+.chain-progress:not(.u-hidden) {
+  display: flex;
+}
+
+/* ── Sensitivity notice ──────────────────────────────────────────────────────── */
+.chain-sensitivity-notice {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--color-warning-alt);
+  padding: 0.625rem 0.875rem;
+  border: var(--border-w) solid rgba(207, 154, 111, 0.35);
+  border-radius: var(--radius);
+  background: rgba(207, 154, 111, 0.08);
+  margin-bottom: 1rem;
+}
+
+/* ── Truncation notice ───────────────────────────────────────────────────────── */
+.chain-truncated-notice {
+  margin-bottom: 0.75rem;
+}
+
+/* ── Summary stat cards ──────────────────────────────────────────────────────── */
+.chain-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.chain-stat-card {
+  background: var(--bg-terminal);
+  border: var(--border-w) solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.chain-stat-number {
+  font-family: var(--font-mono);
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  font-weight: 400;
+  line-height: 1;
+  color: var(--term-data);
+  display: block;
+}
+
+.chain-stat-number.risk-critical { color: var(--color-error); }
+.chain-stat-number.risk-high     { color: var(--color-warning-alt); }
+.chain-stat-number.risk-medium   { color: var(--color-warning); }
+.chain-stat-number.chain-stat--good { color: var(--term-green); }
+
+.chain-stat-label {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+/* ── Overall risk banner ─────────────────────────────────────────────────────── */
+.chain-overall {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.chain-overall-label {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--term-dim);
+}
+
+/* ── Results table ───────────────────────────────────────────────────────────── */
+.chain-table-wrap {
+  overflow-x: auto;
+  margin-bottom: 1rem;
+  border: var(--border-w) solid var(--border);
+  border-radius: var(--radius);
+}
+
+.chain-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.chain-table th {
+  font-size: 0.5625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--term-dim);
+  text-align: left;
+  padding: 0.625rem 0.75rem;
+  border-bottom: var(--border-w) solid var(--border-strong);
+  background: var(--bg-terminal);
+  white-space: nowrap;
+}
+
+.chain-table td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: var(--border-w) solid var(--border);
+  vertical-align: middle;
+  color: var(--term-data);
+}
+
+.chain-row-main {
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.chain-row-main:hover td,
+.chain-row-main:focus-within td {
+  background: var(--bg-raised);
+  outline: none;
+}
+
+.chain-row-main:focus {
+  outline: 2px solid var(--term-green);
+  outline-offset: -2px;
+}
+
+.chain-td-url {
+  max-width: 20rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--term-cmd);
+}
+
+.chain-td-hash {
+  color: var(--text-faint);
+  white-space: nowrap;
+  font-size: 0.6875rem;
+}
+
+/* ── Match/fail/na indicators ────────────────────────────────────────────────── */
+.chain-match {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+}
+
+.chain-match--ok   { color: var(--term-green); }
+.chain-match--fail { color: var(--color-error); }
+.chain-match--na   { color: var(--text-faint); }
+
+/* ── Expandable detail row ───────────────────────────────────────────────────── */
+.chain-row-detail {
+  display: none;
+}
+
+.chain-row-detail.open {
+  display: table-row;
+}
+
+.chain-row-detail td {
+  background: var(--bg-terminal);
+  padding: 0.875rem 1rem;
+  border-bottom: var(--border-w) solid var(--border-strong);
+}
+
+.chain-detail-warn {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-error);
+  margin-bottom: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border: var(--border-w) solid var(--color-error-border);
+  border-radius: var(--radius);
+  background: var(--color-error-bg);
+}
+
+.chain-detail-grid {
+  display: grid;
+  grid-template-columns: 6rem 1fr;
+  gap: 0.375rem 1rem;
+}
+
+.chain-detail-label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--term-dim);
+  text-align: right;
+  padding-top: 0.0625rem;
+  white-space: nowrap;
+}
+
+.chain-detail-value {
+  font-size: 0.6875rem;
+  color: var(--term-data);
+  word-break: break-all;
+}
+
+/* ── Actions row (copy report) ───────────────────────────────────────────────── */
+.chain-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.chain-copy-btn {
+  font-size: 0.8125rem;
+  padding: 0.375rem 0.875rem;
+}
+
+/* ── Privacy note ────────────────────────────────────────────────────────────── */
+.chain-privacy-note {
+  margin-top: 0.75rem;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────────── */
+@media (max-width: 40rem) {
+  .chain-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Hide less critical columns on narrow screens */
+  .chain-col-sri-match,
+  .chain-col-npm {
+    display: none;
+  }
+
+  .chain-detail-grid {
+    grid-template-columns: 5rem 1fr;
+  }
+}

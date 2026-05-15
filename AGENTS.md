@@ -634,6 +634,13 @@ Open `public/tools/index.html` and add a new `.tool-card` in the grid. Follow th
 
 The `##` in `tool-icon` is a two-digit sequential number. Use the next available number.
 
+**`.tool-desc` rules:**
+- One short sentence. No em dashes.
+- End with exactly one of these suffixes based on where computation runs:
+  - `No data sent.` — tool runs entirely in the browser; nothing leaves the device.
+  - `Self-hosted.` — data is sent to kapadia.org's own edge infrastructure (a Worker function).
+  - No suffix — data is sent to a third-party service (e.g., Speed Test uses Cloudflare's servers).
+
 ### Step 6 — Add to navigation tab-completion (optional)
 
 If the tool should be reachable by typing `cd tools` or `cd <toolname>` in the homepage terminal, add it to the `COMMANDS` map in `public/js/index.js`:

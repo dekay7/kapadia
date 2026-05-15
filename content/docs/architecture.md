@@ -25,11 +25,18 @@ Global Edge Network
       │     ├── /api/dns     — DNS-over-HTTPS resolver
       │     ├── /api/link    — Link Inspector (redirect tracing,
       │     │                   domain intel, safety scoring)
-      │     └── /api/osint   — OSINT footprint checker
-      │                         (IP, domain, username, email — with DKIM,
-      │                          DMARC, MTA-STS, TLS-RPT, BIMI)
+      │     ├── /api/osint   — OSINT footprint checker
+      │     │                   (IP, domain, username, email — with DKIM,
+      │     │                    DMARC, MTA-STS, TLS-RPT, BIMI)
+      │     └── /api/chain  — Supply Chain Auditor
+      │                         (SRI verification, SHA-256/512 hashing,
+      │                          npm registry cross-reference, consensus check)
       │
       ├── Client-Side Only Tools          ← No server component
+      │     ├── /tools/email  — Email header parser and authentication scorer
+      │     │                    (all parsing is local; clicking "Run OSINT Analysis"
+      │     │                     fires a single call to /api/osint with just the IP
+      │     │                     address and sender domain — no headers transmitted)
       │     ├── /tools/exif  — EXIF metadata inspector + stripper
       │     │                   (FileReader + exifr + Canvas API)
       │     ├── /tools/hash  — Cryptographic hashing (Web Crypto API)
@@ -65,6 +72,7 @@ These tools run entirely in your browser. No input data reaches any server.
 | **Subnet Calculator** | Bitwise JS arithmetic | None |
 | **EXIF Inspector** | FileReader + vendored `exifr` | None (GPS links open OpenStreetMap in new tab — only if you click) |
 | **Hash Generator** | Web Crypto API (SHA) + SparkMD5 (MD5) | `cdnjs.cloudflare.com` — library load only, no data sent |
+| **Email Analyzer** | Raw header parsing + auth scoring entirely in-browser | None for parsing; clicking **Run OSINT Analysis** calls the site's `/api/osint` edge function with the originating IP and sender domain only — no headers or email body leave the browser |
 
 ### Server-Side Tools (Edge Functions as Privacy Shield)
 
@@ -80,6 +88,7 @@ These tools send your query to a Cloudflare edge function. The edge function con
 | **OSINT — Domain mode** | RDAP (`rdap.org`), Cloudflare DoH, crt.sh | Registration, DNS, certificate transparency |
 | **OSINT — Username mode** | GitHub API, GitLab API, Hacker News, Docker Hub, npm | Public profile lookups |
 | **OSINT — Email mode** | Cloudflare DoH | DNS-based email security analysis |
+| **Supply Chain Auditor** | Cloudflare DoH, npm registry (`registry.npmjs.org`), cdnjs API (`api.cdnjs.com`), target page URL and its external resources | SSRF-safe fetch of page HTML, per-resource hashing, SRI validation, registry cross-reference |
 
 ### Site-Wide Infrastructure
 
@@ -87,6 +96,7 @@ These tools send your query to a Cloudflare edge function. The edge function con
 |---|---|---|
 | **Google Fonts** | Typography (Cormorant Garamond, DM Sans, JetBrains Mono) | **Yes — on every page load** |
 | **cdnjs (Cloudflare)** | Vendor libraries (SparkMD5) | **Yes — on relevant page loads** |
+| **DOMPurify** (self-hosted) | HTML sanitization for docs and writes Markdown rendering; vendored at `/js/vendor/dompurify.min.js` with SRI hash | No — served from kapadia.org itself |
 
 > [!NOTE]
 > **Privacy by Proxy:** For all investigative tools (OSINT, DNS, Link Inspector), kapadia.org's edge acts as a proxy. Third-party data services only see the edge server's IP — never yours.

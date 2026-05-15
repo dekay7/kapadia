@@ -25,6 +25,7 @@ Welcome to the technical heart of kapadia.org. This documentation hub contains e
 - **[JWT Decoder](#tool-jwt)**: Split and decode JSON Web Tokens entirely client-side.
 - **[Payload Encoder](#tool-encode)**: Base64, URL, Hex, and HTML encoding/decoding with no server involvement.
 - **[Subnet Calculator](#tool-subnet)**: CIDR subnet math — fully client-side.
+- **[Supply Chain Auditor](#tool-chain)**: Audit third-party scripts on any page — verify SRI hashes, detect CDN tampering, and cross-reference npm registry integrity.
 - **[API Reference](#api-reference)**: How to programmatically access visitor data, OSINT, and link-inspection endpoints.
 - **[Self-Hosting Curl IP](#curl-ip-selfhost)**: Instructions for running your own IP detection service.
 

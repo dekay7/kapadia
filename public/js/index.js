@@ -18,6 +18,7 @@ const COMMANDS = Object.freeze({
   'tools/osint':  '/tools/osint/',
   'tools/speed':  '/tools/speed/',
   'tools/subnet': '/tools/subnet/',
+  'tools/chain':  '/tools/chain/',
   'about/cv':     '/about/cv/',
   'privacy':      '/privacy/',
 });

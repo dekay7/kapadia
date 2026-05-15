@@ -173,7 +173,12 @@
       resultsBody.appendChild(netOrgSection);
     } else {
       const noGeo = section('Geolocation');
-      noGeo.appendChild(msg('Geolocation data unavailable for this IP.', 'faint'));
+      noGeo.appendChild(msg(
+        data.geoTimedOut
+          ? '⚠ Geolocation lookup timed out — data may be unavailable due to time constraints'
+          : 'Geolocation data unavailable for this IP.',
+        data.geoTimedOut ? 'warn' : 'faint'
+      ));
       resultsBody.appendChild(noGeo);
     }
   }
@@ -194,7 +199,12 @@
       if (r.nameservers?.length) row(rdapGrid, 'Nameservers', tag(r.nameservers.join(', '), 'data'));
       rdapSection.appendChild(rdapGrid);
     } else {
-      rdapSection.appendChild(msg('RDAP data not available for this domain.', 'faint'));
+      rdapSection.appendChild(msg(
+        data.rdapTimedOut
+          ? '⚠ RDAP lookup timed out — registration data may be unavailable due to time constraints'
+          : 'RDAP data not available for this domain.',
+        data.rdapTimedOut ? 'warn' : 'faint'
+      ));
     }
     resultsBody.appendChild(rdapSection);
 
@@ -240,7 +250,12 @@
       });
       certSection.appendChild(certGrid);
     } else {
-      certSection.appendChild(msg('No certificate records found in crt.sh', 'faint'));
+      certSection.appendChild(msg(
+        data.subdomainsTimedOut
+          ? '⚠ crt.sh lookup timed out — subdomain data may be incomplete due to time constraints'
+          : 'No certificate records found in crt.sh',
+        data.subdomainsTimedOut ? 'warn' : 'faint'
+      ));
     }
     resultsBody.appendChild(certSection);
   }
@@ -250,8 +265,9 @@
     const username = data.username;
     const platforms = data.platforms || {};
 
-    const found    = Object.values(platforms).filter(p => p.found);
-    const notFound = Object.values(platforms).filter(p => !p.found);
+    const found     = Object.values(platforms).filter(p => p.found);
+    const timedOut  = Object.values(platforms).filter(p => !p.found && p.timedOut);
+    const notFound  = Object.values(platforms).filter(p => !p.found && !p.timedOut);
 
     // Summary
     const summarySection = section('Platform Summary');
@@ -259,6 +275,7 @@
     row(summGrid, 'Checked platforms', tag(Object.keys(platforms).length, 'data'));
     row(summGrid, 'Found on',          tag(found.length, found.length > 0 ? 'good' : 'faint'));
     row(summGrid, 'Not found on',      tag(notFound.length, 'faint'));
+    if (timedOut.length > 0) row(summGrid, 'Timed out', tag(timedOut.length, 'warn'));
     summarySection.appendChild(summGrid);
     resultsBody.appendChild(summarySection);
 
@@ -284,7 +301,11 @@
       const nfSection = section('Not Found');
       const nfGrid = grid();
       notFound.forEach(p => {
-        row(nfGrid, p.label, tag('✗ Profile not found', 'faint'));
+        if (p.timedOut) {
+          row(nfGrid, p.label, tag('⚠ Lookup timed out', 'warn'));
+        } else {
+          row(nfGrid, p.label, tag('✗ Profile not found', 'faint'));
+        }
       });
       nfSection.appendChild(nfGrid);
       resultsBody.appendChild(nfSection);

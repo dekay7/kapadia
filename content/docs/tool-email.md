@@ -134,7 +134,8 @@ DMARC ties SPF and DKIM together and adds policy enforcement. For a DMARC check 
 ## Privacy
 
 - All parsing and scoring runs **100% in your browser** — raw headers are never transmitted anywhere
-- The optional **→ OSINT** link opens the OSINT Footprint tool in a new tab; it is user-triggered, not automatic
+- The **→ OSINT** link in the Received Chain opens the OSINT Footprint tool in a new tab; it is a navigation link, not an automatic fetch
+- Clicking **Run OSINT Analysis** sends only the originating IP address and sender domain to the site's OSINT API — no headers, no email body, no personal data
 - No cookies, no localStorage, no analytics
 
 ---
