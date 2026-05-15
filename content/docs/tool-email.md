@@ -1,16 +1,16 @@
 ---
-title: Email Header Analyzer
+title: Email Analyzer
 breadcrumb: docs / tools
 sidebar_section: Technology Tools
 sidebar_order: 2
 ---
 
-# Email Header Analyzer
+# Email Analyzer
 
 > [!TIP]
-> Copy the raw headers from any email and paste them here to investigate authentication, trace the relay chain, and detect spoofing signals — all without sending any data to a server.
+> Paste email headers or the **full email source** — the tool only needs the headers and ignores the body automatically. Use it to investigate authentication, trace the relay chain, and detect spoofing signals without sending any data to a server.
 
-## What is an Email Header Analyzer?
+## What is an Email Analyzer?
 
 Every email carries a set of **raw headers** that travel invisibly alongside the message. These headers record every server the email passed through, whether cryptographic signatures verified correctly, and whether the sender was authorized to send on behalf of the claimed domain.
 
@@ -22,7 +22,9 @@ The analyzer parses the raw headers block, checks three authentication protocols
 
 ---
 
-## How to Get Raw Headers
+## How to Get Email Headers or Source
+
+You can paste the **full email source** (headers + body) or just the headers — the tool extracts only the header block it needs. All of the methods below copy the full source, which is fine.
 
 | Email Client | Instructions |
 |---|---|

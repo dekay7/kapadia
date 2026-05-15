@@ -821,7 +821,7 @@ Before every commit, verify:
 |---|---|---|---|
 | Speed Test | `/tools/speed/` | Client + Cloudflare servers | None |
 | Link Inspector | `/tools/link/` | Edge | `/api/link` |
-| Email Header Analyzer | `/tools/email/` | Client only | None |
+| Email Analyzer | `/tools/email/` | Client only | None |
 | OSINT Footprint | `/tools/osint/` | Edge | `/api/osint` |
 | EXIF Inspector | `/tools/exif/` | Client only | None |
 | Browser Fingerprint | `/tools/leak/` | Client + edge headers | `/api/leak` |

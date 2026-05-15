@@ -1,4 +1,4 @@
-/* ── Email Header Analyzer — tool-specific styles ─────────────────────────── */
+/* ── Email Analyzer — tool-specific styles ─────────────────────────── */
 
 /* ── How-to copy headers disclosure ─────────────────────────────────────────── */
 .email-how-to {
@@ -36,9 +36,23 @@
   transform: rotate(90deg);
 }
 
+.email-source-note {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  padding: 0.5rem 1rem;
+  margin: 0;
+  border-bottom: var(--border-w) solid var(--border);
+}
+
+.email-source-note strong {
+  color: var(--term-data);
+  font-weight: 500;
+}
+
 .email-how-to ul {
   margin: 0;
-  padding: 0 1rem 0.75rem 2.25rem;
+  padding: 0.75rem 1rem 0.75rem 2.25rem;
 }
 
 .email-how-to li {
@@ -55,6 +69,19 @@
   min-height: 14rem;
   font-size: 0.75rem;
   line-height: 1.5;
+}
+
+/* ── Section header with subtitle ───────────────────────────────────────────── */
+.email-section-title-compact {
+  margin-bottom: 0.2rem;
+}
+
+.email-section-subtitle {
+  font-size: 0.6875rem;
+  color: var(--text-faint);
+  margin-top: 0;
+  margin-bottom: 0.875rem;
+  line-height: 1.4;
 }
 
 /* ── Section spacing ─────────────────────────────────────────────────────────── */
@@ -249,6 +276,77 @@
 .email-osint-link:hover {
   text-decoration: underline;
   opacity: 0.8;
+}
+
+/* ── OSINT deep dive section ─────────────────────────────────────────────────── */
+.email-osint-section {
+  margin-bottom: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: var(--border-w) solid var(--border);
+}
+
+.email-osint-prompt {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--text-faint);
+  margin-bottom: 0.875rem;
+}
+
+@keyframes emailOsintPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.35; }
+}
+
+.email-osint-loading {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-faint);
+  margin-top: 0.875rem;
+  animation: emailOsintPulse 1.4s ease-in-out infinite;
+}
+
+.email-osint-error {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-error);
+  margin-top: 0.875rem;
+}
+
+.email-osint-results {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.email-osint-block-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.email-osint-block-label {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  color: var(--term-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.email-osint-block-target {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--term-data);
+}
+
+/* ── OSINT contextual note ───────────────────────────────────────────────────── */
+.email-osint-note {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--text-faint);
+  margin: 0.75rem 0 0;
+  line-height: 1.5;
 }
 
 /* ── Responsive ──────────────────────────────────────────────────────────────── */

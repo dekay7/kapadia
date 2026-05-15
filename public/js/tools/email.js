@@ -1,5 +1,5 @@
 /**
- * Email Header Analyzer — kapadia.org
+ * Email Analyzer — kapadia.org
  *
  * Security notes:
  *   - All parsed values rendered via textContent — never innerHTML
@@ -41,6 +41,13 @@
 
   function sectionTitle(text) {
     return el('p', 'link-section-title', text);
+  }
+
+  function sectionHeader(title, subtitle) {
+    const wrapper = el('div', 'email-section-header');
+    wrapper.appendChild(el('p', 'link-section-title email-section-title-compact', title));
+    if (subtitle) wrapper.appendChild(el('p', 'email-section-subtitle', subtitle));
+    return wrapper;
   }
 
   // ── Header parsing ────────────────────────────────────────────────────────────
@@ -204,30 +211,30 @@
     const hasAnyAuth = auth && Object.values(auth.verdicts).some(v => v !== null);
 
     if (!hasAnyAuth) {
-      signals.push({ level: 'high', reason: 'No authentication results found — headers may be incomplete or truncated', deduction: 15, category: 'auth' });
+      signals.push({ level: 'high', reason: 'No security checks found — try pasting more of the email source', deduction: 15, category: 'auth' });
     } else {
       const { spf, dkim, dmarc } = auth.verdicts;
 
       if (dmarc === 'fail') {
-        signals.push({ level: 'critical', reason: 'DMARC check failed', deduction: 25, category: 'auth' });
+        signals.push({ level: 'critical', reason: "DMARC failed — the sender's domain policy rejected this email", deduction: 25, category: 'auth' });
       } else if (dmarc === null) {
-        signals.push({ level: 'high', reason: 'DMARC result absent from authentication headers', deduction: 15, category: 'auth' });
+        signals.push({ level: 'high', reason: 'DMARC missing — no domain policy check was recorded', deduction: 15, category: 'auth' });
       } else if (dmarc === 'pass' && auth.dmarcPolicy === 'none') {
-        signals.push({ level: 'info', reason: 'DMARC passed but sender policy is "none" — enforcement not in effect', deduction: 0, category: 'auth' });
+        signals.push({ level: 'info', reason: 'DMARC policy is "none" — the domain monitors but does not block spoofed mail yet', deduction: 0, category: 'auth' });
       }
 
       if (dkim === 'fail') {
-        signals.push({ level: 'critical', reason: 'DKIM signature verification failed', deduction: 20, category: 'auth' });
+        signals.push({ level: 'critical', reason: "DKIM failed — the email's signature is invalid or the message may have been tampered with", deduction: 20, category: 'auth' });
       } else if (dkim === null) {
-        signals.push({ level: 'medium', reason: 'DKIM result absent from authentication headers', deduction: 10, category: 'auth' });
+        signals.push({ level: 'medium', reason: 'DKIM missing — no email signature check was recorded', deduction: 10, category: 'auth' });
       }
 
       if (spf === 'fail') {
-        signals.push({ level: 'high', reason: 'SPF check failed — sending IP not authorized by domain', deduction: 15, category: 'auth' });
+        signals.push({ level: 'high', reason: 'SPF failed — the sending server is not authorized to send for this domain', deduction: 15, category: 'auth' });
       } else if (spf === 'softfail') {
-        signals.push({ level: 'medium', reason: 'SPF softfail — domain policy discourages but does not reject this sender', deduction: 8, category: 'auth' });
+        signals.push({ level: 'medium', reason: "SPF softfail — the sender is not fully authorized by the domain's policy", deduction: 8, category: 'auth' });
       } else if (spf === null) {
-        signals.push({ level: 'low', reason: 'SPF result absent from authentication headers', deduction: 5, category: 'auth' });
+        signals.push({ level: 'low', reason: 'SPF missing — no sender authorization check was recorded', deduction: 5, category: 'auth' });
       }
     }
 
@@ -235,19 +242,19 @@
     // Comparisons use organizational domain (last two labels) so that legitimate
     // subdomains like mail9.glassdoor.com are not flagged against glassdoor.com.
     if (fromDomain && dkimDomain && orgDomain(fromDomain) !== orgDomain(dkimDomain)) {
-      signals.push({ level: 'high', reason: `From domain (${fromDomain}) differs from DKIM signing domain (${dkimDomain})`, deduction: 15, category: 'identity' });
+      signals.push({ level: 'high', reason: `Sender mismatch — displayed domain (${fromDomain}) ≠ signing domain (${dkimDomain})`, deduction: 15, category: 'identity' });
     }
 
     if (fromDomain && returnPathDomain && orgDomain(fromDomain) !== orgDomain(returnPathDomain)) {
-      signals.push({ level: 'medium', reason: `From domain (${fromDomain}) differs from Return-Path domain (${returnPathDomain})`, deduction: 10, category: 'identity' });
+      signals.push({ level: 'medium', reason: `Return-Path mismatch — sender domain (${fromDomain}) ≠ bounce address domain (${returnPathDomain})`, deduction: 10, category: 'identity' });
     }
 
     if (fromDomain && replyToDomain && orgDomain(fromDomain) !== orgDomain(replyToDomain)) {
-      signals.push({ level: 'low', reason: `Reply-To domain (${replyToDomain}) differs from sender domain (${fromDomain})`, deduction: 5, category: 'identity' });
+      signals.push({ level: 'low', reason: `Reply-To mismatch — replies go to ${replyToDomain}, not ${fromDomain}`, deduction: 5, category: 'identity' });
     }
 
     if (fromDomain && msgIdDomain && orgDomain(fromDomain) !== orgDomain(msgIdDomain)) {
-      signals.push({ level: 'low', reason: `Message-ID domain (${msgIdDomain}) differs from From domain (${fromDomain})`, deduction: 5, category: 'identity' });
+      signals.push({ level: 'low', reason: `Message-ID mismatch — internal ID domain (${msgIdDomain}) ≠ sender (${fromDomain})`, deduction: 5, category: 'identity' });
     }
 
     // ── Transport security deductions ─────────────────────────────────────────
@@ -256,10 +263,10 @@
 
     if (hopsWithProtocol > 0) {
       if (hopsWithTls === 0) {
-        signals.push({ level: 'high', reason: 'No relay hop in the received chain used TLS', deduction: 20, category: 'transport' });
+        signals.push({ level: 'high', reason: 'No encryption — the email traveled over unencrypted connections', deduction: 20, category: 'transport' });
       } else if (hopsWithTls < hopsWithProtocol) {
         const missing = hopsWithProtocol - hopsWithTls;
-        signals.push({ level: 'medium', reason: `${missing} of ${hopsWithProtocol} relay hops did not use TLS`, deduction: 10, category: 'transport' });
+        signals.push({ level: 'medium', reason: `Partial encryption — ${missing} of ${hopsWithProtocol} servers sent without encryption`, deduction: 10, category: 'transport' });
       }
     }
 
@@ -269,9 +276,9 @@
       if (!prev || !curr) continue;
       const diffH = (curr - prev) / (1000 * 60 * 60);
       if (diffH > 24) {
-        signals.push({ level: 'high', reason: `Unusual relay delay: ~${Math.round(diffH)}h gap before hop ${i + 1}`, deduction: 10, category: 'transport' });
+        signals.push({ level: 'high', reason: `Long delay — email held for ~${Math.round(diffH)} hours before hop ${i + 1}`, deduction: 10, category: 'transport' });
       } else if (diffH > 2) {
-        signals.push({ level: 'medium', reason: `Unusual relay delay: ~${Math.round(diffH * 10) / 10}h gap before hop ${i + 1}`, deduction: 5, category: 'transport' });
+        signals.push({ level: 'medium', reason: `Moderate delay — email held for ~${Math.round(diffH * 10) / 10} hours before hop ${i + 1}`, deduction: 5, category: 'transport' });
       }
     }
 
@@ -280,11 +287,11 @@
     const score = Math.max(0, Math.min(100, 100 - totalDeduction));
 
     let grade, verdict;
-    if (score >= 90)      { grade = 'A'; verdict = 'Strong authentication — email signals are consistent'; }
-    else if (score >= 75) { grade = 'B'; verdict = 'Authentication passed with minor concerns'; }
-    else if (score >= 55) { grade = 'C'; verdict = 'Authentication issues detected — review signals carefully'; }
-    else if (score >= 35) { grade = 'D'; verdict = 'Multiple authentication failures — handle with caution'; }
-    else                  { grade = 'F'; verdict = 'Severe authentication failures — likely spoofed or malicious'; }
+    if (score >= 90)      { grade = 'A'; verdict = 'Looks genuine — all security checks passed'; }
+    else if (score >= 75) { grade = 'B'; verdict = 'Mostly genuine — minor issues detected'; }
+    else if (score >= 55) { grade = 'C'; verdict = 'Some concerns — review the security signals below'; }
+    else if (score >= 35) { grade = 'D'; verdict = 'Multiple failures — treat this email with caution'; }
+    else                  { grade = 'F'; verdict = 'High risk — this email may be spoofed or malicious'; }
 
     return {
       score, grade, verdict, signals,
@@ -324,7 +331,7 @@
 
     const info = el('div', 'link-score-info');
     info.appendChild(el('span', 'link-score-verdict', verdict));
-    info.appendChild(el('span', 'link-score-sub', 'Score out of 100 · Analyzed locally, nothing sent to server'));
+    info.appendChild(el('span', 'link-score-sub', 'Trust score out of 100 · analyzed entirely in your browser'));
     section.appendChild(info);
     return section;
   }
@@ -333,7 +340,7 @@
 
   function renderAuth(auth) {
     const wrapper = el('div', 'email-auth-section');
-    wrapper.appendChild(sectionTitle('Authentication Results'));
+    wrapper.appendChild(sectionHeader('Authentication Results', 'Did the email pass security checks?'));
 
     const block = el('div', 'output-block');
     const list  = el('div', 'email-auth-list');
@@ -379,7 +386,7 @@
   function renderSignals(signals) {
     if (!signals || signals.length === 0) return null;
     const wrapper = el('div', 'email-signals');
-    wrapper.appendChild(sectionTitle('Security Signals'));
+    wrapper.appendChild(sectionHeader('Security Signals', 'Flags that reduced the score'));
 
     const block = el('div', 'output-block');
     const list  = el('div', 'link-signal-list');
@@ -401,7 +408,7 @@
 
   function renderSummary(headers) {
     const wrapper = el('div', 'email-summary-section');
-    wrapper.appendChild(sectionTitle('Email Summary'));
+    wrapper.appendChild(sectionHeader('Email Summary', 'Key details extracted from the headers'));
 
     const block = el('div', 'output-block');
     const grid  = el('div', 'output-grid link-info-grid');
@@ -442,7 +449,7 @@
     if (!hopsOrdered || hopsOrdered.length === 0) return null;
 
     const wrapper = el('div', 'email-chain-section');
-    wrapper.appendChild(sectionTitle('Received Chain'));
+    wrapper.appendChild(sectionHeader('Received Chain', 'Servers this email passed through, originating server first'));
 
     const block = el('div', 'output-block');
     const table = el('div', 'email-hop-table');
@@ -513,7 +520,7 @@
     if (!fromDomain) return null;
 
     const wrapper = el('div', 'email-identity-section');
-    wrapper.appendChild(sectionTitle('Identity Analysis'));
+    wrapper.appendChild(sectionHeader('Identity Analysis', 'Do the sender addresses all match up?'));
 
     const block = el('div', 'output-block');
     const grid  = el('div', 'output-grid link-info-grid');
@@ -541,16 +548,215 @@
     return wrapper;
   }
 
+  // ── Render: OSINT deep dive ───────────────────────────────────────────────────
+
+  function interpretSendingInfrastructure(org, reverseDns) {
+    const combined = ((org || '') + ' ' + (reverseDns || '')).toLowerCase();
+    const has = (...keys) => keys.some(k => combined.includes(k));
+
+    if (has('mailgun'))                              return { label: 'Mailgun (email service)',          type: 'mail' };
+    if (has('sendgrid'))                             return { label: 'SendGrid (email service)',          type: 'mail' };
+    if (has('sparkpost'))                            return { label: 'SparkPost (email service)',         type: 'mail' };
+    if (has('mailchimp', 'mandrill'))                return { label: 'Mailchimp (email service)',         type: 'mail' };
+    if (has('postmark'))                             return { label: 'Postmark (email service)',          type: 'mail' };
+    if (has('amazonses', 'amazon ses'))              return { label: 'Amazon SES (email service)',        type: 'mail' };
+    if (has('google'))                               return { label: 'Google mail servers',              type: 'mail' };
+    if (has('microsoft', 'hotmail.com', 'outlook.com')) return { label: 'Microsoft mail servers',       type: 'mail' };
+    if (has('yahoo'))                                return { label: 'Yahoo mail servers',               type: 'mail' };
+    if (has('protonmail', 'proton.me', 'proton ag')) return { label: 'Proton Mail servers',              type: 'mail' };
+    if (has('fastmail'))                             return { label: 'Fastmail servers',                 type: 'mail' };
+    if (has('amazon', 'aws', 'amazonaws'))           return { label: 'Amazon AWS (cloud hosting)',       type: 'cloud' };
+    if (has('digitalocean'))                         return { label: 'DigitalOcean (cloud hosting)',     type: 'cloud' };
+    if (has('linode', 'akamai'))                     return { label: 'Akamai / Linode (cloud hosting)',  type: 'cloud' };
+    if (has('vultr'))                                return { label: 'Vultr (cloud hosting)',            type: 'cloud' };
+    if (has('hetzner'))                              return { label: 'Hetzner (cloud hosting)',          type: 'cloud' };
+    if (has('ovh'))                                  return { label: 'OVH (hosting)',                    type: 'cloud' };
+    if (has('cloudflare'))                           return { label: 'Cloudflare',                       type: 'cloud' };
+    return null;
+  }
+
+  function renderOsintIpResult(data, target) {
+    const wrapper = el('div', 'email-osint-block');
+
+    const head = el('div', 'email-osint-block-head');
+    head.appendChild(el('span', 'email-osint-block-label', 'Originating IP'));
+    head.appendChild(el('span', 'email-osint-block-target', target));
+    wrapper.appendChild(head);
+
+    const block = el('div', 'output-block');
+    const grid  = el('div', 'output-grid link-info-grid');
+
+    const geo = data.geo;
+    const location = geo ? [geo.city, geo.region, geo.country].filter(Boolean).join(', ') : null;
+    if (location) {
+      grid.appendChild(el('span', 'output-label', 'Location'));
+      grid.appendChild(el('span', 'output-value', location));
+    }
+
+    const infra = interpretSendingInfrastructure(geo?.org, data.reverseDns);
+    if (infra) {
+      grid.appendChild(el('span', 'output-label', 'Sent via'));
+      grid.appendChild(el('span', 'output-value', infra.label));
+    } else if (geo?.org) {
+      const orgClean = geo.org.replace(/^AS\d+\s+/, '');
+      grid.appendChild(el('span', 'output-label', 'Sent via'));
+      grid.appendChild(el('span', 'output-value', orgClean));
+    }
+
+    if (data.reverseDns) {
+      grid.appendChild(el('span', 'output-label', 'Hostname'));
+      grid.appendChild(el('span', 'output-value', data.reverseDns));
+    }
+
+    block.appendChild(grid);
+
+    if (infra?.type === 'cloud') {
+      block.appendChild(el('p', 'email-osint-note',
+        'Cloud hosting is commonly used by bulk mail and marketing services. If this email claims to be personal or from a recognised brand, that is worth noting.'));
+    }
+
+    wrapper.appendChild(block);
+    return wrapper;
+  }
+
+  function renderOsintDomainResult(data, target) {
+    const wrapper = el('div', 'email-osint-block');
+
+    const head = el('div', 'email-osint-block-head');
+    head.appendChild(el('span', 'email-osint-block-label', 'Sender Domain'));
+    head.appendChild(el('span', 'email-osint-block-target', target));
+    wrapper.appendChild(head);
+
+    const block = el('div', 'output-block');
+    const grid  = el('div', 'output-grid link-info-grid');
+
+    grid.appendChild(el('span', 'output-label', 'Spoofable'));
+    grid.appendChild(el('span', data.isSpoofable ? 'output-value output-value--warn' : 'output-value',
+      data.isSpoofable
+        ? 'Yes — anyone can spoof email from this domain'
+        : 'No — domain policy blocks spoofed email'));
+
+    if (data.rdap) {
+      const reg = data.rdap.events?.registration;
+      if (reg) {
+        const regDate  = new Date(reg);
+        const diffDays = Math.floor((Date.now() - regDate.getTime()) / (1000 * 60 * 60 * 24));
+        if (!isNaN(diffDays) && diffDays >= 0) {
+          const months = Math.floor(diffDays / 30);
+          const years  = Math.floor(diffDays / 365);
+          let age;
+          if (diffDays < 30)    age = diffDays + (diffDays === 1 ? ' day' : ' days') + ' old';
+          else if (months < 12) age = months + (months === 1 ? ' month' : ' months') + ' old';
+          else                  age = years + (years === 1 ? ' year' : ' years') + ' old';
+          const isFresh = diffDays < 180;
+          grid.appendChild(el('span', 'output-label', 'Registered'));
+          grid.appendChild(el('span', isFresh ? 'output-value output-value--warn' : 'output-value',
+            reg.substring(0, 10) + ' (' + age + ')' + (isFresh ? ' — recently registered' : '')));
+        }
+      }
+
+      if (data.rdap.registrar) {
+        grid.appendChild(el('span', 'output-label', 'Registrar'));
+        grid.appendChild(el('span', 'output-value', data.rdap.registrar));
+      }
+    }
+
+    block.appendChild(grid);
+    wrapper.appendChild(block);
+    return wrapper;
+  }
+
+  function renderOsint(originatingIp, fromDomain) {
+    if (!originatingIp && !fromDomain) return null;
+
+    const wrapper = el('div', 'email-osint-section');
+    wrapper.appendChild(sectionHeader('OSINT Deep Dive',
+      'Optional — queries the originating IP and sender domain via server-side lookup'));
+
+    const targets = [];
+    if (originatingIp) targets.push('Originating IP: ' + originatingIp);
+    if (fromDomain)    targets.push('Sender domain: '  + fromDomain);
+    wrapper.appendChild(el('p', 'email-osint-prompt', targets.join(' · ')));
+
+    const btn = el('button', 'btn', 'Run OSINT Analysis');
+    btn.type = 'button';
+    wrapper.appendChild(btn);
+
+    const loadingEl = el('p', 'email-osint-loading u-hidden', 'Fetching OSINT data…');
+    wrapper.appendChild(loadingEl);
+
+    const osintErrorEl = el('p', 'email-osint-error u-hidden');
+    wrapper.appendChild(osintErrorEl);
+
+    const resultArea = el('div', 'email-osint-results u-hidden');
+    wrapper.appendChild(resultArea);
+
+    btn.addEventListener('click', async () => {
+      btn.disabled = true;
+      btn.setAttribute('aria-busy', 'true');
+      loadingEl.classList.remove('u-hidden');
+      osintErrorEl.classList.add('u-hidden');
+      resultArea.classList.add('u-hidden');
+
+      const tasks = [];
+      if (originatingIp) {
+        tasks.push(
+          fetch('/api/osint?mode=ip&target=' + encodeURIComponent(originatingIp))
+            .then(r => r.json())
+            .then(j => ({ kind: 'ip', payload: j }))
+        );
+      }
+      if (fromDomain) {
+        tasks.push(
+          fetch('/api/osint?mode=domain&target=' + encodeURIComponent(fromDomain))
+            .then(r => r.json())
+            .then(j => ({ kind: 'domain', payload: j }))
+        );
+      }
+
+      const settled = await Promise.allSettled(tasks);
+
+      loadingEl.classList.add('u-hidden');
+      btn.disabled = false;
+      btn.removeAttribute('aria-busy');
+      btn.textContent = 'Refresh';
+
+      resultArea.replaceChildren();
+
+      let anySuccess = false;
+      for (const r of settled) {
+        if (r.status === 'rejected' || r.value.payload.error) continue;
+        anySuccess = true;
+        const { kind, payload } = r.value;
+        if (kind === 'ip')     resultArea.appendChild(renderOsintIpResult(payload.data, payload.target));
+        if (kind === 'domain') resultArea.appendChild(renderOsintDomainResult(payload.data, payload.target));
+      }
+
+      if (!anySuccess) {
+        osintErrorEl.textContent = 'OSINT lookup failed — check your connection and try again.';
+        osintErrorEl.classList.remove('u-hidden');
+      }
+
+      resultArea.classList.remove('u-hidden');
+    });
+
+    return wrapper;
+  }
+
   // ── Render: privacy notice ────────────────────────────────────────────────────
 
   function renderPrivacy() {
-    return el('p', 'link-privacy', 'All analysis runs in your browser. No header data is sent to any server.');
+    return el('p', 'link-privacy',
+      'All header analysis runs in your browser. No header data is sent to any server. ' +
+      'Clicking "Run OSINT Analysis" sends the originating IP and sender domain to the site\'s OSINT API.');
   }
 
   // ── Full results render ───────────────────────────────────────────────────────
 
   function renderResults(headers, result) {
     resultsEl.replaceChildren();
+
+    const originatingIp = result.hopsOrdered.length > 0 ? result.hopsOrdered[0].ip : null;
 
     resultsEl.appendChild(renderScore(result.score, result.grade, result.verdict));
     resultsEl.appendChild(renderAuth(result.auth));
@@ -566,6 +772,9 @@
     const identity = renderIdentity(result);
     if (identity) resultsEl.appendChild(identity);
 
+    const osint = renderOsint(originatingIp, result.fromDomain);
+    if (osint) resultsEl.appendChild(osint);
+
     resultsEl.appendChild(renderPrivacy());
 
     resultsEl.classList.remove('u-hidden');
@@ -578,19 +787,19 @@
     clearError();
     const raw = inputEl.value.trim();
     if (!raw) {
-      showError('Paste raw email headers to analyze.');
+      showError('Paste email headers or full email source to analyze.');
       return;
     }
     try {
       const headers = parseRawHeaders(raw);
       if (headers.length === 0) {
-        showError('No valid headers found. Paste the raw headers block copied from your email client.');
+        showError('No valid headers found. Make sure you pasted email headers or full email source.');
         return;
       }
       const result = computeScore(headers);
       renderResults(headers, result);
     } catch (err) {
-      showError(err.message || 'Failed to parse headers. Check that you pasted the raw headers block.');
+      showError(err.message || 'Failed to parse. Make sure you pasted email headers or full email source.');
     }
   }
 

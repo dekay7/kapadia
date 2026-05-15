@@ -4,16 +4,16 @@
   <meta charset="UTF-8" />
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="description" content="Email Header Analyzer. Paste raw email headers to detect spoofing, score authentication strength, and trace the relay chain. 100% client-side — nothing leaves your browser." />
+  <meta name="description" content="Email Analyzer. Check if an email is genuine — paste headers or full email source to spot spoofing, score authentication, and trace the relay chain. 100% client-side." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://kapadia.org/tools/email/" />
-  <meta property="og:title" content="Email Header Analyzer — Tools — kapadia.org" />
-  <meta property="og:description" content="Detect spoofing, score authentication (SPF/DKIM/DMARC), and trace relay chains from raw email headers. 100% client-side." />
+  <meta property="og:title" content="Email Analyzer — Tools — kapadia.org" />
+  <meta property="og:description" content="Check if an email is genuine. Paste headers or full source to detect spoofing, score authentication (SPF/DKIM/DMARC), and trace the relay chain. 100% client-side." />
   <meta property="og:site_name" content="kapadia.org" />
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Email Header Analyzer — Tools — kapadia.org" />
-  <meta name="twitter:description" content="Detect spoofing, score authentication (SPF/DKIM/DMARC), and trace relay chains from raw email headers. 100% client-side." />
-  <title>Email Header Analyzer — kapadia.org</title>
+  <meta name="twitter:title" content="Email Analyzer — Tools — kapadia.org" />
+  <meta name="twitter:description" content="Check if an email is genuine. Paste headers or full source to detect spoofing, score authentication (SPF/DKIM/DMARC), and trace the relay chain. 100% client-side." />
+  <title>Email Analyzer — kapadia.org</title>
   <link rel="canonical" href="https://kapadia.org/tools/email/" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -47,16 +47,17 @@
       <div class="tool-container">
 
         <div class="tool-header">
-          <h1>Email Header Analyzer</h1>
-          <p class="tool-desc">Paste raw email headers to score authentication, detect spoofing signals, and trace the relay chain. Runs entirely in your browser.</p>
+          <h1>Email Analyzer</h1>
+          <p class="tool-desc">Check if an email is genuine. Paste headers or full source to spot spoofing and trace the relay chain. No data sent.</p>
         </div>
 
         <div class="tool-disclaimer">
-          <strong>Privacy:</strong> All analysis runs 100% in your browser — no header data is sent to any server.
+          <strong>Privacy:</strong> All header analysis runs 100% in your browser — no header data is sent to any server. Optionally, clicking <em>Run OSINT Analysis</em> sends the originating IP and sender domain to the site's OSINT API for server-side enrichment; no email body or personal data is included.
         </div>
 
         <details class="email-how-to">
-          <summary>How to copy raw headers</summary>
+          <summary>How to get email headers or source</summary>
+          <p class="email-source-note">Paste the <strong>full email source</strong> or just the <strong>headers</strong> — the tool only needs the headers and will ignore the body automatically.</p>
           <ul>
             <li><strong>Gmail</strong> — open email → ⋮ → <strong>Show original</strong> → <strong>Copy to clipboard</strong></li>
             <li><strong>Outlook (web)</strong> — open email → ⋮ → <strong>View</strong> → <strong>View message source</strong> → Ctrl+A, Ctrl+C</li>
@@ -67,18 +68,20 @@
         </details>
 
         <div class="form-group">
-          <label for="email-input" class="form-label">Raw email headers</label>
+          <label for="email-input" class="form-label">Email headers or full source</label>
           <textarea
             id="email-input"
             class="form-textarea email-textarea"
-            placeholder="Paste raw email headers here…"
+            placeholder="Paste email headers or full email source here — only the headers are needed, the body is ignored…"
             autocomplete="off"
             spellcheck="false"
-            aria-label="Raw email headers"
+            aria-label="Email headers or full source"
           ></textarea>
         </div>
 
-        <button id="email-analyze-btn" class="btn" type="button">Analyze</button>
+        <div class="form-group">
+          <button id="email-analyze-btn" class="btn" type="button">Analyze</button>
+        </div>
 
         <div id="email-error" class="link-error u-hidden" role="alert" aria-live="polite"></div>
 
