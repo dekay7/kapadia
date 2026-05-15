@@ -12,7 +12,7 @@ tool_suffix: No data sent.
 > [!NOTE]
 > This tool is 100% client-side. Files never leave your browser — no data is uploaded to any server.
 
-## What is EXIF Metadata?
+## What Is EXIF Metadata?
 
 When you take a photo with a smartphone or digital camera, the file contains much more than just the image. It also stores hidden "metadata" called **EXIF data**. 
 
@@ -22,7 +22,7 @@ This often includes:
 - Details about your **camera or phone model**.
 - Even unique **serial numbers** that can identify your specific device.
 
-## What is this tool for?
+## What Is This Tool For?
 
 The EXIF Inspector makes this "invisible" data visible so you can see what you're sharing. More importantly, it allows you to **strip** (remove) this information from your photos before you upload them to social media or send them to others, protecting your privacy and location.
 

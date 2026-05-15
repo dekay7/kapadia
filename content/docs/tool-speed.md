@@ -9,11 +9,11 @@ tool_suffix:
 
 # Speed Test
 
-## What is a Speed Test?
+## What Is a Speed Test?
 
 An internet **speed test** measures how quickly your device can send and receive information from the internet. It's like measuring the flow of water through a pipe—some pipes are wider (more speed) and some are narrower (less speed).
 
-## What is this tool for?
+## What Is This Tool For?
 
 This tool helps you diagnose issues with your internet connection. If videos are buffering or websites are loading slowly, a speed test can tell you if the problem is with your internet provider or something else. It measures three main things:
 - **Download**: How fast you receive data (e.g., watching a movie).

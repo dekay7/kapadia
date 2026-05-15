@@ -12,7 +12,7 @@ tool_suffix: No data sent.
 > [!TIP]
 > Paste email headers or the **full email source** — the tool only needs the headers and ignores the body automatically. Use it to investigate authentication, trace the relay chain, and detect spoofing signals without sending any data to a server.
 
-## What is an Email Header Analyzer?
+## What Is an Email Header Analyzer?
 
 Every email carries a set of **raw headers** that travel invisibly alongside the message. These headers record every server the email passed through, whether cryptographic signatures verified correctly, and whether the sender was authorized to send on behalf of the claimed domain.
 

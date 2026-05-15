@@ -12,11 +12,11 @@ tool_suffix: Self-hosted.
 > [!TIP]
 > Paste any URL — including shortened links — to trace exactly where it goes and assess its safety before clicking.
 
-## What is a Link Inspector?
+## What Is a Link Inspector?
 
 Have you ever received a text or email with a shortened link and wondered if it's safe to click? A **Link Inspector** follows that link for you in a safe environment, seeing exactly where it leads without you having to visit the site yourself.
 
-## What is this tool for?
+## What Is This Tool For?
 
 This tool acts as a "shield." It follows a link through all its twists and turns (redirects) and analyzes the final destination. It looks for red flags—like very new websites, lack of security encryption, or suspicious settings—and gives the link a "safety score" so you can decide if it's safe to open in your own browser.
 
@@ -131,7 +131,7 @@ GET /api/link?url=<encoded-url>
 curl "https://kapadia.org/api/link?url=https%3A%2F%2Fexample.com"
 ```
 
-### Response envelope
+### Response Envelope
 
 ```json
 {
@@ -173,7 +173,7 @@ curl "https://kapadia.org/api/link?url=https%3A%2F%2Fexample.com"
 }
 ```
 
-### Error responses
+### Error Responses
 
 | HTTP Status | Meaning |
 |---|---|

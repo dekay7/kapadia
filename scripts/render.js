@@ -89,15 +89,18 @@ function renderToolsHtml(toolsMeta, htmlFile) {
       `        </a>`,
     ].join('\n');
   }).join('\n');
-  const updated = html.replace(
-    /<div class="tools-grid" id="tools-grid">[\s\S]*?<\/div>/,
-    `<div class="tools-grid" id="tools-grid">\n${cards}\n      </div>`
-  );
-  if (updated === html) {
+  const pattern = /<div class="tools-grid" id="tools-grid">[\s\S]*?<\/div>/;
+  if (!pattern.test(html)) {
     console.warn('renderToolsHtml: tools-grid placeholder not found in', htmlFile);
     return;
   }
-  writeFileSync(join(root, htmlFile), updated, 'utf-8');
+  const updated = html.replace(
+    pattern,
+    `<div class="tools-grid" id="tools-grid">\n${cards}\n      </div>`
+  );
+  if (updated !== html) {
+    writeFileSync(join(root, htmlFile), updated, 'utf-8');
+  }
   console.log(`Rendered tools grid into ${htmlFile}: ${toolsMeta.map(t => t.slug).join(', ')}`);
 }
 

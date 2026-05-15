@@ -164,6 +164,8 @@ sidebar_order: 1
 
 That's it. The sidebar entry and page title are derived from frontmatter automatically — no changes to `docs.js` or `docs/index.html` are needed.
 
+> **Heading convention:** All headings in Markdown content files must use title case — capitalize major words (nouns, verbs, adjectives, adverbs); leave articles, short prepositions, and coordinating conjunctions lowercase unless they are the first or last word. Capitalize both parts of hyphenated compounds (e.g., `Write-Ups`). This rule also applies to headings in `README.md` and `AGENTS.md`.
+
 **Frontmatter fields:**
 
 | Field | Required | Description |
@@ -176,7 +178,7 @@ That's it. The sidebar entry and page title are derived from frontmatter automat
 
 ---
 
-## Adding Write-ups
+## Adding Write-Ups
 
 1. Create a Markdown file in `content/writes/`, e.g. `content/writes/my-post.md`.
 2. Add YAML frontmatter at the top of the file:

@@ -16,7 +16,7 @@ The Hash Generator computes cryptographic hashes for text input or file contents
 
 ---
 
-## What is a Hash?
+## What Is a Hash?
 
 A **hash** is like a "digital fingerprint" of a piece of information. When you "hash" text or a file, you get a unique, fixed-length string of characters. 
 
@@ -24,7 +24,7 @@ Crucially:
 1. If you change even one tiny comma in your text, the hash will look completely different.
 2. You cannot turn a hash back into the original text or file. It's a one-way street.
 
-## What is this tool for?
+## What Is This Tool For?
 
 This tool is used to verify that information hasn't been changed. For example, if you download a file and the creator says its hash should be `abc123...`, you can use this tool to check your file's hash. If they match, you know the file is exactly what the creator intended and hasn't been tampered with or corrupted.
 

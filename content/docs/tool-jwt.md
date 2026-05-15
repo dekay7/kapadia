@@ -16,13 +16,13 @@ The JWT Decoder splits and base64-decodes a JSON Web Token into its three compon
 
 ---
 
-## What is a JWT?
+## What Is a JWT?
 
 A **JSON Web Token (JWT)** is a compact way to securely send information between two parties. Think of it like a digital ID card or a ticket. 
 
 For example, when you log into a website, the server might give you a JWT. Your browser then shows this "ID card" every time you want to see your profile or make a purchase, so the website knows who you are without you having to log in again for every single click.
 
-## What is this tool for?
+## What Is This Tool For?
 
 While JWTs look like a random jumble of letters and numbers, they actually contain readable information. This tool "unpacks" that jumble so you can see what data is stored inside, such as your username or when the "ticket" expires.
 

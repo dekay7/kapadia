@@ -12,7 +12,7 @@ tool_suffix: Self-hosted.
 > [!CAUTION]
 > A compromised CDN script can silently steal passwords and payment data from every visitor to a site. In 2024, the Polyfill.io attack did exactly this — to over 100,000 websites — before most developers even noticed.
 
-## What problem does this solve?
+## What Problem Does This Solve?
 
 94% of websites load third-party JavaScript from content delivery networks (CDNs). Each of those scripts runs with full access to the page — it can read passwords you type, capture credit card numbers, and exfiltrate session tokens. Users and developers both assume that a script loaded over HTTPS from a reputable CDN is safe.
 
@@ -22,7 +22,7 @@ CDNs get compromised. Maintainers get hacked. Build pipelines get poisoned. And 
 
 This tool audits any web page and tells you exactly how exposed it is.
 
-## What is Subresource Integrity (SRI)?
+## What Is Subresource Integrity (SRI)?
 
 SRI is a browser security feature that lets a website declare the expected cryptographic hash of an external resource. A script tag with SRI looks like this:
 
@@ -35,7 +35,7 @@ If the browser downloads `lib.js` and its SHA-384 hash doesn't match, the browse
 
 **The problem:** Only a small fraction of websites implement SRI. Most pages load dozens of external scripts with no integrity verification at all.
 
-## What this tool does
+## What This Tool Does
 
 Enter any URL. The tool:
 
@@ -47,9 +47,9 @@ Enter any URL. The tool:
 6. **Runs a consensus check** — each resource is fetched twice; if the two responses differ, that is a tamper signal (non-deterministic responses can indicate active content injection)
 7. **Scores risk** — each resource and the overall page receive a risk rating
 
-## Reading the results
+## Reading the Results
 
-### Stat cards
+### Stat Cards
 
 | Card | Meaning |
 |------|---------|
@@ -58,7 +58,7 @@ Enter any URL. The tool:
 | Unprotected | Resources loaded with no SRI protection — these could be replaced without browser detection |
 | Risk Score | Weighted sum of per-resource risk signals; higher = more exposure |
 
-### Table columns
+### Table Columns
 
 | Column | Meaning |
 |--------|---------|
@@ -71,7 +71,7 @@ Enter any URL. The tool:
 
 Click any row to expand the full hash values and registry details.
 
-### Risk levels
+### Risk Levels
 
 | Level | Meaning |
 |-------|---------|
@@ -81,11 +81,11 @@ Click any row to expand the full hash values and registry details.
 | **low** | SRI is present and valid — or all signals are consistent |
 | **info** | Not enough data to score (fetch failed, unknown CDN) |
 
-### Sensitivity multiplier
+### Sensitivity Multiplier
 
 If the page contains a login form or payment form, the overall risk score is multiplied upward (×1.2 for auth, ×1.5 for payment). Compromised scripts on a checkout page are more dangerous than on a blog.
 
-## npm registry cross-reference
+## npm Registry Cross-Reference
 
 For scripts loaded from jsDelivr (`cdn.jsdelivr.net/npm/`), unpkg (`unpkg.com/`), and cdnjs (`cdnjs.cloudflare.com/ajax/libs/`), the tool identifies the package name and version and queries the official registry:
 
@@ -94,7 +94,7 @@ For scripts loaded from jsDelivr (`cdn.jsdelivr.net/npm/`), unpkg (`unpkg.com/`)
 
 When the npm column shows **tarball**, it means a registry hash exists but cannot be compared directly to the individual file hash. When it shows **matched** (cdnjs only), the file-level hash was verified against the registry.
 
-## Consensus fetch — why two requests?
+## Consensus Fetch — Why Two Requests?
 
 Non-deterministic responses are a red flag. A CDN that serves different JavaScript content on different requests may be:
 
@@ -111,7 +111,7 @@ If both fetches return identical content, that is one positive signal. A mismatc
 - No URLs, results, or hashes are logged or stored by kapadia.org
 - Your IP address is never forwarded to the target site
 
-## Security design
+## Security Design
 
 - **SSRF prevention**: Both the page URL and each extracted resource URL are pre-resolved via DNS-over-HTTPS and checked against private/reserved IP ranges before any fetch
 - **Max resources**: 20 external resources per audit (prevents runaway fetch chains)
@@ -119,7 +119,7 @@ If both fetches return identical content, that is one positive signal. A mismatc
 - **Compression**: All resource fetches request uncompressed content (`Accept-Encoding: identity`) — SRI hashes are always computed on the uncompressed form
 - **Error discipline**: Error messages never echo user input back in responses
 
-## API reference
+## API Reference
 
 ```
 GET /api/chain?url=<encoded-url>

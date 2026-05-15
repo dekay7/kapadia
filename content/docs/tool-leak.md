@@ -12,11 +12,11 @@ tool_suffix: Self-hosted.
 > [!NOTE]
 > No fingerprint data is logged or stored by kapadia.org. The data is displayed to you and then discarded.
 
-## What is Browser Fingerprinting?
+## What Is Browser Fingerprinting?
 
 A **browser fingerprint** is a collection of small details about your computer and browser that, when combined, can uniquely identify you. Even if you hide your IP address with a VPN, websites can often still "recognize" you by looking at your screen resolution, the fonts you have installed, your battery level, and more.
 
-## What is this tool for?
+## What Is This Tool For?
 
 This tool shows you exactly what information your browser is sharing with every website you visit. It's a "transparency report" for your own device, helping you understand how you might be tracked online even without using cookies.
 

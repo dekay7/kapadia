@@ -16,13 +16,13 @@ The DNS Analyzer resolves standard DNS record types for any domain using a secur
 
 ---
 
-## What is DNS?
+## What Is DNS?
 
 The **Domain Name System (DNS)** is essentially the phonebook of the internet. While humans use names like `google.com` or `kapadia.org`, computers use numbers called IP addresses (like `192.0.2.1`). 
 
 DNS translates those human-friendly names into computer-friendly numbers so your browser can find the right website.
 
-## What is this tool for?
+## What Is This Tool For?
 
 This tool allows you to look up the "records" in that phonebook. You can see which server handles a website's emails, what its IP address is, and other behind-the-scenes settings that make a domain work.
 

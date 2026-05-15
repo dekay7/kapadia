@@ -18,7 +18,7 @@ kapadia.org is a privacy-first, edge-native site with no frameworks, no build co
 | Markdown | Compiled at build time via `marked`; output committed as static JS |
 | DNS | Cloudflare |
 
-## Request flow
+## Request Flow
 
 ```
 Browser / curl
@@ -35,13 +35,13 @@ Cloudflare Edge
       └── public/            — static assets (HTML, CSS, JS, fonts)
 ```
 
-## Privacy model
+## Privacy Model
 
 - **Client-side tools** (encoding, hashing, JWT, EXIF, subnet) — nothing leaves the browser.
 - **Edge-proxied tools** (DNS, OSINT, Link Inspector, Supply Chain, Browser Fingerprint) — queries go from the edge to third-party APIs; the visitor IP is never forwarded.
 - **Speed Test** — traffic goes directly from the browser to `speed.cloudflare.com`; Cloudflare sees the visitor IP.
 - **Site-wide** — Google Fonts is loaded on every page, which exposes visitor IP to Google.
 
-## Build pipeline
+## Build Pipeline
 
 `npm run render` (run by Cloudflare Pages on every push to `master`) compiles all Markdown in `content/docs/` and `content/writes/` to static JS modules (`*-content.js`, `tools-meta.js`) that are committed to the repo and served as `'self'` assets. No runtime Markdown parsing.

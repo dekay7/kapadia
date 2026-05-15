@@ -16,11 +16,11 @@ The Subnet Calculator computes network boundaries, host ranges, and masks from a
 
 ---
 
-## What is a Subnet?
+## What Is a Subnet?
 
 An IP address (like `192.168.1.1`) identifies a single device on a network. A **subnet** is a way of dividing a large network into smaller, more manageable pieces. It's like having a large neighborhood and dividing it into specific blocks or streets.
 
-## What is this tool for?
+## What Is This Tool For?
 
 This tool helps network administrators (and curious users) understand how a network is divided up. If you give it an IP address and a "prefix", it will tell you exactly which range of addresses belong to that specific "block," where the block starts and ends, and how many devices can fit inside it.
 

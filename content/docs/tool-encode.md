@@ -16,13 +16,13 @@ The Payload Encoder converts strings between common encoding formats used in web
 
 ---
 
-## What is Encoding?
+## What Is Encoding?
 
 **Encoding** is a way of transforming information from one format into another. It isn't meant to keep secrets like a "code" or "ciphers"—instead, it's used to make sure data can be safely understood by different systems.
 
 For example, a URL (a web address) can't contain spaces. If you want to include a space, it has to be "encoded" into `%20`.
 
-## What is this tool for?
+## What Is This Tool For?
 
 This tool helps you translate text between these different formats. Whether you need to make a piece of text safe for a URL, or decode a string of text that looks like a jumble of letters (Base64), this tool does the conversion for you instantly.
 

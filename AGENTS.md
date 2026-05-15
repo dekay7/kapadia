@@ -72,7 +72,7 @@ kapadia-site/
 
 ## 4. Deployment & Build
 
-### Build pipeline
+### Build Pipeline
 
 The build command (run by Cloudflare Pages on every `master` push) is:
 
@@ -85,7 +85,7 @@ npm run render
 
 `render.js` reads all Markdown files in `content/docs/` and `content/writes/`, converts them to HTML via `marked`, and writes the output into `public/js/docs-content.js` and `public/js/writes-content.js`. These generated files are committed to the repository and must be regenerated whenever Markdown content changes.
 
-### Local development
+### Local Development
 
 ```bash
 npm run dev        # render + wrangler pages dev public --port 8788
@@ -582,7 +582,7 @@ Functions that are shared between multiple Workers (e.g., IP parsing) live in `f
 
 Follow these steps exactly to add a new tool. Each step is required:
 
-### Step 1 — Determine where computation runs
+### Step 1 — Determine Where Computation Runs
 
 | Computation type | Where to run |
 |---|---|
@@ -594,11 +594,11 @@ Follow these steps exactly to add a new tool. Each step is required:
 
 If it can be client-side, make it client-side. A Worker function is only warranted when JS running in the browser cannot access the data.
 
-### Step 2 — Create the Worker function (if needed)
+### Step 2 — Create the Worker Function (If Needed)
 
 Create `functions/api/<toolname>.js`. Follow the pattern in Section 10. Document security considerations in a JSDoc comment at the top of the file (scheme validation, SSRF prevention, input validation, data flow). See `functions/api/link.js` for a comprehensive example.
 
-### Step 3 — Create the HTML page
+### Step 3 — Create the HTML Page
 
 Create `public/tools/<toolname>/index.html`. Follow the tool page template in Section 7.2. Required elements:
 - Correct `<title>`, `<meta description>`, Open Graph tags, canonical URL.
@@ -608,7 +608,7 @@ Create `public/tools/<toolname>/index.html`. Follow the tool page template in Se
 - Footer identical to all other pages.
 - `<script src="/js/tools/<toolname>.js" defer>` at end of `<body>`.
 
-### Step 4 — Create the JavaScript file
+### Step 4 — Create the JavaScript File
 
 Create `public/js/tools/<toolname>.js`. Follow the conventions in Section 9. Key requirements:
 - All untrusted values through `textContent`.
@@ -616,7 +616,7 @@ Create `public/js/tools/<toolname>.js`. Follow the conventions in Section 9. Key
 - Network requests to `/api/<toolname>` only.
 - File inputs validated by size and magic bytes before processing.
 
-### Step 5 — Add to the tools index
+### Step 5 — Add to the Tools Index
 
 The tool card is **auto-generated** — no edits to `public/tools/index.html` are needed beyond running the build. `render.js` reads the doc frontmatter (Step 7), writes `tools-meta.js` (for the homepage terminal), and also injects the card HTML directly into `public/tools/index.html`. The card appears automatically after you run `npm run render`. Commit both the `.md` file and the regenerated `public/tools/index.html`.
 
@@ -629,7 +629,7 @@ Ensure the doc file (Step 7) includes the `tool_desc` and `tool_suffix` frontmat
   - `Self-hosted.` — data is sent to kapadia.org's own edge infrastructure (a Worker function).
   - Omit the field entirely — data is sent to a third-party service (e.g., Speed Test uses Cloudflare's servers).
 
-### Step 6 — Navigation tab-completion (auto)
+### Step 6 — Navigation Tab-Completion (Auto)
 
 Tool paths (`cd tools/<toolname>`) are **auto-derived** from `toolsMeta` in `public/js/index.js` — no manual edit is required:
 
@@ -639,7 +639,7 @@ Tool paths (`cd tools/<toolname>`) are **auto-derived** from `toolsMeta` in `pub
 
 No action needed for tools. If you are adding a non-tool top-level path (e.g. a new section), add it manually to the `COMMANDS` map in `public/js/index.js`.
 
-### Step 7 — Add documentation
+### Step 7 — Add Documentation
 
 Create `content/docs/tool-<toolname>.md` with the appropriate frontmatter:
 
@@ -658,11 +658,11 @@ tool_suffix: Self-hosted.
 
 Run `npm run render` to regenerate `docs-content.js` and `tools-meta.js`.
 
-### Step 8a — Update site structure documentation
+### Step 8a — Update Site Structure Documentation
 
 Whenever a new page or tool is added, update `README.md` in the same commit: add a bullet to the Features list and an entry to the Project Structure tree under `public/tools/`. The tools hub card and terminal tab-completion are auto-generated from the doc frontmatter — no other files need updating.
 
-### Step 8b — Security review before shipping
+### Step 8b — Security Review Before Shipping
 
 Before committing, answer each question:
 1. What is every path by which user input enters the system?
@@ -695,9 +695,11 @@ sidebar_label: Optional override for sidebar button text
 
 Supported Markdown features: headings, paragraphs, bold, italic, code blocks (fenced), inline code, links, tables, blockquotes, unordered/ordered lists, GitHub-flavored alert blocks (`> [!NOTE]`, `> [!WARNING]`, `> [!TIP]`, `> [!IMPORTANT]`, `> [!CAUTION]`).
 
+**All headings must use title case.** Capitalize major words (nouns, verbs, adjectives, adverbs, and subordinating conjunctions). Leave articles (`a`, `an`, `the`), coordinating conjunctions (`and`, `but`, `or`, `nor`, `for`, `so`, `yet`), and short prepositions (`in`, `on`, `at`, `to`, `by`, `of`, `up`) lowercase unless they are the first or last word. For hyphenated compounds, capitalize both parts (e.g., `Write-Ups`, `Tab-Completion`). This rule applies to headings in all Markdown content files and in `README.md` and `AGENTS.md` itself.
+
 ---
 
-## 13. Adding Write-ups
+## 13. Adding Write-Ups
 
 1. Create `content/writes/<slug>.md`.
 2. Add YAML frontmatter:
@@ -802,6 +804,7 @@ Before every commit, verify:
 - [ ] The `.tool-disclaimer` block is present on all tool pages
 - [ ] New Markdown content has been rendered (`npm run render`) and `*-content.js` is committed
 - [ ] `README.md` updated to include the new tool/page (features list + project structure tree)
+- [ ] All headings in new/edited Markdown files and in `README.md`/`AGENTS.md` use title case
 - [ ] No `console.log` in committed code
 - [ ] No cookies, localStorage, sessionStorage
 

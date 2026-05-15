@@ -13,11 +13,11 @@ tool_suffix: Self-hosted.
 > [!NOTE]
 > All lookups run through a secure edge function. No queries, targets, or results are logged or persisted.
 
-## What is OSINT?
+## What Is OSINT?
 
 **OSINT** stands for Open-Source Intelligence. It refers to the practice of collecting and analyzing information that is publicly available. Just like a detective gathering clues from public records, OSINT helps you piece together a digital picture of an IP address, a domain, or a username.
 
-## What is this tool for?
+## What Is This Tool For?
 
 This tool helps you investigate "digital footprints." You can use it to:
 - See the physical location and owner of an **IP address**.
