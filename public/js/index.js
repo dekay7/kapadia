@@ -37,6 +37,19 @@ function pad(str, len) {
   return String(str).padEnd(len, ' ');
 }
 
+// Longest string that all entries in arr start with
+function commonPrefix(arr) {
+  if (!arr.length) return '';
+  let prefix = arr[0];
+  for (let i = 1; i < arr.length; i++) {
+    while (!arr[i].startsWith(prefix)) {
+      prefix = prefix.slice(0, -1);
+      if (!prefix) return '';
+    }
+  }
+  return prefix;
+}
+
 function makeLine(text, cls, insertBefore = null) {
   const el = document.createElement('div');
   el.className = 'term-line' + (cls ? ' ' + cls : '');
@@ -143,11 +156,12 @@ async function runTerminal({ ipv4, ipv6, geo }) {
   return cursorEl;
 }
 
-// Returns true to open a new input row, false to stop (navigating away or clear).
+// Returns true to open a new input row, false to stop (navigating away).
+// Normalizes leading slashes so /tools/speed works identically to tools/speed.
 function executeCommand(raw, anchor) {
   if (!raw) return true;
 
-  const cmd = raw.toLowerCase().replace(/\/$/, '');
+  const cmd = raw.toLowerCase().replace(/^\/+/, '').replace(/\/$/, '');
   const dest = COMMANDS[cmd];
 
   if (dest) {
@@ -156,7 +170,7 @@ function executeCommand(raw, anchor) {
   }
 
   const out = document.createElement('div');
-  out.className = 'term-line data visible';
+  out.className = 'term-line err visible';
   out.textContent = `bash: cd: ${sanitizeInput(raw)}: No such file or directory`;
   termBody.insertBefore(out, anchor);
   return true;
@@ -234,32 +248,54 @@ function initInput(staticCursor) {
   let animating = false;
   let { typed, cur, ghost } = newRow(true);
 
-  // Tab-cycling state — reset whenever the user types
-  let tabCycling = false;
-  let tabMatches = [];
-  let tabIndex = -1;
+  // Print all Tab matches as a terminal output line (bash double-Tab style).
+  // Freezes the current prompt row, prints the match list, then opens a fresh
+  // row with the same content so the user can keep typing.
+  function showTabCompletions(matches) {
+    cur.remove();
 
-  function resetTabCycle() {
-    tabCycling = false;
-    tabMatches = [];
-    tabIndex = -1;
+    const line = document.createElement('div');
+    line.className = 'term-line data visible';
+    line.textContent = matches.map(m => m + '/').join('    ');
+    termBody.insertBefore(line, anchor);
+
+    const savedVal = hidden.value;
+    ({ typed, cur, ghost } = newRow());
+    hidden.value = savedVal;
+    typed.textContent = savedVal;
+    ghost.textContent = getCompletion(savedVal);
+
+    requestAnimationFrame(scrollRowIntoView);
   }
 
-  function cycleTab(dir = 1) {
-    if (!tabCycling || tabMatches.length === 0) {
-      const val = hidden.value;
-      const matches = CMD_KEYS.filter(k => k.startsWith(val)).sort();
-      if (matches.length === 0) return;
-      tabMatches = matches;
-      tabIndex = dir === 1 ? 0 : matches.length - 1;
-      tabCycling = true;
-    } else {
-      tabIndex = (tabIndex + dir + tabMatches.length) % tabMatches.length;
+  // Tab: fill to longest common prefix on first press; show all matches if
+  // already at the prefix (mirrors bash completion behaviour).
+  function handleTab() {
+    if (animating) return;
+    const val = hidden.value;
+    const matches = CMD_KEYS.filter(k => k.startsWith(val) && !k.slice(val.length).includes('/')).sort();
+
+    if (matches.length === 0) return;
+
+    if (matches.length === 1) {
+      const completed = sanitizeInput(matches[0] + '/');
+      hidden.value = completed;
+      typed.textContent = completed;
+      ghost.textContent = '';
+      return;
     }
-    const chosen = tabMatches[tabIndex];
-    hidden.value = sanitizeInput(chosen + '/');
-    typed.textContent = hidden.value;
-    ghost.textContent = getCompletion(chosen + '/');
+
+    const prefix = commonPrefix(matches);
+    if (prefix.length > val.length) {
+      const completed = CMD_KEYS.includes(prefix) ? prefix + '/' : prefix;
+      hidden.value = completed;
+      typed.textContent = completed;
+      ghost.textContent = getCompletion(completed);
+      return;
+    }
+
+    // Already at common prefix — show the full match list
+    showTabCompletions(matches);
   }
 
   hidden.addEventListener('input', () => {
@@ -268,7 +304,6 @@ function initInput(staticCursor) {
     hidden.value = safe;
     typed.textContent = safe;
     ghost.textContent = getCompletion(safe);
-    resetTabCycle();
   });
 
   hidden.addEventListener('keydown', (e) => {
@@ -282,7 +317,6 @@ function initInput(staticCursor) {
       typed.textContent = raw;
       ghost.textContent = '';
       hidden.value = '';
-      resetTabCycle();
 
       const cont = executeCommand(raw, anchor);
 
@@ -293,12 +327,12 @@ function initInput(staticCursor) {
       requestAnimationFrame(scrollRowIntoView);
     } else if (e.key === 'Tab') {
       e.preventDefault();
-      cycleTab(e.shiftKey ? -1 : 1);
+      handleTab();
     }
   });
 
   // Closures capture the let-binding, so they always act on the active cursor
-  hidden.addEventListener('focus', () => { cur.style.display = ''; });
+  hidden.addEventListener('focus', () => { cur.style.display = ''; syncHiddenPos(); });
   hidden.addEventListener('blur',  () => { cur.style.display = 'none'; });
 
   // Desktop: grab focus immediately after animation without scrolling the page
@@ -315,20 +349,58 @@ function initInput(staticCursor) {
     if (rect.bottom > visH - 8) {
       window.scrollBy({ top: rect.bottom - visH + 8, behavior: 'instant' });
     }
+    syncHiddenPos();
   }
 
-  // Mobile swipe-right to complete (Tab equivalent for touchscreens)
-  const termEl = document.getElementById('terminal');
-  let swipeStartX = 0, swipeStartY = 0;
-  termEl.addEventListener('touchstart', (e) => {
-    swipeStartX = e.touches[0].clientX;
-    swipeStartY = e.touches[0].clientY;
-  }, { passive: true });
-  termEl.addEventListener('touchend', (e) => {
-    const dx = e.changedTouches[0].clientX - swipeStartX;
-    const dy = e.changedTouches[0].clientY - swipeStartY;
-    if (Math.abs(dx) > 60 && Math.abs(dy) < 40) cycleTab(dx > 0 ? 1 : -1);
-  }, { passive: true });
+  // Keeps the hidden input's document-absolute position in sync with the
+  // active input row so iOS scrolls to the right place when the keyboard opens.
+  function syncHiddenPos() {
+    const row = cur.closest('.term-input-row');
+    if (!row) return;
+    const rect = row.getBoundingClientRect();
+    hidden.style.top  = (rect.top  + window.scrollY) + 'px';
+    hidden.style.left = (rect.left + window.scrollX) + 'px';
+  }
+
+  // Tapping anywhere in the terminal focuses the hidden input (mobile + desktop).
+  document.getElementById('terminal').addEventListener('click', () => {
+    hidden.focus();
+    scrollRowIntoView();
+  });
+
+  // Mobile: floating Tab button that rises above the virtual keyboard.
+  // pointerdown + preventDefault keeps the hidden input focused while the
+  // button is tapped, so handleTab() sees the correct hidden.value.
+  if (isMobile()) {
+    const tabBtn = document.createElement('button');
+    tabBtn.className = 'term-tab-btn';
+    tabBtn.setAttribute('aria-label', 'Tab — autocomplete');
+    tabBtn.textContent = 'Tab ⇥';
+    document.body.appendChild(tabBtn);
+
+    tabBtn.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      handleTab();
+    });
+
+    function updateTabBtnPos() {
+      const vv = window.visualViewport;
+      if (!vv) return;
+      tabBtn.style.bottom = Math.max(0, window.innerHeight - vv.height - vv.offsetTop) + 'px';
+    }
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', updateTabBtnPos);
+    }
+
+    hidden.addEventListener('focus', () => {
+      tabBtn.classList.add('visible');
+      updateTabBtnPos();
+    });
+    hidden.addEventListener('blur', () => {
+      setTimeout(() => tabBtn.classList.remove('visible'), 200);
+    });
+  }
 }
 
 async function init() {
