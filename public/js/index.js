@@ -304,18 +304,6 @@ function initInput(staticCursor) {
   // Desktop: grab focus immediately after animation without scrolling the page
   if (!isMobile()) hidden.focus({ preventScroll: true });
 
-  // Snap the hidden input to the active row's document position so iOS scrolls
-  // to show the terminal just above the keyboard, then focus.
-  function focusAtRow() {
-    const row = cur.closest('.term-input-row');
-    if (row) {
-      const rect = row.getBoundingClientRect();
-      hidden.style.top  = (rect.top  + window.scrollY) + 'px';
-      hidden.style.left = (rect.left + window.scrollX) + 'px';
-    }
-    hidden.focus();
-  }
-
   // Shared scroll helper — brings the active input row just above the keyboard.
   // visH is window.visualViewport.height (already excludes keyboard) or innerHeight.
   function scrollRowIntoView() {
@@ -329,22 +317,8 @@ function initInput(staticCursor) {
     }
   }
 
-  // When the keyboard opens/closes, visualViewport resizes. Scroll then so the
-  // active row lands just above the keyboard (iOS doesn't account for the keyboard
-  // when scrolling to the focused hidden input).
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', () => {
-      if (document.activeElement === hidden) scrollRowIntoView();
-    });
-  }
-
-  // Mobile: tap anywhere in the terminal that isn't a navigation link → focus input
-  const termEl = document.getElementById('terminal');
-  termEl.addEventListener('click', (e) => {
-    if (!e.target.closest('a')) focusAtRow();
-  });
-
   // Mobile swipe-right to complete (Tab equivalent for touchscreens)
+  const termEl = document.getElementById('terminal');
   let swipeStartX = 0, swipeStartY = 0;
   termEl.addEventListener('touchstart', (e) => {
     swipeStartX = e.touches[0].clientX;
