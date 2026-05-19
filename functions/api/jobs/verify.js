@@ -19,27 +19,27 @@ export async function onRequestGet(context) {
     return Response.redirect(`${TOOL_URL}?verified=error`, 302);
   }
 
-  const row = await env.DB.prepare(
-    'SELECT id, verified, created_at FROM subscribers WHERE verify_token = ? LIMIT 1'
-  ).bind(token).first();
+  const { results: rows } = await env.DB.prepare(
+    'SELECT verified, created_at FROM subscribers WHERE verify_token = ?'
+  ).bind(token).all();
 
-  if (!row) {
+  if (rows.length === 0) {
     return Response.redirect(`${TOOL_URL}?verified=error`, 302);
   }
 
-  if (row.verified === 1) {
+  if (rows.every(r => r.verified === 1)) {
     return Response.redirect(`${TOOL_URL}?verified=already`, 302);
   }
 
   const now = Math.floor(Date.now() / 1000);
 
-  if (now - row.created_at > VERIFY_EXPIRY_SECONDS) {
+  if (now - rows[0].created_at > VERIFY_EXPIRY_SECONDS) {
     return Response.redirect(`${TOOL_URL}?verified=error`, 302);
   }
 
   await env.DB.prepare(
-    'UPDATE subscribers SET verified = 1, verified_at = ? WHERE id = ?'
-  ).bind(now, row.id).run();
+    'UPDATE subscribers SET verified = 1, verified_at = ? WHERE verify_token = ? AND verified = 0'
+  ).bind(now, token).run();
 
   return Response.redirect(`${TOOL_URL}?verified=1`, 302);
 }

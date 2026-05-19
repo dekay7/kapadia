@@ -61,14 +61,16 @@ export async function onRequestPost(context) {
   ).bind(email).first();
   const globalUnsubToken = existingRow?.global_unsub_token ?? randomHex();
 
+  // One shared verify token for the entire batch so a single link verifies all subscriptions.
+  const verifyToken = randomHex();
+
   // Run one conditional INSERT per subscription. The WHERE clause embeds the cap check:
   //   - If this email already has any row in subscribers → EXISTS is true → always allowed
   //     (they're already in the distinct count, so no new slot is consumed).
   //   - If this is a new email → only allowed if distinct count is below MAX_SUBSCRIBERS.
   // Because D1/SQLite serializes concurrent writes, this is race-free.
   const stmts = subscriptions.map(({ category, listing_type }) => {
-    const verifyToken = randomHex();
-    const unsubToken  = randomHex();
+    const unsubToken = randomHex();
     return env.DB.prepare(
       `INSERT INTO subscribers (email, category, listing_type, verified, verify_token, unsub_token, global_unsub_token, created_at)
        SELECT ?, ?, ?, 0, ?, ?, ?, ?
@@ -104,35 +106,14 @@ export async function onRequestPost(context) {
     return cors({ ok: true, already: true });
   }
 
-  // Build verify links for each newly written subscription.
-  // Re-fetch the tokens we just wrote so we don't have to pass them through the batch results.
-  const tokenRows = await env.DB.prepare(
-    `SELECT category, listing_type, verify_token
-     FROM subscribers
-     WHERE email = ? AND verified = 0`
-  ).bind(email).all();
+  const verifyUrl = `${SITE}/api/jobs/verify?token=${verifyToken}`;
 
-  const tokenMap = new Map(
-    tokenRows.results.map(r => [`${r.category}:${r.listing_type}`, r.verify_token])
-  );
+  const subscriptionLabels = changed.map(({ sub: { category, listing_type } }) => ({
+    catLabel:  category === 'cybersecurity' ? 'Cybersecurity' : 'IT',
+    typeLabel: listing_type === 'internship' ? `Internship ${CYCLE_YEAR}` : `New Grad ${CYCLE_YEAR}`,
+  }));
 
-  const verifyLinks = changed
-    .map(({ sub: { category, listing_type } }) => {
-      const token = tokenMap.get(`${category}:${listing_type}`);
-      if (!token) return null;
-      return {
-        verifyUrl: `${SITE}/api/jobs/verify?token=${token}`,
-        catLabel:  category === 'cybersecurity' ? 'Cybersecurity' : 'IT',
-        typeLabel: listing_type === 'internship' ? `Internship ${CYCLE_YEAR}` : `New Grad ${CYCLE_YEAR}`,
-      };
-    })
-    .filter(Boolean);
-
-  if (verifyLinks.length === 0) {
-    return cors({ ok: true, already: true });
-  }
-
-  const emailHtml = buildVerificationEmail(verifyLinks);
+  const emailHtml = buildVerificationEmail(verifyUrl, subscriptionLabels);
 
   const res = await fetch(RESEND_API, {
     method: 'POST',
@@ -167,18 +148,13 @@ function esc(s) {
   return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-function buildVerificationEmail(verifyLinks) {
-  const buttons = verifyLinks.map(({ verifyUrl, catLabel, typeLabel }) => `
-    <div style="margin-bottom:20px;">
-      <p style="color:#a8a59e;font-size:14px;margin:0 0 10px;">
-        <strong style="color:#e6e3dc;">${esc(catLabel)} ${esc(typeLabel)}</strong> alerts
-      </p>
-      <a href="${esc(verifyUrl)}"
-         style="display:inline-block;background:#e6e3dc;color:#111110;font-family:monospace;font-size:13px;
-                padding:10px 20px;border-radius:2px;text-decoration:none;">
-        Verify ${esc(catLabel)} ${esc(typeLabel)} Alerts
-      </a>
-    </div>`).join('');
+function buildVerificationEmail(verifyUrl, subscriptionLabels) {
+  const labelList = subscriptionLabels.map(({ catLabel, typeLabel }) => `
+    <li style="color:#a8a59e;font-size:14px;margin-bottom:4px;">
+      <strong style="color:#e6e3dc;">${esc(catLabel)} ${esc(typeLabel)}</strong> alerts
+    </li>`).join('');
+
+  const plural = subscriptionLabels.length > 1;
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -189,14 +165,21 @@ function buildVerificationEmail(verifyLinks) {
       kapadia.org &middot; job alerts
     </p>
     <h1 style="font-size:22px;font-weight:300;color:#e6e3dc;margin:0 0 8px;">
-      Confirm your subscription${verifyLinks.length > 1 ? 's' : ''}
+      Confirm your subscription${plural ? 's' : ''}
     </h1>
-    <p style="color:#a8a59e;font-size:14px;margin:0 0 24px;">
-      Click each link below to verify your email and start receiving digests.
+    <p style="color:#a8a59e;font-size:14px;margin:0 0 12px;">
+      Click the link below to verify your email and start receiving digests for:
     </p>
-    ${buttons}
+    <ul style="margin:0 0 24px;padding-left:20px;">
+      ${labelList}
+    </ul>
+    <a href="${esc(verifyUrl)}"
+       style="display:inline-block;background:#e6e3dc;color:#111110;font-family:monospace;font-size:13px;
+              padding:10px 20px;border-radius:2px;text-decoration:none;">
+      Verify my subscription${plural ? 's' : ''}
+    </a>
     <p style="color:#5a5856;font-size:11px;margin:24px 0 0;">
-      If you did not sign up, ignore this email. Links expire in 24 hours.
+      If you did not sign up, ignore this email. Link expires in 24 hours.
     </p>
   </div>
 </body>
