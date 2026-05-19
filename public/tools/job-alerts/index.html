@@ -60,22 +60,12 @@
         <!-- Query-string feedback banner (shown on verify/unsubscribe redirect) -->
         <div id="ja-notice" class="ja-notice u-hidden" role="status" aria-live="polite"></div>
 
-        <!-- Two-column grid: Cybersecurity | IT -->
-        <div class="ja-grid">
+        <!-- Single-column sections: Cybersecurity, then IT -->
+        <div class="ja-sections">
 
-          <!-- Cybersecurity column -->
-          <section class="ja-column" aria-label="Cybersecurity job listings">
-            <div class="ja-col-header">
-              <h2 class="ja-col-title">Cybersecurity</h2>
-              <div class="ja-toggle" role="group" aria-label="Listing type for Cybersecurity">
-                <button type="button" class="ja-toggle-btn active"
-                        data-col="cyber" data-type="internship">Internship 2026</button>
-                <button type="button" class="ja-toggle-btn"
-                        data-col="cyber" data-type="newgrad">New Grad 2026</button>
-              </div>
-            </div>
-
-            <div class="ja-jobs" id="cyber-jobs" aria-live="polite" aria-busy="false"></div>
+          <!-- Cybersecurity section -->
+          <section class="ja-section" aria-label="Cybersecurity job listings">
+            <h2 class="ja-sec-title">Cybersecurity</h2>
 
             <div class="ja-subscribe">
               <div class="ja-sub-label">Get email alerts for new listings</div>
@@ -87,21 +77,13 @@
               </div>
               <div id="cyber-sub-status" class="ja-sub-status" aria-live="polite"></div>
             </div>
+
+            <div class="ja-jobs" id="cyber-jobs" aria-live="polite" aria-busy="false"></div>
           </section>
 
-          <!-- IT column -->
-          <section class="ja-column" aria-label="IT job listings">
-            <div class="ja-col-header">
-              <h2 class="ja-col-title">IT</h2>
-              <div class="ja-toggle" role="group" aria-label="Listing type for IT">
-                <button type="button" class="ja-toggle-btn active"
-                        data-col="it" data-type="internship">Internship 2026</button>
-                <button type="button" class="ja-toggle-btn"
-                        data-col="it" data-type="newgrad">New Grad 2026</button>
-              </div>
-            </div>
-
-            <div class="ja-jobs" id="it-jobs" aria-live="polite" aria-busy="false"></div>
+          <!-- IT section -->
+          <section class="ja-section" aria-label="IT job listings">
+            <h2 class="ja-sec-title">IT</h2>
 
             <div class="ja-subscribe">
               <div class="ja-sub-label">Get email alerts for new listings</div>
@@ -113,9 +95,11 @@
               </div>
               <div id="it-sub-status" class="ja-sub-status" aria-live="polite"></div>
             </div>
+
+            <div class="ja-jobs" id="it-jobs" aria-live="polite" aria-busy="false"></div>
           </section>
 
-        </div><!-- /.ja-grid -->
+        </div><!-- /.ja-sections -->
 
       </div>
     </div>

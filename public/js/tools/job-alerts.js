@@ -2,11 +2,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  const state = {
-    cyber: { type: 'internship' },
-    it:    { type: 'internship' },
-  };
-
   // ── Query-string feedback banner ─────────────────────────────────────────
 
   function handleQueryParams() {
@@ -39,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function loadJobs(col) {
     const category = col === 'cyber' ? 'cybersecurity' : 'it';
-    const type = state[col].type;
     const container = document.getElementById(`${col}-jobs`);
     if (!container) return;
 
@@ -52,12 +46,27 @@ document.addEventListener('DOMContentLoaded', () => {
     container.appendChild(loader);
 
     try {
-      const res = await fetch(
-        `/api/jobs?category=${encodeURIComponent(category)}&type=${encodeURIComponent(type)}`
-      );
-      if (!res.ok) throw new Error(`API ${res.status}`);
-      const data = await res.json();
-      renderJobs(container, data.jobs);
+      const [internRes, newgradRes] = await Promise.all([
+        fetch(`/api/jobs?category=${encodeURIComponent(category)}&type=internship`),
+        fetch(`/api/jobs?category=${encodeURIComponent(category)}&type=newgrad`),
+      ]);
+
+      if (!internRes.ok || !newgradRes.ok) throw new Error('API error');
+
+      const [internData, newgradData] = await Promise.all([
+        internRes.json(),
+        newgradRes.json(),
+      ]);
+
+      const internJobs = (internData.jobs || [])
+        .filter(j => j.active)
+        .map(j => ({ ...j, _type: 'internship' }));
+
+      const newgradJobs = (newgradData.jobs || [])
+        .filter(j => j.active)
+        .map(j => ({ ...j, _type: 'new grad' }));
+
+      renderJobs(container, [...internJobs, ...newgradJobs]);
     } catch {
       container.replaceChildren();
       const err = document.createElement('div');
@@ -84,14 +93,15 @@ document.addEventListener('DOMContentLoaded', () => {
       const card = document.createElement('div');
       card.className = 'ja-job-card';
 
-      // Company row
+      // Company row with type badge
       const company = document.createElement('div');
       company.className = 'ja-job-company';
       company.textContent = job.company;
-      if (!job.active) {
+
+      if (job._type) {
         const badge = document.createElement('span');
-        badge.className = 'ja-badge-closed';
-        badge.textContent = 'Closed';
+        badge.className = 'ja-badge-type';
+        badge.textContent = job._type;
         company.appendChild(badge);
       }
 
@@ -122,34 +132,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ── Toggle buttons ───────────────────────────────────────────────────────
-
-  function initToggles() {
-    document.querySelectorAll('.ja-toggle-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const col  = btn.dataset.col;
-        const type = btn.dataset.type;
-
-        if (state[col].type === type) return;
-        state[col].type = type;
-
-        btn.closest('.ja-toggle').querySelectorAll('.ja-toggle-btn').forEach(b => {
-          b.classList.toggle('active', b === btn);
-        });
-
-        loadJobs(col);
-      });
-    });
-  }
-
   // ── Subscribe ────────────────────────────────────────────────────────────
 
   async function subscribe(col) {
-    const category    = col === 'cyber' ? 'cybersecurity' : 'it';
-    const listingType = state[col].type;
-    const emailInput  = document.getElementById(`${col}-email`);
-    const statusEl    = document.getElementById(`${col}-sub-status`);
-    const btn         = document.getElementById(`${col}-sub-btn`);
+    const category   = col === 'cyber' ? 'cybersecurity' : 'it';
+    const emailInput = document.getElementById(`${col}-email`);
+    const statusEl   = document.getElementById(`${col}-sub-status`);
+    const btn        = document.getElementById(`${col}-sub-btn`);
 
     if (!emailInput || !statusEl || !btn) return;
 
@@ -166,20 +155,32 @@ document.addEventListener('DOMContentLoaded', () => {
     statusEl.className = 'ja-sub-status';
 
     try {
-      const res = await fetch('/api/jobs/subscribe', {
+      const postOne = (listing_type) => fetch('/api/jobs/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, category, listing_type: listingType }),
+        body: JSON.stringify({ email, category, listing_type }),
         signal: AbortSignal.timeout(10000),
       });
 
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || `Error ${res.status}`);
+      const [internRes, newgradRes] = await Promise.all([
+        postOne('internship'),
+        postOne('newgrad'),
+      ]);
+
+      const results = await Promise.all([
+        internRes.ok ? internRes.json().catch(() => ({})) : internRes.json().catch(() => ({ error: `Error ${internRes.status}` })),
+        newgradRes.ok ? newgradRes.json().catch(() => ({})) : newgradRes.json().catch(() => ({ error: `Error ${newgradRes.status}` })),
+      ]);
+
+      const anySuccess = internRes.ok || newgradRes.ok;
+      const allAlready = results.every(r => r.already);
+
+      if (!anySuccess) {
+        const msg = results.find(r => r.error)?.error || 'Subscription failed. Please try again.';
+        throw new Error(msg);
       }
 
-      const data = await res.json();
-      statusEl.textContent = data.already
+      statusEl.textContent = allAlready
         ? 'Already subscribed. Check your inbox for listings.'
         : 'Check your inbox — verification link sent.';
       statusEl.className = 'ja-sub-status success';
@@ -209,7 +210,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── Init ─────────────────────────────────────────────────────────────────
 
   handleQueryParams();
-  initToggles();
   initSubscribeButtons();
   loadJobs('cyber');
   loadJobs('it');

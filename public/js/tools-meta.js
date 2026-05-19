@@ -83,5 +83,12 @@ export const toolsMeta = [
     "desc": "Audit third-party scripts on any page for SRI integrity and supply chain risk.",
     "suffix": "Self-hosted.",
     "order": 11
+  },
+  {
+    "slug": "job-alerts",
+    "title": "Job Alerts",
+    "desc": "Subscribe to email digests for Cybersecurity and IT job listings from SimplifyJobs.",
+    "suffix": "2026 cycle.",
+    "order": 12
   }
 ];
