@@ -7,7 +7,7 @@
 import { corsOptions } from '../../lib/cors.js';
 
 const TOKEN_RE = /^[0-9a-f]{64}$/i;
-const TOOL_URL = '/tools/job-alerts/';
+const TOOL_URL = 'https://kapadia.org/tools/job-alerts/';
 const VERIFY_EXPIRY = 24 * 60 * 60; // 24 hours in seconds
 
 export async function onRequestGet(context) {
