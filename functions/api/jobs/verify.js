@@ -5,10 +5,10 @@
  */
 
 import { corsOptions } from '../../lib/cors.js';
+import { VERIFY_EXPIRY_SECONDS } from '../../lib/limits.js';
 
 const TOKEN_RE = /^[0-9a-f]{64}$/i;
 const TOOL_URL = 'https://kapadia.org/tools/job-alerts/';
-const VERIFY_EXPIRY = 24 * 60 * 60; // 24 hours in seconds
 
 export async function onRequestGet(context) {
   const { request, env } = context;
@@ -33,7 +33,7 @@ export async function onRequestGet(context) {
 
   const now = Math.floor(Date.now() / 1000);
 
-  if (now - row.created_at > VERIFY_EXPIRY) {
+  if (now - row.created_at > VERIFY_EXPIRY_SECONDS) {
     return Response.redirect(`${TOOL_URL}?verified=error`, 302);
   }
 

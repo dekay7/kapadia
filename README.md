@@ -135,7 +135,7 @@ The `http-handler.js` Worker intercepts plain-HTTP requests to serve the curl IP
 
 ### Job Digest Worker (kapadia-job-digest)
 
-The `job-digest.js` Worker runs on a cron trigger (daily at 00:00 UTC). It fetches fresh job listings from the SimplifyJobs GitHub repositories, diffs them against the previous snapshot stored in Cloudflare D1, and emails subscribers via Resend when new postings appear. Job listings older than 120 days are automatically purged from D1 on each daily run. It is configured by **`wrangler-digest.toml`** and shares the same `kapadia-jobs` D1 database as the Pages project.
+The `job-digest.js` Worker runs on a cron trigger (daily at 14:00 UTC). It fetches fresh job listings from the SimplifyJobs GitHub repositories, diffs them against the previous snapshot stored in Cloudflare D1, and emails subscribers via Resend when new postings appear. Each subscriber receives at most one email per run — new jobs for all their alert types are consolidated into a single digest. Sends are capped at `MAX_SUBSCRIBERS` unique addresses per run (see `functions/lib/limits.js`) to stay within Resend free-tier limits; new signups are also rejected once this cap is reached. Job listings older than `JOB_RETENTION_DAYS` days are automatically purged from D1 on each daily run. It is configured by **`wrangler-digest.toml`** and shares the same `kapadia-jobs` D1 database as the Pages project.
 
 Deploy and manage secrets:
 

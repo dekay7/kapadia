@@ -44,7 +44,7 @@ Subscribe to receive a digest email whenever new listings are found since the la
 2. A verification email is sent from `alerts@kapadia.org`
 3. Click the link in the email to confirm your address
 4. You will receive digest emails when new listings appear (up to twice daily)
-5. Every digest email includes an **Unsubscribe** link at the bottom
+5. Every digest email includes an **Unsubscribe** link for each alert type — if you have multiple subscriptions, all are combined into one daily email
 
 ### Privacy
 

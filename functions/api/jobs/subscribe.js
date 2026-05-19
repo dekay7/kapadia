@@ -1,19 +1,23 @@
 /**
  * POST /api/jobs/subscribe
- * Body: { email, category, listing_type }
- * Stores subscriber in D1 and sends a verification email via Resend.
+ * Body: { email, subscriptions: [{ category, listing_type }, ...] }
+ * Upserts all requested subscriptions and sends one consolidated verification email.
+ *
+ * The cap check is embedded in the INSERT itself (INSERT INTO ... SELECT ... WHERE ...)
+ * so the count query and the write are atomic at the SQLite level, eliminating TOCTOU races.
  */
 
 import { cors, corsPostOptions } from '../../lib/cors.js';
 import { enforceRateLimit } from '../../lib/rate-limit.js';
+import { MAX_SUBSCRIBERS, EMAIL_MAX_LENGTH, RESEND_TIMEOUT_MS } from '../../lib/limits.js';
 
 const VALID_CATEGORIES = new Set(['cybersecurity', 'it']);
-const VALID_TYPES = new Set(['internship', 'newgrad']);
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const CYCLE_YEAR = 2026;
-const RESEND_API = 'https://api.resend.com/emails';
-const FROM_EMAIL = 'Job Alerts <alerts@kapadia.org>';
-const SITE = 'https://kapadia.org';
+const VALID_TYPES      = new Set(['internship', 'newgrad']);
+const EMAIL_RE         = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const CYCLE_YEAR       = 2026;
+const RESEND_API       = 'https://api.resend.com/emails';
+const FROM_EMAIL       = 'Job Alerts <alerts@kapadia.org>';
+const SITE             = 'https://kapadia.org';
 
 export async function onRequestPost(context) {
   const { request, env } = context;
@@ -29,45 +33,98 @@ export async function onRequestPost(context) {
     return cors({ error: 'Invalid JSON body.' }, 400);
   }
 
-  const { email, category, listing_type } = body ?? {};
+  const { email, subscriptions } = body ?? {};
 
-  if (typeof email !== 'string' || !EMAIL_RE.test(email) || email.length > 254) {
+  if (typeof email !== 'string' || !EMAIL_RE.test(email) || email.length > EMAIL_MAX_LENGTH) {
     return cors({ error: 'Invalid email address.' }, 400);
   }
-  if (!VALID_CATEGORIES.has(category)) {
-    return cors({ error: 'Invalid category.' }, 400);
-  }
-  if (!VALID_TYPES.has(listing_type)) {
-    return cors({ error: 'Invalid listing_type.' }, 400);
+
+  if (!Array.isArray(subscriptions) || subscriptions.length === 0 || subscriptions.length > 4) {
+    return cors({ error: 'subscriptions must be an array of 1–4 entries.' }, 400);
   }
 
-  const verifyToken = randomHex();
-  const unsubToken  = randomHex();
+  for (const sub of subscriptions) {
+    if (!VALID_CATEGORIES.has(sub?.category)) {
+      return cors({ error: `Invalid category: ${sub?.category}` }, 400);
+    }
+    if (!VALID_TYPES.has(sub?.listing_type)) {
+      return cors({ error: `Invalid listing_type: ${sub?.listing_type}` }, 400);
+    }
+  }
+
   const now = Math.floor(Date.now() / 1000);
 
-  // Atomic upsert: only overwrites an existing row if it is not yet verified.
-  // If the subscriber is already verified, changes === 0 and we return early
-  // without sending another email, eliminating the check-then-write race.
-  const result = await env.DB.prepare(
-    `INSERT INTO subscribers (email, category, listing_type, verified, verify_token, unsub_token, created_at)
-     VALUES (?, ?, ?, 0, ?, ?, ?)
-     ON CONFLICT(email, category, listing_type) DO UPDATE SET
-       verify_token = excluded.verify_token,
-       unsub_token  = excluded.unsub_token,
-       verified     = 0,
-       created_at   = excluded.created_at
-     WHERE subscribers.verified = 0`
-  ).bind(email, category, listing_type, verifyToken, unsubToken, now).run();
+  // Run one conditional INSERT per subscription. The WHERE clause embeds the cap check:
+  //   - If this email already has any row in subscribers → EXISTS is true → always allowed
+  //     (they're already in the distinct count, so no new slot is consumed).
+  //   - If this is a new email → only allowed if distinct count is below MAX_SUBSCRIBERS.
+  // Because D1/SQLite serializes concurrent writes, this is race-free.
+  const stmts = subscriptions.map(({ category, listing_type }) => {
+    const verifyToken = randomHex();
+    const unsubToken  = randomHex();
+    return env.DB.prepare(
+      `INSERT INTO subscribers (email, category, listing_type, verified, verify_token, unsub_token, created_at)
+       SELECT ?, ?, ?, 0, ?, ?, ?
+       WHERE (
+         EXISTS (SELECT 1 FROM subscribers WHERE email = ?)
+         OR (SELECT COUNT(DISTINCT email) FROM subscribers) < ?
+       )
+       ON CONFLICT(email, category, listing_type) DO UPDATE SET
+         verify_token = excluded.verify_token,
+         unsub_token  = excluded.unsub_token,
+         verified     = 0,
+         created_at   = excluded.created_at
+       WHERE subscribers.verified = 0`
+    ).bind(email, category, listing_type, verifyToken, unsubToken, now, email, MAX_SUBSCRIBERS);
+  });
 
-  if (result.meta.changes === 0) {
+  const results = await env.DB.batch(stmts);
+
+  const changed = results
+    .map((r, i) => ({ result: r, sub: subscriptions[i] }))
+    .filter(({ result }) => result.meta.changes > 0);
+
+  if (changed.length === 0) {
+    // Distinguish "all already verified" from "cap exceeded for a brand-new email".
+    const existing = await env.DB.prepare(
+      'SELECT COUNT(*) AS cnt FROM subscribers WHERE email = ?'
+    ).bind(email).first();
+
+    if (existing.cnt === 0) {
+      return cors({ error: 'Subscription list is currently full. Please try again later.' }, 503);
+    }
     return cors({ ok: true, already: true });
   }
 
-  const verifyUrl = `${SITE}/api/jobs/verify?token=${verifyToken}`;
-  const catLabel  = category === 'cybersecurity' ? 'Cybersecurity' : 'IT';
-  const typeLabel = listing_type === 'internship' ? `Internship ${CYCLE_YEAR}` : `New Grad ${CYCLE_YEAR}`;
+  // Build verify links for each newly written subscription.
+  // Re-fetch the tokens we just wrote so we don't have to pass them through the batch results.
+  const tokenRows = await env.DB.prepare(
+    `SELECT category, listing_type, verify_token
+     FROM subscribers
+     WHERE email = ? AND verified = 0`
+  ).bind(email).all();
 
-  const emailHtml = buildVerificationEmail(verifyUrl, catLabel, typeLabel);
+  const tokenMap = new Map(
+    tokenRows.results.map(r => [`${r.category}:${r.listing_type}`, r.verify_token])
+  );
+
+  const verifyLinks = changed
+    .map(({ sub: { category, listing_type } }) => {
+      const token = tokenMap.get(`${category}:${listing_type}`);
+      if (!token) return null;
+      return {
+        verifyUrl: `${SITE}/api/jobs/verify?token=${token}`,
+        catLabel:  category === 'cybersecurity' ? 'Cybersecurity' : 'IT',
+        typeLabel: listing_type === 'internship' ? `Internship ${CYCLE_YEAR}` : `New Grad ${CYCLE_YEAR}`,
+      };
+    })
+    .filter(Boolean);
+
+  if (verifyLinks.length === 0) {
+    return cors({ ok: true, already: true });
+  }
+
+  const emailHtml = buildVerificationEmail(verifyLinks);
 
   const res = await fetch(RESEND_API, {
     method: 'POST',
@@ -78,10 +135,10 @@ export async function onRequestPost(context) {
     body: JSON.stringify({
       from:    FROM_EMAIL,
       to:      [email],
-      subject: `Verify your ${catLabel} ${typeLabel} job alerts`,
+      subject: 'Verify your job alerts on kapadia.org',
       html:    emailHtml,
     }),
-    signal: AbortSignal.timeout(8000),
+    signal: AbortSignal.timeout(RESEND_TIMEOUT_MS),
   });
 
   if (!res.ok) {
@@ -102,8 +159,19 @@ function esc(s) {
   return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-function buildVerificationEmail(verifyUrl, catLabel, typeLabel) {
-  const safeUrl = esc(verifyUrl);
+function buildVerificationEmail(verifyLinks) {
+  const buttons = verifyLinks.map(({ verifyUrl, catLabel, typeLabel }) => `
+    <div style="margin-bottom:20px;">
+      <p style="color:#a8a59e;font-size:14px;margin:0 0 10px;">
+        <strong style="color:#e6e3dc;">${esc(catLabel)} ${esc(typeLabel)}</strong> alerts
+      </p>
+      <a href="${esc(verifyUrl)}"
+         style="display:inline-block;background:#e6e3dc;color:#111110;font-family:monospace;font-size:13px;
+                padding:10px 20px;border-radius:2px;text-decoration:none;">
+        Verify ${esc(catLabel)} ${esc(typeLabel)} Alerts
+      </a>
+    </div>`).join('');
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><title>Verify your job alerts</title></head>
@@ -113,19 +181,14 @@ function buildVerificationEmail(verifyUrl, catLabel, typeLabel) {
       kapadia.org &middot; job alerts
     </p>
     <h1 style="font-size:22px;font-weight:300;color:#e6e3dc;margin:0 0 8px;">
-      Confirm your subscription
+      Confirm your subscription${verifyLinks.length > 1 ? 's' : ''}
     </h1>
     <p style="color:#a8a59e;font-size:14px;margin:0 0 24px;">
-      You signed up for <strong style="color:#e6e3dc;">${esc(catLabel)} ${esc(typeLabel)}</strong> alerts.
-      Click below to verify your email and start receiving digests.
+      Click each link below to verify your email and start receiving digests.
     </p>
-    <a href="${safeUrl}"
-       style="display:inline-block;background:#e6e3dc;color:#111110;font-family:monospace;font-size:13px;
-              padding:10px 20px;border-radius:2px;text-decoration:none;">
-      Verify Email
-    </a>
+    ${buttons}
     <p style="color:#5a5856;font-size:11px;margin:24px 0 0;">
-      If you did not sign up, ignore this email. This link expires in 24 hours.
+      If you did not sign up, ignore this email. Links expire in 24 hours.
     </p>
   </div>
 </body>

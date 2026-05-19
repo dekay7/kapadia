@@ -216,33 +216,25 @@ document.addEventListener('DOMContentLoaded', () => {
     statusEl.className = 'ja-sub-status';
 
     try {
-      const responses = await Promise.all(
-        segments.map(seg =>
-          fetch('/api/jobs/subscribe', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, category: seg.category, listing_type: seg.listing_type }),
-            signal: AbortSignal.timeout(10000),
-          })
-        )
-      );
-      const results = await Promise.all(
-        responses.map(r => r.json().catch(() => ({ error: `Error ${r.status}` })))
-      );
+      const response = await fetch('/api/jobs/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          subscriptions: segments.map(({ category, listing_type }) => ({ category, listing_type })),
+        }),
+        signal: AbortSignal.timeout(10000),
+      });
+      const result = await response.json().catch(() => ({}));
 
-      const anySuccess = responses.some(r => r.ok);
-      const allAlready = results.every(r => r.already);
-
-      if (!anySuccess) {
-        const msg = results.find(r => r.error)?.error || 'Subscription failed. Please try again.';
-        throw new Error(msg);
+      if (!response.ok) {
+        throw new Error(result.error || 'Subscription failed. Please try again.');
       }
 
-      if (allAlready) {
+      if (result.already) {
         statusEl.textContent = 'Already subscribed. Check your inbox for listings.';
       } else {
-        const labels = segments.map(s => s.label).join(', ');
-        statusEl.textContent = `Check your inbox — verification link${segments.length > 1 ? 's' : ''} sent for: ${labels}.`;
+        statusEl.textContent = 'Check your inbox — verification link sent.';
       }
       statusEl.className = 'ja-sub-status success';
       emailInput.value = '';
