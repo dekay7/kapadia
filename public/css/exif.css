@@ -24,19 +24,6 @@
   display: flex;
 }
 
-.exif-spinner {
-  width: 0.875rem;
-  height: 0.875rem;
-  border: 0.125rem solid var(--border-strong);
-  border-top-color: var(--term-green);
-  border-radius: 50%;
-  animation: exif-spin 0.7s linear infinite;
-  flex-shrink: 0;
-}
-
-@keyframes exif-spin {
-  to { transform: rotate(360deg); }
-}
 
 /* Results layout */
 .exif-layout {

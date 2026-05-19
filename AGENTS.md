@@ -524,6 +524,8 @@ No other exports. No `onRequestPost` unless a new feature genuinely requires POS
 ### 10.2 Request Handling Pattern
 
 ```javascript
+import { cors, corsOptions } from '../lib/cors.js';
+
 export async function onRequestGet(context) {
   const { searchParams } = new URL(context.request.url);
   const param = searchParams.get('param');
@@ -541,27 +543,7 @@ export async function onRequestGet(context) {
   }
 }
 
-function cors(body, status = 200) {
-  return Response.json(body, {
-    status,
-    headers: {
-      'Cache-Control': 'no-store',
-      'Access-Control-Allow-Origin': 'https://kapadia.org',
-    },
-  });
-}
-
-export async function onRequestOptions() {
-  return new Response(null, {
-    status: 204,
-    headers: {
-      'Access-Control-Allow-Origin':  'https://kapadia.org',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-      'Access-Control-Max-Age':       '86400',
-    },
-  });
-}
+export { corsOptions as onRequestOptions };
 ```
 
 ### 10.3 Edge Data

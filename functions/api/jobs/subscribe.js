@@ -4,7 +4,7 @@
  * Stores subscriber in D1 and sends a verification email via Resend.
  */
 
-import { corsPost, corsPostOptions } from '../../lib/cors.js';
+import { cors, corsPostOptions } from '../../lib/cors.js';
 
 const VALID_CATEGORIES = new Set(['cybersecurity', 'it']);
 const VALID_TYPES = new Set(['internship', 'newgrad']);
@@ -20,19 +20,19 @@ export async function onRequestPost(context) {
   try {
     body = await request.json();
   } catch {
-    return corsPost({ error: 'Invalid JSON body.' }, 400);
+    return cors({ error: 'Invalid JSON body.' }, 400);
   }
 
   const { email, category, listing_type } = body ?? {};
 
   if (typeof email !== 'string' || !EMAIL_RE.test(email) || email.length > 254) {
-    return corsPost({ error: 'Invalid email address.' }, 400);
+    return cors({ error: 'Invalid email address.' }, 400);
   }
   if (!VALID_CATEGORIES.has(category)) {
-    return corsPost({ error: 'Invalid category.' }, 400);
+    return cors({ error: 'Invalid category.' }, 400);
   }
   if (!VALID_TYPES.has(listing_type)) {
-    return corsPost({ error: 'Invalid listing_type.' }, 400);
+    return cors({ error: 'Invalid listing_type.' }, 400);
   }
 
   const verifyToken = randomHex();
@@ -54,7 +54,7 @@ export async function onRequestPost(context) {
   ).bind(email, category, listing_type, verifyToken, unsubToken, now).run();
 
   if (result.meta.changes === 0) {
-    return corsPost({ ok: true, already: true });
+    return cors({ ok: true, already: true });
   }
 
   const verifyUrl = `${SITE}/api/jobs/verify?token=${verifyToken}`;
@@ -80,10 +80,10 @@ export async function onRequestPost(context) {
 
   if (!res.ok) {
     console.error('Resend error:', res.status);
-    return corsPost({ error: 'Failed to send verification email. Please try again.' }, 502);
+    return cors({ error: 'Failed to send verification email. Please try again.' }, 502);
   }
 
-  return corsPost({ ok: true });
+  return cors({ ok: true });
 }
 
 function randomHex() {

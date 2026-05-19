@@ -30,19 +30,6 @@
   display: flex;
 }
 
-.link-spinner {
-  width: 0.875rem;
-  height: 0.875rem;
-  border: 0.125rem solid var(--border-strong);
-  border-top-color: var(--term-green);
-  border-radius: 50%;
-  animation: link-spin 0.7s linear infinite;
-  flex-shrink: 0;
-}
-
-@keyframes link-spin {
-  to { transform: rotate(360deg); }
-}
 
 /* ── Score section ───────────────────────────────────────────────────────────── */
 .link-score-section {

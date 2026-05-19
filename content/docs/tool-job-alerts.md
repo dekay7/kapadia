@@ -51,6 +51,7 @@ Subscribe to receive a digest email whenever new listings are found since the la
 - Email addresses are stored in a Cloudflare D1 database scoped to this site
 - Digests are sent via [Resend](https://resend.com) from `alerts@kapadia.org`
 - Unsubscribing immediately deletes your address from the database
+- Job listing data (title, company, URL) is retained for up to 120 days from when a listing was first seen, then automatically deleted
 - No analytics, tracking pixels, or open/click tracking
 
 ---
@@ -65,4 +66,4 @@ The current cycle targets **2026** listings. To update the cycle (e.g. for 2027)
 
 ## Closed Listings
 
-Listings that are no longer accepting applications are shown with a **Closed** badge. They remain visible for reference — useful for tracking which companies recruited in a given cycle.
+Listings that are no longer accepting applications are shown with a **Closed** badge. They remain visible for reference — useful for tracking which companies recruited in a given cycle. Listings older than 120 days are automatically removed from the database regardless of status.

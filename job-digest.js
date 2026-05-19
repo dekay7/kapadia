@@ -26,7 +26,8 @@ const DATA_PATH    = '.github/scripts/listings.json';
 const RESEND_API   = 'https://api.resend.com/emails';
 const FROM_EMAIL   = 'Job Alerts <alerts@kapadia.org>';
 const SITE         = 'https://kapadia.org';
-const BATCH_SIZE   = 50;  // D1 batch limit is 1,000; 50 is safe and avoids large payloads
+const BATCH_SIZE      = 50;  // D1 batch limit is 1,000; 50 is safe and avoids large payloads
+const RETENTION_DAYS  = 120;
 
 const SEGMENTS = [
   'cybersecurity:internship',
@@ -148,6 +149,11 @@ async function upsertJobs(db, jobs, listingType) {
     );
     await db.batch(stmts);
   }
+}
+
+async function purgeOldJobs(db) {
+  const cutoff = Math.floor(Date.now() / 1000) - RETENTION_DAYS * 86400;
+  await db.prepare('DELETE FROM job_cache WHERE first_seen_at < ?').bind(cutoff).run();
 }
 
 async function findNewJobs(db, segment) {
@@ -301,6 +307,9 @@ async function runDigest(env) {
     upsertJobs(DB, internshipRows, 'internship'),
     upsertJobs(DB, newgradRows, 'newgrad'),
   ]);
+
+  // 2.5. Purge rows older than RETENTION_DAYS
+  await purgeOldJobs(DB);
 
   // 3. For each segment: find new jobs, send digests, log
   for (const segment of SEGMENTS) {
