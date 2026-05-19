@@ -2,3 +2,9 @@ name                   = "kapadia"
 compatibility_date     = "2025-05-10"
 pages_build_output_dir = "./public"
 
+[[d1_databases]]
+binding        = "DB"
+database_name  = "kapadia-jobs"
+database_id    = "575aec14-e5f5-4a9e-b081-83f092d81713"
+migrations_dir = "migrations"
+

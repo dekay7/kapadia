@@ -1,0 +1,15 @@
+name               = "kapadia-job-digest"
+main               = "job-digest.js"
+compatibility_date = "2025-05-10"
+
+[triggers]
+crons = ["0 */12 * * *"]
+
+[[d1_databases]]
+binding       = "DB"
+database_name = "kapadia-jobs"
+database_id   = "575aec14-e5f5-4a9e-b081-83f092d81713"
+
+# Secrets — set via CLI after deploying:
+#   npx wrangler secret put RESEND_API_KEY --config wrangler-digest.toml
+#   npx wrangler secret put GITHUB_TOKEN   --config wrangler-digest.toml

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="Job Alerts. Get email digests for new Cybersecurity and IT job listings from SimplifyJobs — 2026 internships and new grad positions." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://kapadia.org/tools/job-alerts/" />
+  <meta property="og:title" content="Job Alerts — Tools — kapadia.org" />
+  <meta property="og:description" content="Get email digests for new Cybersecurity and IT job listings from SimplifyJobs — 2026 internships and new grad positions." />
+  <meta property="og:site_name" content="kapadia.org" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Job Alerts — Tools — kapadia.org" />
+  <meta name="twitter:description" content="Get email digests for new Cybersecurity and IT job listings from SimplifyJobs — 2026 internships and new grad positions." />
+  <title>Job Alerts — kapadia.org</title>
+  <link rel="canonical" href="https://kapadia.org/tools/job-alerts/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/shared.css" />
+  <link rel="stylesheet" href="/css/tools.css" />
+  <link rel="stylesheet" href="/css/job-alerts.css" />
+</head>
+<body>
+
+  <noscript>
+    <div class="noscript-msg">This tool requires JavaScript to function.<br>Enable JS and reload to use it.</div>
+  </noscript>
+
+  <nav aria-label="Main Navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo" aria-label="kapadia.org homepage">kapadia<span>.org</span></a>
+      <ul class="nav-links">
+        <li><a href="/">~</a></li>
+        <li><a href="/tools/" aria-current="page">tools</a></li>
+        <li><a href="/docs/">docs</a></li>
+        <li><a href="/writes/">writes</a></li>
+        <li><a href="/about/">about</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container tools-page">
+      <div class="tool-container">
+
+        <div class="tool-header">
+          <h1>Job Alerts</h1>
+          <p class="tool-desc">Browse and subscribe to email digests for Cybersecurity and IT job listings — 2026 internships and new grad positions sourced from SimplifyJobs.</p>
+        </div>
+
+        <div class="tool-disclaimer">
+          <strong>Source:</strong> Listings are pulled from the
+          <a href="https://github.com/SimplifyJobs" target="_blank" rel="noopener noreferrer">SimplifyJobs</a>
+          GitHub repositories and refreshed every 12 hours. New listings trigger an email digest to verified subscribers.
+          Email addresses are stored in Cloudflare D1 and used only for digest delivery.
+        </div>
+
+        <!-- Query-string feedback banner (shown on verify/unsubscribe redirect) -->
+        <div id="ja-notice" class="ja-notice u-hidden" role="status" aria-live="polite"></div>
+
+        <!-- Two-column grid: Cybersecurity | IT -->
+        <div class="ja-grid">
+
+          <!-- Cybersecurity column -->
+          <section class="ja-column" aria-label="Cybersecurity job listings">
+            <div class="ja-col-header">
+              <h2 class="ja-col-title">Cybersecurity</h2>
+              <div class="ja-toggle" role="group" aria-label="Listing type for Cybersecurity">
+                <button type="button" class="ja-toggle-btn active"
+                        data-col="cyber" data-type="internship">Internship 2026</button>
+                <button type="button" class="ja-toggle-btn"
+                        data-col="cyber" data-type="newgrad">New Grad 2026</button>
+              </div>
+            </div>
+
+            <div class="ja-jobs" id="cyber-jobs" aria-live="polite" aria-busy="false"></div>
+
+            <div class="ja-subscribe">
+              <div class="ja-sub-label">Get email alerts for new listings</div>
+              <div class="form-input-group">
+                <input type="email" id="cyber-email" class="form-input ja-email-input"
+                       placeholder="you@example.com"
+                       aria-label="Email address for Cybersecurity job alerts" />
+                <button type="button" id="cyber-sub-btn" class="btn">Subscribe</button>
+              </div>
+              <div id="cyber-sub-status" class="ja-sub-status" aria-live="polite"></div>
+            </div>
+          </section>
+
+          <!-- IT column -->
+          <section class="ja-column" aria-label="IT job listings">
+            <div class="ja-col-header">
+              <h2 class="ja-col-title">IT</h2>
+              <div class="ja-toggle" role="group" aria-label="Listing type for IT">
+                <button type="button" class="ja-toggle-btn active"
+                        data-col="it" data-type="internship">Internship 2026</button>
+                <button type="button" class="ja-toggle-btn"
+                        data-col="it" data-type="newgrad">New Grad 2026</button>
+              </div>
+            </div>
+
+            <div class="ja-jobs" id="it-jobs" aria-live="polite" aria-busy="false"></div>
+
+            <div class="ja-subscribe">
+              <div class="ja-sub-label">Get email alerts for new listings</div>
+              <div class="form-input-group">
+                <input type="email" id="it-email" class="form-input ja-email-input"
+                       placeholder="you@example.com"
+                       aria-label="Email address for IT job alerts" />
+                <button type="button" id="it-sub-btn" class="btn">Subscribe</button>
+              </div>
+              <div id="it-sub-status" class="ja-sub-status" aria-live="polite"></div>
+            </div>
+          </section>
+
+        </div><!-- /.ja-grid -->
+
+      </div>
+    </div>
+  </main>
+
+  <footer role="contentinfo" aria-label="Site Footer">
+    <div class="footer-inner">
+      <span class="footer-left">© kapadia.org</span>
+      <nav class="footer-right" aria-label="Footer Navigation">
+        <a href="/">~</a>
+        <a href="/tools/" aria-current="page">tools</a>
+        <a href="/docs/">docs</a>
+        <a href="/writes/">writes</a>
+        <a href="/about/">about</a>
+        <a href="/privacy/">privacy</a>
+        <a href="https://github.com/dekay7/kapadia" target="_blank" rel="noopener noreferrer">github</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="/js/tools/job-alerts.js" defer></script>
+</body>
+</html>
