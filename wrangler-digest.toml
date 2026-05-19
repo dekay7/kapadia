@@ -11,6 +11,9 @@ binding       = "DB"
 database_name = "kapadia-jobs"
 database_id   = "575aec14-e5f5-4a9e-b081-83f092d81713"
 
+[observability]
+enabled = true
+
 # Secrets — set via CLI after deploying:
 #   npx wrangler secret put RESEND_API_KEY --config wrangler-digest.toml
 #   npx wrangler secret put GITHUB_TOKEN   --config wrangler-digest.toml
