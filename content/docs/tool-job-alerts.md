@@ -10,7 +10,7 @@ tool_suffix: 2026 cycle.
 # Job Alerts
 
 > [!NOTE]
-> Listings are sourced from the SimplifyJobs GitHub repositories and refreshed every 12 hours. Email addresses are stored in Cloudflare D1 and used only for digest delivery — no tracking, no third-party sharing.
+> Listings are sourced from the SimplifyJobs GitHub repositories and refreshed every day. Email addresses are stored in Cloudflare D1 and used only for digest delivery — no tracking, no third-party sharing.
 
 Browse current Cybersecurity and IT job listings for the 2026 recruitment cycle and subscribe to email digests when new postings appear. Listings cover both **Summer 2026 Internships** and **New Grad 2026** full-time positions.
 
@@ -57,7 +57,7 @@ Subscribe to receive a digest email whenever new listings are found since the la
 
 ## Data Source
 
-Listings are pulled from the SimplifyJobs GitHub repositories, which are community-maintained and updated continuously throughout the recruitment cycle. The data is refreshed every 12 hours.
+Listings are pulled from the SimplifyJobs GitHub repositories, which are community-maintained and updated continuously throughout the recruitment cycle. The data is refreshed every 24 hours.
 
 The current cycle targets **2026** listings. To update the cycle (e.g. for 2027), change the `CYCLE` constant at the top of `job-digest.js`.
 

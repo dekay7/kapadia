@@ -10,19 +10,49 @@
 
 export const KEYWORDS = {
   cybersecurity: [
-    'security', 'cybersecurity', 'cyber security', 'soc ', 'siem',
-    'pentest', 'penetration test', 'vulnerability', 'malware', 'forensic',
-    'grc', 'cryptograph', 'threat intel', 'threat hunt', 'infosec',
-    'appsec', 'devsecops', 'red team', 'blue team', 'incident response',
-    'security engineer', 'security analyst', 'security operations',
+    // Core
+    'security', 'cybersecurity', 'cyber security',
+    // Cyber-prefixed roles
+    'cyber analyst', 'cyber engineer', 'cyber operations', 'cyber defense',
+    // SOC / SIEM
+    'soc ', 'siem',
+    // Offensive / testing
+    'pentest', 'penetration test', 'red team', 'purple team',
+    // Defensive / response
+    'blue team', 'incident response', 'insider threat', 'intrusion',
+    // Intelligence / modeling
+    'threat intel', 'threat hunt', 'threat model', 'osint',
+    // Malware / threats
+    'vulnerability', 'malware', 'ransomware', 'phishing',
+    // Forensics / RE
+    'forensic', 'reverse engineer',
+    // Disciplines
+    'grc', 'cryptograph', 'infosec', 'appsec', 'devsecops',
+    // Domains
     'endpoint security', 'network security', 'cloud security', 'zero trust',
+    // Identity / privacy
+    'identity and access', 'iam ', 'privacy engineer', 'data privacy',
   ],
   it: [
-    'sysadmin', 'system administrator', 'help desk', 'helpdesk',
-    'network engineer', 'network administrator', 'infrastructure engineer',
-    'devops', 'site reliability', 'sre ', 'platform engineer',
-    'cloud engineer', 'it intern', 'information technology',
-    'systems engineer', 'it support', 'it operations',
+    // Admin
+    'sysadmin', 'system administrator', 'systems administration',
+    'it administrator', 'linux administrator',
+    // Support
+    'help desk', 'helpdesk', 'service desk', 'desktop support', 'technical support',
+    'it support', 'it specialist', 'it analyst', 'it technician', 'it operations',
+    'it intern', 'information technology',
+    // Network
+    'network engineer', 'network administrator', 'network technician',
+    'network operations', 'noc ',
+    // Infrastructure / cloud
+    'infrastructure engineer', 'infrastructure admin',
+    'cloud engineer', 'cloud architect', 'cloud administrator', 'cloud operations',
+    // Engineering / SRE / DevOps
+    'devops', 'site reliability', 'sre ', 'platform engineer', 'systems engineer',
+    // Database
+    'database administrator', 'dba ',
+    // Directory
+    'active directory',
   ],
 };
 
