@@ -368,39 +368,7 @@ function initInput(staticCursor) {
     scrollRowIntoView();
   });
 
-  // Mobile: floating Tab button that rises above the virtual keyboard.
-  // pointerdown + preventDefault keeps the hidden input focused while the
-  // button is tapped, so handleTab() sees the correct hidden.value.
-  if (isMobile()) {
-    const tabBtn = document.createElement('button');
-    tabBtn.className = 'term-tab-btn';
-    tabBtn.setAttribute('aria-label', 'Tab — autocomplete');
-    tabBtn.textContent = 'Tab ⇥';
-    document.body.appendChild(tabBtn);
 
-    tabBtn.addEventListener('pointerdown', e => {
-      e.preventDefault();
-      handleTab();
-    });
-
-    function updateTabBtnPos() {
-      const vv = window.visualViewport;
-      if (!vv) return;
-      tabBtn.style.bottom = Math.max(0, window.innerHeight - vv.height - vv.offsetTop) + 'px';
-    }
-
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', updateTabBtnPos);
-    }
-
-    hidden.addEventListener('focus', () => {
-      tabBtn.classList.add('visible');
-      updateTabBtnPos();
-    });
-    hidden.addEventListener('blur', () => {
-      setTimeout(() => tabBtn.classList.remove('visible'), 200);
-    });
-  }
 }
 
 async function init() {

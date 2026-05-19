@@ -136,26 +136,6 @@
 .term-line.err { color: var(--color-error); }
 
 /* ── Mobile Tab button ─────────────────────────────────────────────────────── */
-.term-tab-btn {
-  position: fixed;
-  bottom: 0;
-  right: 1rem;
-  display: none;
-  padding: 0.375rem 0.875rem;
-  background: var(--bg-terminal);
-  color: var(--term-cmd);
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  border: var(--border-w) solid rgba(255, 255, 255, 0.12);
-  border-bottom: none;
-  border-radius: 0.375rem 0.375rem 0 0;
-  cursor: pointer;
-  z-index: 999;
-  touch-action: manipulation;
-  letter-spacing: 0.04em;
-}
-.term-tab-btn.visible { display: block; }
-.term-tab-btn:active { opacity: 0.7; }
 
 /* ── Section Grid ──────────────────────────────────────────────────────────── */
 .sections {
