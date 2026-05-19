@@ -128,7 +128,7 @@ async function findNewJobs(db, segment) {
   ).bind(segment).first();
 
   const allActive = await db.prepare(
-    `SELECT source_id, company_name, title, url, locations, active, date_posted
+    `SELECT source_id, company_name, title, url, locations, active, date_posted, first_seen_at
      FROM job_cache
      WHERE category = ? AND listing_type = ? AND active = 1 AND is_visible = 1`
   ).bind(category, listingType).all();
@@ -170,7 +170,14 @@ function buildDigestEmail(subscriber, newJobs, segment) {
   const unsubUrl  = `${SITE}/api/jobs/unsubscribe?token=${encodeURIComponent(subscriber.unsub_token)}`;
   const toolUrl   = `${SITE}/tools/job-alerts/`;
 
-  const jobRows = newJobs.slice(0, 50).map(job => {
+  const sortedJobs = newJobs.slice().sort((a, b) => {
+    const da = a.date_posted ?? 0;
+    const db = b.date_posted ?? 0;
+    if (db !== da) return db - da;
+    return (b.first_seen_at ?? 0) - (a.first_seen_at ?? 0);
+  });
+
+  const jobRows = sortedJobs.slice(0, 50).map(job => {
     const locations = (() => {
       try {
         const locs = JSON.parse(job.locations || '[]');

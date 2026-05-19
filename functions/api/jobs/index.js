@@ -26,7 +26,7 @@ export async function onRequestGet(context) {
             active, is_visible, locations, first_seen_at
      FROM job_cache
      WHERE category = ? AND listing_type = ?
-     ORDER BY first_seen_at DESC
+     ORDER BY date_posted DESC, first_seen_at DESC
      LIMIT 200`
   ).bind(category, type).all();
 
