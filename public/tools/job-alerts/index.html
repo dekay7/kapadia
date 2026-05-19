@@ -60,15 +60,31 @@
         <!-- Query-string feedback banner (shown on verify/unsubscribe redirect) -->
         <div id="ja-notice" class="ja-notice u-hidden" role="status" aria-live="polite"></div>
 
-        <!-- Single-column sections: Cybersecurity, then IT -->
+        <!-- Tab navigation -->
+        <div class="ja-tabs" role="tablist" aria-label="Job category">
+          <button class="ja-tab ja-tab--active" role="tab" aria-selected="true"
+                  aria-controls="tab-cyber" data-tab="cyber">Cybersecurity</button>
+          <button class="ja-tab" role="tab" aria-selected="false"
+                  aria-controls="tab-it" data-tab="it">IT</button>
+        </div>
+
         <div class="ja-sections">
 
           <!-- Cybersecurity section -->
-          <section class="ja-section" aria-label="Cybersecurity job listings">
-            <h2 class="ja-sec-title">Cybersecurity</h2>
+          <section class="ja-section" id="tab-cyber" aria-label="Cybersecurity job listings">
 
             <div class="ja-subscribe">
               <div class="ja-sub-label">Get email alerts for new listings</div>
+              <div class="ja-sub-types">
+                <label class="ja-sub-type-label">
+                  <input type="checkbox" id="cyber-sub-intern" checked>
+                  Internships
+                </label>
+                <label class="ja-sub-type-label">
+                  <input type="checkbox" id="cyber-sub-newgrad" checked>
+                  New Grad
+                </label>
+              </div>
               <div class="form-input-group">
                 <input type="email" id="cyber-email" class="form-input ja-email-input"
                        placeholder="you@example.com"
@@ -82,11 +98,20 @@
           </section>
 
           <!-- IT section -->
-          <section class="ja-section" aria-label="IT job listings">
-            <h2 class="ja-sec-title">IT</h2>
+          <section class="ja-section ja-section--hidden" id="tab-it" aria-label="IT job listings">
 
             <div class="ja-subscribe">
               <div class="ja-sub-label">Get email alerts for new listings</div>
+              <div class="ja-sub-types">
+                <label class="ja-sub-type-label">
+                  <input type="checkbox" id="it-sub-intern" checked>
+                  Internships
+                </label>
+                <label class="ja-sub-type-label">
+                  <input type="checkbox" id="it-sub-newgrad" checked>
+                  New Grad
+                </label>
+              </div>
               <div class="form-input-group">
                 <input type="email" id="it-email" class="form-input ja-email-input"
                        placeholder="you@example.com"

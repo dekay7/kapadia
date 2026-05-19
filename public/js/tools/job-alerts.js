@@ -30,6 +30,40 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // ── Tab switching ─────────────────────────────────────────────────────────
+
+  function initTabs() {
+    const tabs = document.querySelectorAll('.ja-tab');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => {
+          t.classList.remove('ja-tab--active');
+          t.setAttribute('aria-selected', 'false');
+        });
+        tab.classList.add('ja-tab--active');
+        tab.setAttribute('aria-selected', 'true');
+
+        const activeId = tab.dataset.tab;
+        document.querySelectorAll('.ja-section').forEach(sec => {
+          sec.classList.toggle('ja-section--hidden', sec.id !== `tab-${activeId}`);
+        });
+      });
+    });
+  }
+
+  // ── Date formatting ───────────────────────────────────────────────────────
+
+  function formatDate(timestamp) {
+    if (!timestamp) return null;
+    const d = new Date(timestamp * 1000);
+    if (isNaN(d.getTime())) return null;
+    const now = new Date();
+    const opts = d.getFullYear() === now.getFullYear()
+      ? { month: 'short', day: 'numeric' }
+      : { month: 'short', day: 'numeric', year: 'numeric' };
+    return d.toLocaleDateString('en-US', opts);
+  }
+
   // ── Job loading ──────────────────────────────────────────────────────────
 
   async function loadJobs(col) {
@@ -66,7 +100,13 @@ document.addEventListener('DOMContentLoaded', () => {
         .filter(j => j.active)
         .map(j => ({ ...j, _type: 'new grad' }));
 
-      renderJobs(container, [...internJobs, ...newgradJobs]);
+      const allJobs = [...internJobs, ...newgradJobs].sort((a, b) => {
+        const da = a.date_posted || a.first_seen || 0;
+        const db = b.date_posted || b.first_seen || 0;
+        return db - da;
+      });
+
+      renderJobs(container, allJobs);
     } catch {
       container.replaceChildren();
       const err = document.createElement('div');
@@ -117,13 +157,14 @@ document.addEventListener('DOMContentLoaded', () => {
         titleEl.href = '#';
       }
 
-      // Location meta
+      // Location + date meta
       const meta = document.createElement('div');
       meta.className = 'ja-job-meta';
       const locs = Array.isArray(job.locations) && job.locations.length
         ? job.locations.slice(0, 2).join(' · ')
         : 'Remote / Multiple';
-      meta.textContent = locs;
+      const dateStr = formatDate(job.date_posted || job.first_seen);
+      meta.textContent = dateStr ? `${dateStr} · ${locs}` : locs;
 
       card.appendChild(company);
       card.appendChild(titleEl);
@@ -139,6 +180,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const emailInput = document.getElementById(`${col}-email`);
     const statusEl   = document.getElementById(`${col}-sub-status`);
     const btn        = document.getElementById(`${col}-sub-btn`);
+    const internBox  = document.getElementById(`${col}-sub-intern`);
+    const newgradBox = document.getElementById(`${col}-sub-newgrad`);
 
     if (!emailInput || !statusEl || !btn) return;
 
@@ -146,6 +189,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!email || !EMAIL_RE.test(email)) {
       statusEl.textContent = 'Enter a valid email address.';
+      statusEl.className = 'ja-sub-status error';
+      return;
+    }
+
+    const wantIntern  = internBox?.checked ?? true;
+    const wantNewgrad = newgradBox?.checked ?? true;
+
+    if (!wantIntern && !wantNewgrad) {
+      statusEl.textContent = 'Select at least one listing type.';
       statusEl.className = 'ja-sub-status error';
       return;
     }
@@ -162,17 +214,16 @@ document.addEventListener('DOMContentLoaded', () => {
         signal: AbortSignal.timeout(10000),
       });
 
-      const [internRes, newgradRes] = await Promise.all([
-        postOne('internship'),
-        postOne('newgrad'),
-      ]);
+      const promises = [];
+      if (wantIntern)  promises.push(postOne('internship'));
+      if (wantNewgrad) promises.push(postOne('newgrad'));
 
-      const results = await Promise.all([
-        internRes.ok ? internRes.json().catch(() => ({})) : internRes.json().catch(() => ({ error: `Error ${internRes.status}` })),
-        newgradRes.ok ? newgradRes.json().catch(() => ({})) : newgradRes.json().catch(() => ({ error: `Error ${newgradRes.status}` })),
-      ]);
+      const responses = await Promise.all(promises);
+      const results   = await Promise.all(
+        responses.map(r => r.json().catch(() => ({ error: `Error ${r.status}` })))
+      );
 
-      const anySuccess = internRes.ok || newgradRes.ok;
+      const anySuccess = responses.some(r => r.ok);
       const allAlready = results.every(r => r.already);
 
       if (!anySuccess) {
@@ -210,6 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── Init ─────────────────────────────────────────────────────────────────
 
   handleQueryParams();
+  initTabs();
   initSubscribeButtons();
   loadJobs('cyber');
   loadJobs('it');
