@@ -4,7 +4,7 @@ compatibility_date = "2025-05-10"
 workers_dev        = false
 
 [triggers]
-crons = ["0 16 * * *"]
+crons = ["0 14 * * *"]
 
 [[d1_databases]]
 binding       = "DB"

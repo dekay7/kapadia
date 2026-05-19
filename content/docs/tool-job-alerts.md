@@ -58,7 +58,7 @@ Subscribe to receive a digest email whenever new listings are found since the la
 
 ## Data Source
 
-Listings are pulled from the SimplifyJobs GitHub repositories, which are community-maintained and updated continuously throughout the recruitment cycle. The data is refreshed every 24 hours.
+Listings are pulled from the SimplifyJobs GitHub repositories, which are community-maintained and updated continuously throughout the recruitment cycle. The data is refreshed at 14:00 UTC.
 
 The current cycle targets **2026** listings. To update the cycle (e.g. for 2027), change the `CYCLE` constant at the top of `job-digest.js`.
 
