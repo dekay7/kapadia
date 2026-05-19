@@ -2,6 +2,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+  // ── Active filter state ───────────────────────────────────────────────────
+
+  const state = { type: 'internship', sector: 'cybersecurity' };
+
   // ── Query-string feedback banner ─────────────────────────────────────────
 
   function handleQueryParams() {
@@ -30,10 +34,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // ── Tab switching ─────────────────────────────────────────────────────────
+  // ── Tab switching (job type) ──────────────────────────────────────────────
 
-  function initTabs() {
-    const tabs = document.querySelectorAll('.ja-tab');
+  function initTypeTabs() {
+    const tabs = document.querySelectorAll('.ja-tab[data-type]');
     tabs.forEach(tab => {
       tab.addEventListener('click', () => {
         tabs.forEach(t => {
@@ -42,11 +46,26 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         tab.classList.add('ja-tab--active');
         tab.setAttribute('aria-selected', 'true');
+        state.type = tab.dataset.type;
+        loadJobs();
+      });
+    });
+  }
 
-        const activeId = tab.dataset.tab;
-        document.querySelectorAll('.ja-section').forEach(sec => {
-          sec.classList.toggle('ja-section--hidden', sec.id !== `tab-${activeId}`);
+  // ── Sector pill switching ─────────────────────────────────────────────────
+
+  function initSectorBtns() {
+    const btns = document.querySelectorAll('.ja-sector-btn[data-sector]');
+    btns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        btns.forEach(b => {
+          b.classList.remove('ja-sector-btn--active');
+          b.setAttribute('aria-pressed', 'false');
         });
+        btn.classList.add('ja-sector-btn--active');
+        btn.setAttribute('aria-pressed', 'true');
+        state.sector = btn.dataset.sector;
+        loadJobs();
       });
     });
   }
@@ -66,9 +85,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ── Job loading ──────────────────────────────────────────────────────────
 
-  async function loadJobs(col) {
-    const category = col === 'cyber' ? 'cybersecurity' : 'it';
-    const container = document.getElementById(`${col}-jobs`);
+  async function loadJobs() {
+    const { type, sector } = state;
+    const category = sector === 'cybersecurity' ? 'cybersecurity' : 'it';
+    const container = document.getElementById('ja-jobs');
     if (!container) return;
 
     container.setAttribute('aria-busy', 'true');
@@ -80,33 +100,13 @@ document.addEventListener('DOMContentLoaded', () => {
     container.appendChild(loader);
 
     try {
-      const [internRes, newgradRes] = await Promise.all([
-        fetch(`/api/jobs?category=${encodeURIComponent(category)}&type=internship`),
-        fetch(`/api/jobs?category=${encodeURIComponent(category)}&type=newgrad`),
-      ]);
-
-      if (!internRes.ok || !newgradRes.ok) throw new Error('API error');
-
-      const [internData, newgradData] = await Promise.all([
-        internRes.json(),
-        newgradRes.json(),
-      ]);
-
-      const internJobs = (internData.jobs || [])
-        .filter(j => j.active)
-        .map(j => ({ ...j, _type: 'internship' }));
-
-      const newgradJobs = (newgradData.jobs || [])
-        .filter(j => j.active)
-        .map(j => ({ ...j, _type: 'new grad' }));
-
-      const allJobs = [...internJobs, ...newgradJobs].sort((a, b) => {
-        const da = a.date_posted || a.first_seen || 0;
-        const db = b.date_posted || b.first_seen || 0;
-        return db - da;
-      });
-
-      renderJobs(container, allJobs);
+      const res = await fetch(
+        `/api/jobs?category=${encodeURIComponent(category)}&type=${encodeURIComponent(type)}`
+      );
+      if (!res.ok) throw new Error('API error');
+      const data = await res.json();
+      const jobs = (data.jobs || []).filter(j => j.active);
+      renderJobs(container, jobs);
     } catch {
       container.replaceChildren();
       const err = document.createElement('div');
@@ -133,17 +133,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const card = document.createElement('div');
       card.className = 'ja-job-card';
 
-      // Company row with type badge
+      // Company row
       const company = document.createElement('div');
       company.className = 'ja-job-company';
       company.textContent = job.company;
-
-      if (job._type) {
-        const badge = document.createElement('span');
-        badge.className = 'ja-badge-type';
-        badge.textContent = job._type;
-        company.appendChild(badge);
-      }
 
       // Title / apply link
       const titleEl = document.createElement('a');
@@ -175,13 +168,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ── Subscribe ────────────────────────────────────────────────────────────
 
-  async function subscribe(col) {
-    const category   = col === 'cyber' ? 'cybersecurity' : 'it';
-    const emailInput = document.getElementById(`${col}-email`);
-    const statusEl   = document.getElementById(`${col}-sub-status`);
-    const btn        = document.getElementById(`${col}-sub-btn`);
-    const internBox  = document.getElementById(`${col}-sub-intern`);
-    const newgradBox = document.getElementById(`${col}-sub-newgrad`);
+  async function subscribe() {
+    const emailInput = document.getElementById('ja-email');
+    const statusEl   = document.getElementById('ja-sub-status');
+    const btn        = document.getElementById('ja-sub-btn');
+
+    const typeInternBox  = document.getElementById('sub-type-intern');
+    const typeNewgradBox = document.getElementById('sub-type-newgrad');
+    const sectorCyberBox = document.getElementById('sub-sector-cyber');
+    const sectorItBox    = document.getElementById('sub-sector-it');
 
     if (!emailInput || !statusEl || !btn) return;
 
@@ -193,33 +188,45 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    const wantIntern  = internBox?.checked ?? true;
-    const wantNewgrad = newgradBox?.checked ?? true;
+    const wantIntern  = typeInternBox?.checked ?? true;
+    const wantNewgrad = typeNewgradBox?.checked ?? true;
+    const wantCyber   = sectorCyberBox?.checked ?? true;
+    const wantIt      = sectorItBox?.checked ?? true;
 
     if (!wantIntern && !wantNewgrad) {
-      statusEl.textContent = 'Select at least one listing type.';
+      statusEl.textContent = 'Select at least one job type.';
       statusEl.className = 'ja-sub-status error';
       return;
     }
+    if (!wantCyber && !wantIt) {
+      statusEl.textContent = 'Select at least one sector.';
+      statusEl.className = 'ja-sub-status error';
+      return;
+    }
+
+    // Build all (type × sector) combinations the user wants
+    const segments = [];
+    if (wantIntern  && wantCyber) segments.push({ listing_type: 'internship', category: 'cybersecurity', label: 'Cybersecurity Internship' });
+    if (wantIntern  && wantIt)    segments.push({ listing_type: 'internship', category: 'it',             label: 'IT Internship' });
+    if (wantNewgrad && wantCyber) segments.push({ listing_type: 'newgrad',    category: 'cybersecurity', label: 'Cybersecurity New Grad' });
+    if (wantNewgrad && wantIt)    segments.push({ listing_type: 'newgrad',    category: 'it',             label: 'IT New Grad' });
 
     btn.disabled = true;
     statusEl.textContent = 'Sending…';
     statusEl.className = 'ja-sub-status';
 
     try {
-      const postOne = (listing_type) => fetch('/api/jobs/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, category, listing_type }),
-        signal: AbortSignal.timeout(10000),
-      });
-
-      const promises = [];
-      if (wantIntern)  promises.push(postOne('internship'));
-      if (wantNewgrad) promises.push(postOne('newgrad'));
-
-      const responses = await Promise.all(promises);
-      const results   = await Promise.all(
+      const responses = await Promise.all(
+        segments.map(seg =>
+          fetch('/api/jobs/subscribe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, category: seg.category, listing_type: seg.listing_type }),
+            signal: AbortSignal.timeout(10000),
+          })
+        )
+      );
+      const results = await Promise.all(
         responses.map(r => r.json().catch(() => ({ error: `Error ${r.status}` })))
       );
 
@@ -231,9 +238,12 @@ document.addEventListener('DOMContentLoaded', () => {
         throw new Error(msg);
       }
 
-      statusEl.textContent = allAlready
-        ? 'Already subscribed. Check your inbox for listings.'
-        : 'Check your inbox — verification link sent.';
+      if (allAlready) {
+        statusEl.textContent = 'Already subscribed. Check your inbox for listings.';
+      } else {
+        const labels = segments.map(s => s.label).join(', ');
+        statusEl.textContent = `Check your inbox — verification link${segments.length > 1 ? 's' : ''} sent for: ${labels}.`;
+      }
       statusEl.className = 'ja-sub-status success';
       emailInput.value = '';
     } catch (err) {
@@ -244,26 +254,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function initSubscribeButtons() {
-    ['cyber', 'it'].forEach(col => {
-      const btn = document.getElementById(`${col}-sub-btn`);
-      if (btn) btn.addEventListener('click', () => subscribe(col));
-
-      const input = document.getElementById(`${col}-email`);
-      if (input) {
-        input.addEventListener('keydown', e => {
-          if (e.key === 'Enter') subscribe(col);
-        });
-      }
-    });
+  function initSubscribeButton() {
+    const btn   = document.getElementById('ja-sub-btn');
+    const input = document.getElementById('ja-email');
+    if (btn)   btn.addEventListener('click', subscribe);
+    if (input) input.addEventListener('keydown', e => { if (e.key === 'Enter') subscribe(); });
   }
 
   // ── Init ─────────────────────────────────────────────────────────────────
 
   handleQueryParams();
-  initTabs();
-  initSubscribeButtons();
-  loadJobs('cyber');
-  loadJobs('it');
+  initTypeTabs();
+  initSectorBtns();
+  initSubscribeButton();
+  loadJobs();
 
 });

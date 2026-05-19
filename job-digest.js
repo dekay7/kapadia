@@ -128,7 +128,7 @@ async function findNewJobs(db, segment) {
   ).bind(segment).first();
 
   const allActive = await db.prepare(
-    `SELECT source_id, company_name, title, url, locations, active
+    `SELECT source_id, company_name, title, url, locations, active, date_posted
      FROM job_cache
      WHERE category = ? AND listing_type = ? AND active = 1 AND is_visible = 1`
   ).bind(category, listingType).all();
@@ -155,6 +155,13 @@ function esc(s) {
   return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
+function fmtEmailDate(timestamp) {
+  if (!timestamp) return null;
+  const d = new Date(timestamp * 1000);
+  if (isNaN(d.getTime())) return null;
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
 function buildDigestEmail(subscriber, newJobs, segment) {
   const [category, listingType] = segment.split(':');
   const catLabel  = category === 'cybersecurity' ? 'Cybersecurity' : 'IT';
@@ -172,11 +179,13 @@ function buildDigestEmail(subscriber, newJobs, segment) {
     })();
     const applyHref = job.url ? esc(job.url) : '#';
     const closedBadge = job.active === 1 ? '' : ' <span style="color:#cf6f6f;font-size:11px;">[Closed]</span>';
+    const dateStr = fmtEmailDate(job.date_posted);
+    const metaLine = dateStr ? `${esc(dateStr)} &middot; ${locations}` : locations;
     return `<tr>
       <td style="padding:10px 0;border-bottom:1px solid #2a2926;vertical-align:top;">
         <div style="font-family:monospace;font-size:12px;color:#8a8884;margin-bottom:3px;">${esc(job.company_name)}${closedBadge}</div>
         <a href="${applyHref}" style="color:#7ac4a2;font-size:14px;text-decoration:none;">${esc(job.title)}</a>
-        <div style="font-family:monospace;font-size:11px;color:#5a5856;margin-top:3px;">${locations}</div>
+        <div style="font-family:monospace;font-size:11px;color:#5a5856;margin-top:3px;">${metaLine}</div>
       </td>
     </tr>`;
   }).join('');

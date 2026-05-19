@@ -51,7 +51,7 @@
         </div>
 
         <div class="tool-disclaimer">
-          <strong>Source:</strong> Listings are pulled from the
+          <strong>Privacy:</strong> Listings are pulled from the
           <a href="https://github.com/SimplifyJobs" target="_blank" rel="noopener noreferrer">SimplifyJobs</a>
           GitHub repositories and refreshed every 12 hours. New listings trigger an email digest to verified subscribers.
           Email addresses are stored in Cloudflare D1 and used only for digest delivery.
@@ -60,71 +60,69 @@
         <!-- Query-string feedback banner (shown on verify/unsubscribe redirect) -->
         <div id="ja-notice" class="ja-notice u-hidden" role="status" aria-live="polite"></div>
 
-        <!-- Tab navigation -->
-        <div class="ja-tabs" role="tablist" aria-label="Job category">
-          <button class="ja-tab ja-tab--active" role="tab" aria-selected="true"
-                  aria-controls="tab-cyber" data-tab="cyber">Cybersecurity</button>
-          <button class="ja-tab" role="tab" aria-selected="false"
-                  aria-controls="tab-it" data-tab="it">IT</button>
+        <!-- ── Two-axis filter bar ─────────────────────────────────────────── -->
+        <div class="ja-filter-bar" role="group" aria-label="Job filters">
+
+          <!-- Job type tabs -->
+          <div class="ja-tabs" role="tablist" aria-label="Job type">
+            <button type="button" class="ja-tab ja-tab--active" role="tab" aria-selected="true"
+                    data-type="internship" id="tab-btn-internship">Internship</button>
+            <button type="button" class="ja-tab" role="tab" aria-selected="false"
+                    data-type="newgrad" id="tab-btn-newgrad">New Grad</button>
+          </div>
+
+          <!-- Sector pills -->
+          <div class="ja-sector-group" role="group" aria-label="Sector">
+            <button type="button" class="ja-sector-btn ja-sector-btn--active" data-sector="cybersecurity"
+                    id="sector-btn-cyber" aria-pressed="true">Cybersecurity</button>
+            <button type="button" class="ja-sector-btn" data-sector="it"
+                    id="sector-btn-it" aria-pressed="false">IT</button>
+          </div>
+
         </div>
 
-        <div class="ja-sections">
+        <!-- ── Subscribe form ─────────────────────────────────────────────── -->
+        <div class="ja-subscribe">
+          <div class="ja-sub-label">Get email alerts for new listings</div>
 
-          <!-- Cybersecurity section -->
-          <section class="ja-section" id="tab-cyber" aria-label="Cybersecurity job listings">
-
-            <div class="ja-subscribe">
-              <div class="ja-sub-label">Get email alerts for new listings</div>
-              <div class="ja-sub-types">
-                <label class="ja-sub-type-label">
-                  <input type="checkbox" id="cyber-sub-intern" checked>
-                  Internships
-                </label>
-                <label class="ja-sub-type-label">
-                  <input type="checkbox" id="cyber-sub-newgrad" checked>
-                  New Grad
-                </label>
+          <div class="ja-sub-axes">
+            <div class="ja-sub-axis-group">
+              <span class="ja-sub-axis-label">Job type</span>
+              <div class="ja-sub-check">
+                <input type="checkbox" id="sub-type-intern" checked>
+                <label class="ja-sub-type-label" for="sub-type-intern">Internship</label>
               </div>
-              <div class="form-input-group">
-                <input type="email" id="cyber-email" class="form-input ja-email-input"
-                       placeholder="you@example.com"
-                       aria-label="Email address for Cybersecurity job alerts" />
-                <button type="button" id="cyber-sub-btn" class="btn">Subscribe</button>
+              <div class="ja-sub-check">
+                <input type="checkbox" id="sub-type-newgrad" checked>
+                <label class="ja-sub-type-label" for="sub-type-newgrad">New Grad</label>
               </div>
-              <div id="cyber-sub-status" class="ja-sub-status" aria-live="polite"></div>
             </div>
-
-            <div class="ja-jobs" id="cyber-jobs" aria-live="polite" aria-busy="false"></div>
-          </section>
-
-          <!-- IT section -->
-          <section class="ja-section ja-section--hidden" id="tab-it" aria-label="IT job listings">
-
-            <div class="ja-subscribe">
-              <div class="ja-sub-label">Get email alerts for new listings</div>
-              <div class="ja-sub-types">
-                <label class="ja-sub-type-label">
-                  <input type="checkbox" id="it-sub-intern" checked>
-                  Internships
-                </label>
-                <label class="ja-sub-type-label">
-                  <input type="checkbox" id="it-sub-newgrad" checked>
-                  New Grad
-                </label>
+            <div class="ja-sub-axis-group">
+              <span class="ja-sub-axis-label">Sector</span>
+              <div class="ja-sub-check">
+                <input type="checkbox" id="sub-sector-cyber" checked>
+                <label class="ja-sub-type-label" for="sub-sector-cyber">Cybersecurity</label>
               </div>
-              <div class="form-input-group">
-                <input type="email" id="it-email" class="form-input ja-email-input"
-                       placeholder="you@example.com"
-                       aria-label="Email address for IT job alerts" />
-                <button type="button" id="it-sub-btn" class="btn">Subscribe</button>
+              <div class="ja-sub-check">
+                <input type="checkbox" id="sub-sector-it" checked>
+                <label class="ja-sub-type-label" for="sub-sector-it">IT</label>
               </div>
-              <div id="it-sub-status" class="ja-sub-status" aria-live="polite"></div>
             </div>
+          </div>
 
-            <div class="ja-jobs" id="it-jobs" aria-live="polite" aria-busy="false"></div>
-          </section>
+          <div class="form-input-group">
+            <input type="email" id="ja-email" class="form-input ja-email-input"
+                   placeholder="you@example.com"
+                   aria-label="Email address for job alerts" />
+            <button type="button" id="ja-sub-btn" class="btn">Subscribe</button>
+          </div>
+          <div id="ja-sub-status" class="ja-sub-status" aria-live="polite"></div>
+        </div>
 
-        </div><!-- /.ja-sections -->
+        <!-- ── Job listing panel ──────────────────────────────────────────── -->
+        <div class="ja-panel">
+          <div id="ja-jobs" class="ja-jobs" aria-live="polite" aria-busy="false"></div>
+        </div>
 
       </div>
     </div>
