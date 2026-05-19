@@ -5,3 +5,4 @@ public/js/*-content.js
 .env
 .env.*
 *.local
+.dev.vars
