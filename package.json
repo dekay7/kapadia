@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "render": "node scripts/check-sync.js && node scripts/render.js",
+    "build": "wrangler d1 migrations apply kapadia-jobs --remote --config wrangler.toml && npm run render",
     "dev": "npm run render && wrangler pages dev public --port 8788"
   },
   "devDependencies": {
