@@ -58,8 +58,8 @@ const KEYWORDS = {
     'security', 'cybersecurity', 'cyber security',
     // Cyber-prefixed roles
     'cyber analyst', 'cyber engineer', 'cyber operations', 'cyber defense',
-    // SOC / SIEM
-    'soc ', 'siem',
+    // SIEM
+    'siem',
     // Offensive / testing
     'pentest', 'penetration test', 'red team', 'purple team',
     // Defensive / response
@@ -101,13 +101,13 @@ const KEYWORDS = {
 };
 
 const IT_WORD_RE = /\bit\b/i;
+const SOC_RE = /\bSOC\b/;
 
 function categorize(title) {
   const lower = title.toLowerCase();
   const matches = [];
-  for (const kw of KEYWORDS.cybersecurity) {
-    if (lower.includes(kw)) { matches.push('cybersecurity'); break; }
-  }
+  const cyberMatch = KEYWORDS.cybersecurity.some(kw => lower.includes(kw)) || SOC_RE.test(title);
+  if (cyberMatch) matches.push('cybersecurity');
   let itMatch = KEYWORDS.it.some(kw => lower.includes(kw));
   if (!itMatch && IT_WORD_RE.test(lower)) itMatch = true;
   if (itMatch) matches.push('it');

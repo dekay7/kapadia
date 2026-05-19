@@ -14,8 +14,8 @@ export const KEYWORDS = {
     'security', 'cybersecurity', 'cyber security',
     // Cyber-prefixed roles
     'cyber analyst', 'cyber engineer', 'cyber operations', 'cyber defense',
-    // SOC / SIEM
-    'soc ', 'siem',
+    // SIEM
+    'siem',
     // Offensive / testing
     'pentest', 'penetration test', 'red team', 'purple team',
     // Defensive / response
@@ -58,6 +58,8 @@ export const KEYWORDS = {
 
 // Word-boundary match for bare "it" — avoids false hits on 'bit', 'unit', 'credit', etc.
 const IT_WORD_RE = /\bit\b/i;
+// Case-sensitive: only uppercase SOC matches Security Operations Center, not SoC (System on Chip)
+const SOC_RE = /\bSOC\b/;
 
 /**
  * Returns the set of categories a job belongs to based on its title.
@@ -68,12 +70,8 @@ export function categorize(title) {
   const lower = title.toLowerCase();
   const matches = [];
 
-  for (const kw of KEYWORDS.cybersecurity) {
-    if (lower.includes(kw)) {
-      matches.push('cybersecurity');
-      break;
-    }
-  }
+  const cyberMatch = KEYWORDS.cybersecurity.some(kw => lower.includes(kw)) || SOC_RE.test(title);
+  if (cyberMatch) matches.push('cybersecurity');
 
   let itMatch = KEYWORDS.it.some(kw => lower.includes(kw));
   if (!itMatch && IT_WORD_RE.test(lower)) itMatch = true;
