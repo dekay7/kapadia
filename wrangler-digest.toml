@@ -1,6 +1,7 @@
 name               = "kapadia-job-digest"
 main               = "job-digest.js"
 compatibility_date = "2025-05-10"
+workers_dev        = false
 
 [triggers]
 crons = ["0 */12 * * *"]
