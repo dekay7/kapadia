@@ -31,7 +31,9 @@ export async function onRequest(context) {
     ua.startsWith('curl/') ||
     ua.startsWith('wget/') ||
     ua.startsWith('httpie/') ||
-    ua === 'httpie';
+    ua === 'httpie' ||
+    ua.includes('windowspowershell/') ||
+    ua.includes(' powershell/');
 
   // Match / and /index.html on the apex domain
   const isRoot =

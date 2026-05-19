@@ -20,7 +20,14 @@ function getConnectingIP(request) {
 
 /** Return true if the User-Agent belongs to a CLI HTTP client. */
 function isCliClient(ua) {
-  return ua.startsWith('curl/') || ua.startsWith('wget/') || ua.startsWith('httpie/') || ua === 'httpie';
+  return (
+    ua.startsWith('curl/') ||
+    ua.startsWith('wget/') ||
+    ua.startsWith('httpie/') ||
+    ua === 'httpie' ||
+    ua.includes('windowspowershell/') ||
+    ua.includes(' powershell/')
+  );
 }
 
 export async function onRequest(context) {

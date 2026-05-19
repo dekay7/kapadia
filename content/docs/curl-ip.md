@@ -15,6 +15,12 @@ Get your public IP address directly from your terminal.
 curl kapadia.org
 ```
 
+**Windows (PowerShell):**
+
+```powershell
+irm kapadia.org
+```
+
 ## Forcing IPv4 or IPv6
 
 ```bash
@@ -27,4 +33,4 @@ curl -6 kapadia.org
 
 ## How It Works
 
-When you send a request, a serverless edge function checks your **User-Agent**. If it indicates a CLI tool like `curl`, the function returns the IP address as plain text.
+When you send a request, a serverless edge function checks your **User-Agent**. If it indicates a CLI tool like `curl`, `wget`, or PowerShell's `irm`, the function returns the IP address as plain text.
