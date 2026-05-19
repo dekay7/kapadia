@@ -9,7 +9,7 @@ crons = ["0 0 * * *"]
 [[d1_databases]]
 binding       = "DB"
 database_name = "kapadia-jobs"
-database_id   = "575aec14-e5f5-4a9e-b081-83f092d81713"
+database_id   = "c45d021f-d062-4af2-869e-2fd55ad6a86d"
 
 [observability]
 enabled = true
