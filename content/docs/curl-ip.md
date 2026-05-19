@@ -2,7 +2,6 @@
 title: curl kapadia.org
 breadcrumb: docs / reference
 sidebar_section: Technical Reference
-sidebar_order: 2
 ---
 
 # curl kapadia.org

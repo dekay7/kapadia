@@ -2,7 +2,6 @@
 title: Introduction
 breadcrumb: docs
 sidebar_section: Overview
-sidebar_order: 0
 ---
 
 # Introduction

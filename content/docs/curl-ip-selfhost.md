@@ -2,7 +2,6 @@
 title: Self-Hosting: curl domain → IP
 breadcrumb: docs / reference
 sidebar_section: Technical Reference
-sidebar_order: 3
 sidebar_label: Self-Hosting Curl IP
 ---
 

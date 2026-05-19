@@ -2,8 +2,8 @@
 title: Job Alerts
 breadcrumb: docs / tools
 sidebar_section: Technology Tools
-sidebar_order: 12
-tool_desc: Subscribe to email digests for Cybersecurity and IT job listings from SimplifyJobs.
+sidebar_order: 3
+tool_desc: Subscribe to email digests for Cybersecurity and IT job listings.
 tool_suffix: 2026 cycle.
 ---
 

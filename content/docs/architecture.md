@@ -2,7 +2,6 @@
 title: Architecture
 breadcrumb: docs / reference
 sidebar_section: Technical Reference
-sidebar_order: 1
 ---
 
 # Architecture

@@ -2,7 +2,6 @@
 title: Getting Started
 breadcrumb: docs / site guides
 sidebar_section: Site Guides
-sidebar_order: 0
 ---
 
 # Getting Started

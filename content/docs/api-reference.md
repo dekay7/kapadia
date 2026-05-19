@@ -2,7 +2,6 @@
 title: API Reference
 breadcrumb: docs / reference
 sidebar_section: Technical Reference
-sidebar_order: 0
 ---
 
 # API Reference
