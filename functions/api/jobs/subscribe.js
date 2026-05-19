@@ -54,6 +54,13 @@ export async function onRequestPost(context) {
 
   const now = Math.floor(Date.now() / 1000);
 
+  // Reuse an existing global_unsub_token if this email already has subscriptions,
+  // so all rows for the same address always share one "unsubscribe from all" token.
+  const existingRow = await env.DB.prepare(
+    'SELECT global_unsub_token FROM subscribers WHERE email = ? AND global_unsub_token IS NOT NULL LIMIT 1'
+  ).bind(email).first();
+  const globalUnsubToken = existingRow?.global_unsub_token ?? randomHex();
+
   // Run one conditional INSERT per subscription. The WHERE clause embeds the cap check:
   //   - If this email already has any row in subscribers → EXISTS is true → always allowed
   //     (they're already in the distinct count, so no new slot is consumed).
@@ -63,19 +70,20 @@ export async function onRequestPost(context) {
     const verifyToken = randomHex();
     const unsubToken  = randomHex();
     return env.DB.prepare(
-      `INSERT INTO subscribers (email, category, listing_type, verified, verify_token, unsub_token, created_at)
-       SELECT ?, ?, ?, 0, ?, ?, ?
+      `INSERT INTO subscribers (email, category, listing_type, verified, verify_token, unsub_token, global_unsub_token, created_at)
+       SELECT ?, ?, ?, 0, ?, ?, ?, ?
        WHERE (
          EXISTS (SELECT 1 FROM subscribers WHERE email = ?)
          OR (SELECT COUNT(DISTINCT email) FROM subscribers) < ?
        )
        ON CONFLICT(email, category, listing_type) DO UPDATE SET
-         verify_token = excluded.verify_token,
-         unsub_token  = excluded.unsub_token,
-         verified     = 0,
-         created_at   = excluded.created_at
+         verify_token       = excluded.verify_token,
+         unsub_token        = excluded.unsub_token,
+         global_unsub_token = excluded.global_unsub_token,
+         verified           = 0,
+         created_at         = excluded.created_at
        WHERE subscribers.verified = 0`
-    ).bind(email, category, listing_type, verifyToken, unsubToken, now, email, MAX_SUBSCRIBERS);
+    ).bind(email, category, listing_type, verifyToken, unsubToken, globalUnsubToken, now, email, MAX_SUBSCRIBERS);
   });
 
   const results = await env.DB.batch(stmts);

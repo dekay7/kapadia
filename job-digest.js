@@ -240,7 +240,7 @@ function buildJobRows(newJobs) {
   }).join('');
 }
 
-function buildConsolidatedEmail(sections) {
+function buildConsolidatedEmail(sections, globalUnsubToken) {
   // sections: Array<{ segment, newJobs, unsub_token }>
   const toolUrl = `${SITE}/tools/job-alerts/`;
 
@@ -297,7 +297,7 @@ function buildConsolidatedEmail(sections) {
     ${sectionBlocks}
     <hr style="border:none;border-top:1px solid #2a2926;margin:28px 0 16px;">
     <p style="color:#5a5856;font-size:11px;margin:0;">
-      You are receiving this because you subscribed to job alerts on kapadia.org.
+      ${globalUnsubToken ? `<a href="${esc(`${SITE}/api/jobs/unsubscribe-all?token=${encodeURIComponent(globalUnsubToken)}`)}" style="color:#5a5856;">Unsubscribe from all alerts</a> &middot; ` : ''}You are receiving this because you subscribed to job alerts on kapadia.org.
     </p>
   </div>
 </body>
@@ -306,8 +306,8 @@ function buildConsolidatedEmail(sections) {
   return { subject, html };
 }
 
-async function sendConsolidatedEmail(resendKey, email, sections) {
-  const { subject, html } = buildConsolidatedEmail(sections);
+async function sendConsolidatedEmail(resendKey, email, sections, globalUnsubToken) {
+  const { subject, html } = buildConsolidatedEmail(sections, globalUnsubToken);
   const res = await fetch(RESEND_API, {
     method: 'POST',
     headers: {
@@ -374,7 +374,7 @@ async function runDigest(env) {
   const binds = activeSegments.flatMap(seg => seg.split(':'));
 
   const rows = await DB.prepare(
-    `SELECT email, category, listing_type, unsub_token
+    `SELECT email, category, listing_type, unsub_token, global_unsub_token
      FROM subscribers
      WHERE verified = 1 AND (${placeholders})`
   ).bind(...binds).all();
@@ -383,8 +383,10 @@ async function runDigest(env) {
   const byEmail = new Map();
   for (const row of rows.results) {
     const segment = `${row.category}:${row.listing_type}`;
-    if (!byEmail.has(row.email)) byEmail.set(row.email, []);
-    byEmail.get(row.email).push({ segment, unsub_token: row.unsub_token });
+    if (!byEmail.has(row.email)) {
+      byEmail.set(row.email, { subs: [], globalUnsubToken: row.global_unsub_token });
+    }
+    byEmail.get(row.email).subs.push({ segment, unsub_token: row.unsub_token });
   }
 
   // 6. Cap at MAX_DIGEST_RECIPIENTS and send one consolidated email per user.
@@ -394,7 +396,7 @@ async function runDigest(env) {
 
   const recipients = [...byEmail.entries()].slice(0, MAX_DIGEST_RECIPIENTS);
 
-  for (const [email, subs] of recipients) {
+  for (const [email, { subs, globalUnsubToken }] of recipients) {
     const sections = subs
       .filter(s => newJobsMap[s.segment])
       .map(s => ({ segment: s.segment, newJobs: newJobsMap[s.segment], unsub_token: s.unsub_token }));
@@ -402,7 +404,7 @@ async function runDigest(env) {
     if (sections.length === 0) continue;
 
     try {
-      await sendConsolidatedEmail(RESEND_API_KEY, email, sections);
+      await sendConsolidatedEmail(RESEND_API_KEY, email, sections, globalUnsubToken);
     } catch (err) {
       console.error(`Digest send failed for ${email}:`, err.message);
     }

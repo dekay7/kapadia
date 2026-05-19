@@ -27,6 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const v = params.get('unsubscribed');
       if (v === '1') {
         notice.textContent = 'You have been unsubscribed.';
+      } else if (v === 'all') {
+        notice.textContent = 'You have been unsubscribed from all job alerts.';
       } else {
         notice.textContent = 'Unsubscribe link is invalid.';
       }
