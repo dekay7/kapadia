@@ -24,7 +24,14 @@ export default {
     // share module files, so any changes here must be mirrored there.
     // check-sync.js verifies these functions stay in sync at build time.
     function isCliClient(ua) {
-      return ua.startsWith('curl/') || ua.startsWith('wget/') || ua.startsWith('httpie/') || ua === 'httpie';
+      return (
+        ua.startsWith('curl/') ||
+        ua.startsWith('wget/') ||
+        ua.startsWith('httpie/') ||
+        ua === 'httpie' ||
+        ua.includes('windowspowershell/') ||
+        ua.includes(' powershell/')
+      );
     }
 
     function ipVersion(ip) {
