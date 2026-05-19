@@ -16,6 +16,7 @@
 
 import { parseIPv4, isPrivateIPv4, isPrivateIPv6, isPrivateAddress } from '../lib/ip.js';
 import { cors, corsOptions } from '../lib/cors.js';
+import { enforceRateLimit } from '../lib/rate-limit.js';
 
 const DOH_BASE       = 'https://cloudflare-dns.com/dns-query';
 const SERVICE_UA     = 'kapadia.org-chain/1.0 (https://kapadia.org/tools/chain/)';
@@ -419,7 +420,13 @@ function computeOverallRisk(resources, sensitivity) {
 
 // ── Main request handler ──────────────────────────────────────────────────────
 
-export async function onRequestGet({ request }) {
+export async function onRequestGet(context) {
+  const { request, env } = context;
+
+  const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+  const limited = await enforceRateLimit(env, 'chain', ip);
+  if (limited) return limited;
+
   const { searchParams } = new URL(request.url);
   const rawUrl = searchParams.get('url');
 

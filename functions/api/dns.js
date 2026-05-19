@@ -4,9 +4,15 @@
  */
 
 import { cors, corsOptions } from '../lib/cors.js';
+import { enforceRateLimit } from '../lib/rate-limit.js';
 
 export async function onRequestGet(context) {
-  const { request } = context;
+  const { request, env } = context;
+
+  const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+  const limited = await enforceRateLimit(env, 'dns', ip);
+  if (limited) return limited;
+
   const url = new URL(request.url);
   const rawDomain = url.searchParams.get('domain');
 

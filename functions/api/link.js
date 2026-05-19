@@ -16,6 +16,7 @@
 
 import { parseIPv4, isPrivateIPv4, isPrivateIPv6, isPrivateAddress } from '../lib/ip.js';
 import { cors, corsOptions } from '../lib/cors.js';
+import { enforceRateLimit } from '../lib/rate-limit.js';
 
 const DOH_BASE   = 'https://cloudflare-dns.com/dns-query';
 const RDAP_BASE  = 'https://rdap.org/domain/';
@@ -520,6 +521,10 @@ function computeScore({
 // ── Handlers ──────────────────────────────────────────────────────────────────
 
 export async function onRequestGet(context) {
+  const ip = context.request.headers.get('CF-Connecting-IP') || 'unknown';
+  const limited = await enforceRateLimit(context.env, 'link', ip);
+  if (limited) return limited;
+
   const { searchParams } = new URL(context.request.url);
   const rawUrl = searchParams.get('url');
 

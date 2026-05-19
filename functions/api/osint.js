@@ -12,6 +12,7 @@
 
 import { parseIPv4, isPrivateIPv4, isPrivateIPv6 } from '../lib/ip.js';
 import { cors, corsOptions } from '../lib/cors.js';
+import { enforceRateLimit } from '../lib/rate-limit.js';
 
 const DOH_BASE = 'https://cloudflare-dns.com/dns-query';
 const DEFAULT_HEADERS = { 'User-Agent': 'kapadia.org-osint/1.0 (https://kapadia.org/tools/osint/)' };
@@ -754,7 +755,12 @@ function inferMailProvider(mxRecords) {
 // ── Entry Point ───────────────────────────────────────────────────────────────
 
 export async function onRequestGet(context) {
-  const { request } = context;
+  const { request, env } = context;
+
+  const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+  const limited = await enforceRateLimit(env, 'osint', ip);
+  if (limited) return limited;
+
   const url    = new URL(request.url);
   const mode   = url.searchParams.get('mode')   || '';
   const target = url.searchParams.get('target') || '';

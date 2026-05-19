@@ -92,6 +92,9 @@
 .doc-main {
   padding: 3rem 1.125rem 5rem;
   min-width: 0;
+}
+
+.doc-animate {
   opacity: 0;
   animation: fadeUp var(--anim-reveal);
 }

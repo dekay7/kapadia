@@ -72,9 +72,8 @@ function showDoc(key, pushState = true) {
 
   const main = document.getElementById('doc-main');
   if (main) {
-    main.style.animation = 'none';
-    main.offsetHeight; // reflow
-    main.style.animation = 'fadeUp var(--anim-duration) ease forwards';
+    main.classList.remove('doc-animate');
+    requestAnimationFrame(() => main.classList.add('doc-animate'));
     main.scrollTop = 0;
   }
 

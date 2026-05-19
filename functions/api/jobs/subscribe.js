@@ -5,16 +5,22 @@
  */
 
 import { cors, corsPostOptions } from '../../lib/cors.js';
+import { enforceRateLimit } from '../../lib/rate-limit.js';
 
 const VALID_CATEGORIES = new Set(['cybersecurity', 'it']);
 const VALID_TYPES = new Set(['internship', 'newgrad']);
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const CYCLE_YEAR = 2026;
 const RESEND_API = 'https://api.resend.com/emails';
 const FROM_EMAIL = 'Job Alerts <alerts@kapadia.org>';
 const SITE = 'https://kapadia.org';
 
 export async function onRequestPost(context) {
   const { request, env } = context;
+
+  const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+  const limited = await enforceRateLimit(env, 'subscribe', ip);
+  if (limited) return limited;
 
   let body;
   try {
@@ -59,7 +65,7 @@ export async function onRequestPost(context) {
 
   const verifyUrl = `${SITE}/api/jobs/verify?token=${verifyToken}`;
   const catLabel  = category === 'cybersecurity' ? 'Cybersecurity' : 'IT';
-  const typeLabel = listing_type === 'internship' ? 'Internship 2026' : 'New Grad 2026';
+  const typeLabel = listing_type === 'internship' ? `Internship ${CYCLE_YEAR}` : `New Grad ${CYCLE_YEAR}`;
 
   const emailHtml = buildVerificationEmail(verifyUrl, catLabel, typeLabel);
 
@@ -119,7 +125,7 @@ function buildVerificationEmail(verifyUrl, catLabel, typeLabel) {
       Verify Email
     </a>
     <p style="color:#5a5856;font-size:11px;margin:24px 0 0;">
-      If you did not sign up, ignore this email. The link expires after use.
+      If you did not sign up, ignore this email. This link expires in 24 hours.
     </p>
   </div>
 </body>

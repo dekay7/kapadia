@@ -329,6 +329,9 @@ async function runDigest(env) {
       'SELECT email, unsub_token FROM subscribers WHERE category = ? AND listing_type = ? AND verified = 1'
     ).bind(category, listingType).all();
 
+    // Log before sending so a mid-loop Worker crash produces misses, not duplicates.
+    await logDigest(DB, segment, allActiveIds, newJobs.length);
+
     for (const sub of subscribers.results) {
       try {
         await sendDigestEmail(RESEND_API_KEY, sub, newJobs, segment);
@@ -336,8 +339,6 @@ async function runDigest(env) {
         console.error(`Digest send failed for segment=${segment}:`, err.message);
       }
     }
-
-    await logDigest(DB, segment, allActiveIds, newJobs.length);
   }
 }
 

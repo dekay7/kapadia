@@ -49,9 +49,11 @@ kapadia-site/
 ├── scripts/
 │   ├── check-sync.js  ← Build guard: verifies _middleware.js / http-handler.js parity
 │   └── render.js      ← Build script: Markdown → *-content.js
-├── http-handler.js    ← Standalone Worker for plain-HTTP curl detection
-├── wrangler.toml      ← Pages project config
-├── wrangler-http.toml ← HTTP Worker config
+├── http-handler.js      ← Standalone Worker for plain-HTTP curl detection
+├── job-digest.js        ← Cron Worker: fetches jobs, sends digest emails
+├── wrangler.toml        ← Pages project config
+├── wrangler-http.toml   ← HTTP Worker config
+├── wrangler-digest.toml ← Cron digest Worker config
 └── public/
     ├── _headers       ← Cloudflare response headers (CSP lives here)
     ├── index.html     ← Homepage

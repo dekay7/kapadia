@@ -9,9 +9,17 @@
  *   KEYWORDS and categorize() must be identical between
  *   functions/lib/jobs-filter.js and job-digest.js.
  *
+ * Check 3 — curl-ip self-host template (http-handler):
+ *   ipVersion, getConnectingIP in public/curl-ip/http-handler.js must match
+ *   those in http-handler.js (root).
+ *
+ * Check 4 — curl-ip self-host template (middleware):
+ *   ipVersion, getConnectingIP in public/curl-ip/middleware.js must match
+ *   those in functions/_middleware.js.
+ *
  * Standalone Workers cannot import Pages Function lib files, so these
- * are intentionally duplicated. This script fails the build if either
- * copy drifts from the other.
+ * are intentionally duplicated. This script fails the build if any
+ * copy drifts from the others.
  */
 
 import { readFileSync } from 'fs';
@@ -97,10 +105,46 @@ if (hash(catA) !== hash(catB)) {
   failed = true;
 }
 
+// ── Check 3: curl-ip template — http-handler ─────────────────────────────────
+// public/curl-ip/http-handler.js is a simplified self-hosting template. Its
+// ipVersion and getConnectingIP helpers must stay in sync with the production
+// copy in http-handler.js.
+
+const curlHandlerSrc = readFileSync(join(root, 'public/curl-ip/http-handler.js'), 'utf-8');
+
+for (const name of ['ipVersion', 'getConnectingIP']) {
+  const a = extractFunction(handlerSrc,     name);
+  const b = extractFunction(curlHandlerSrc, name);
+  if (hash(a) !== hash(b)) {
+    console.error(`\n[check-sync] FAIL: "${name}" differs between http-handler.js and public/curl-ip/http-handler.js`);
+    console.error(`  http-handler.js               : ${a}`);
+    console.error(`  public/curl-ip/http-handler.js: ${b}\n`);
+    failed = true;
+  }
+}
+
+// ── Check 4: curl-ip template — middleware ───────────────────────────────────
+// public/curl-ip/middleware.js is a simplified self-hosting template. Its
+// ipVersion and getConnectingIP helpers must stay in sync with the production
+// copy in functions/_middleware.js.
+
+const curlMiddlewareSrc = readFileSync(join(root, 'public/curl-ip/middleware.js'), 'utf-8');
+
+for (const name of ['ipVersion', 'getConnectingIP']) {
+  const a = extractFunction(middlewareSrc,     name);
+  const b = extractFunction(curlMiddlewareSrc, name);
+  if (hash(a) !== hash(b)) {
+    console.error(`\n[check-sync] FAIL: "${name}" differs between functions/_middleware.js and public/curl-ip/middleware.js`);
+    console.error(`  functions/_middleware.js      : ${a}`);
+    console.error(`  public/curl-ip/middleware.js  : ${b}\n`);
+    failed = true;
+  }
+}
+
 // ────────────────────────────────────────────────────────────────────────────
 
 if (failed) {
   process.exit(1);
 } else {
-  console.log('[check-sync] OK: isCliClient, ipVersion, getConnectingIP, KEYWORDS, and categorize are in sync.');
+  console.log('[check-sync] OK: isCliClient, ipVersion, getConnectingIP, KEYWORDS, categorize, and curl-ip templates are in sync.');
 }

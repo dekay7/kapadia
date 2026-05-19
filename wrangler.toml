@@ -8,3 +8,8 @@ database_name  = "kapadia-jobs"
 database_id    = "c45d021f-d062-4af2-869e-2fd55ad6a86d"
 migrations_dir = "migrations"
 
+[[kv_namespaces]]
+binding    = "RATE_LIMIT"
+id         = "798b4fe0c67941bea4b02942f588b696"
+preview_id = "f927940e20204ebdbb9959e12aec95ed"
+
