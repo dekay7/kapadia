@@ -231,10 +231,10 @@ function buildJobRows(newJobs) {
     const dateStr    = fmtEmailDate(job.date_posted);
     const metaLine   = dateStr ? `${esc(dateStr)} &middot; ${locations}` : locations;
     return `<tr>
-      <td style="padding:10px 0;border-bottom:1px solid #2a2926;vertical-align:top;">
-        <div style="font-family:monospace;font-size:12px;color:#8a8884;margin-bottom:3px;">${esc(job.company_name)}${closedBadge}</div>
-        <a href="${applyHref}" style="color:#7ac4a2;font-size:14px;text-decoration:none;">${esc(job.title)}</a>
-        <div style="font-family:monospace;font-size:11px;color:#5a5856;margin-top:3px;">${metaLine}</div>
+      <td class="divider" style="padding:10px 0;border-bottom:1px solid #dedad3;vertical-align:top;">
+        <div class="text-muted" style="font-family:monospace;font-size:12px;color:#595752;margin-bottom:3px;">${esc(job.company_name)}${closedBadge}</div>
+        <a href="${applyHref}" class="link" style="color:#1c7a5a;font-size:14px;text-decoration:none;">${esc(job.title)}</a>
+        <div class="text-faint" style="font-family:monospace;font-size:11px;color:#7a7873;margin-top:3px;">${metaLine}</div>
       </td>
     </tr>`;
   }).join('');
@@ -252,22 +252,22 @@ function buildConsolidatedEmail(sections, globalUnsubToken) {
     const unsubUrl  = `${SITE}/api/jobs/unsubscribe?token=${encodeURIComponent(unsub_token)}`;
 
     const overflowNote = count > MAX_JOBS_PER_EMAIL
-      ? `<p style="color:#8a8884;font-size:12px;margin-top:16px;">…and ${count - MAX_JOBS_PER_EMAIL} more. <a href="${esc(toolUrl)}" style="color:#7ac4a2;">View all on kapadia.org</a></p>`
+      ? `<p class="text-muted" style="color:#595752;font-size:12px;margin-top:16px;">…and ${count - MAX_JOBS_PER_EMAIL} more. <a href="${esc(toolUrl)}" class="link" style="color:#1c7a5a;">View all on kapadia.org</a></p>`
       : '';
 
     return `
     <div style="margin-bottom:32px;">
-      <h2 style="font-size:17px;font-weight:400;color:#e6e3dc;margin:0 0 4px;">
+      <h2 class="section-title" style="font-size:17px;font-weight:400;color:#1a1917;margin:0 0 4px;">
         ${count} New ${esc(catLabel)} ${esc(typeLabel)} Listing${count !== 1 ? 's' : ''}
       </h2>
-      <p style="color:#8a8884;font-size:12px;margin:0 0 14px;">New since last digest &middot; Source: SimplifyJobs</p>
+      <p class="text-muted" style="color:#595752;font-size:12px;margin:0 0 14px;">New since last digest &middot; Source: SimplifyJobs</p>
       <table width="100%" cellpadding="0" cellspacing="0">${buildJobRows(newJobs)}</table>
       ${overflowNote}
-      <p style="color:#5a5856;font-size:11px;margin:12px 0 0;">
-        <a href="${esc(unsubUrl)}" style="color:#5a5856;">Unsubscribe from ${esc(catLabel)} ${esc(typeLabel)} alerts</a>
+      <p class="text-faint" style="color:#7a7873;font-size:11px;margin:12px 0 0;">
+        <a href="${esc(unsubUrl)}" class="text-faint" style="color:#7a7873;">Unsubscribe from ${esc(catLabel)} ${esc(typeLabel)} alerts</a>
       </p>
     </div>`;
-  }).join('<hr style="border:none;border-top:1px solid #2a2926;margin:0 0 28px;">');
+  }).join('<hr class="hr" style="border:none;border-top:1px solid #dedad3;margin:0 0 28px;">');
 
   // Subject: single section uses original format; multiple sections lists them
   let subject;
@@ -288,16 +288,39 @@ function buildConsolidatedEmail(sections, globalUnsubToken) {
 
   const html = `<!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><title>${esc(subject)}</title></head>
-<body style="background:#111110;color:#e6e3dc;font-family:'DM Sans',system-ui,sans-serif;margin:0;padding:24px;">
+<head>
+  <meta charset="UTF-8">
+  <title>${esc(subject)}</title>
+  <style>
+    body { background-color:#f7f5f1 !important; color:#1a1917 !important; }
+    .brand { color:#4a9456 !important; }
+    .section-title { color:#1a1917 !important; }
+    .text-muted { color:#595752 !important; }
+    .text-faint { color:#7a7873 !important; }
+    .link { color:#1c7a5a !important; }
+    .divider { border-bottom-color:#dedad3 !important; }
+    .hr { border-top-color:#dedad3 !important; }
+    @media (prefers-color-scheme: dark) {
+      body { background-color:#111110 !important; color:#e6e3dc !important; }
+      .brand { color:#72d980 !important; }
+      .section-title { color:#e6e3dc !important; }
+      .text-muted { color:#8a8884 !important; }
+      .text-faint { color:#5a5856 !important; }
+      .link { color:#7ac4a2 !important; }
+      .divider { border-bottom-color:#2a2926 !important; }
+      .hr { border-top-color:#2a2926 !important; }
+    }
+  </style>
+</head>
+<body style="background-color:#f7f5f1;color:#1a1917;font-family:'DM Sans',system-ui,sans-serif;margin:0;padding:24px;">
   <div style="max-width:600px;margin:0 auto;">
-    <p style="font-family:monospace;color:#72d980;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;margin:0 0 12px;">
+    <p class="brand" style="font-family:monospace;color:#4a9456;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;margin:0 0 12px;">
       kapadia.org &middot; job alerts
     </p>
     ${sectionBlocks}
-    <hr style="border:none;border-top:1px solid #2a2926;margin:28px 0 16px;">
-    <p style="color:#5a5856;font-size:11px;margin:0;">
-      ${globalUnsubToken ? `<a href="${esc(`${SITE}/api/jobs/unsubscribe-all?token=${encodeURIComponent(globalUnsubToken)}`)}" style="color:#5a5856;">Unsubscribe from all alerts</a> &middot; ` : ''}You are receiving this because you subscribed to job alerts on kapadia.org.
+    <hr class="hr" style="border:none;border-top:1px solid #dedad3;margin:28px 0 16px;">
+    <p class="text-faint" style="color:#7a7873;font-size:11px;margin:0;">
+      ${globalUnsubToken ? `<a href="${esc(`${SITE}/api/jobs/unsubscribe-all?token=${encodeURIComponent(globalUnsubToken)}`)}" class="text-faint" style="color:#7a7873;">Unsubscribe from all alerts</a> &middot; ` : ''}You are receiving this because you subscribed to job alerts on kapadia.org.
     </p>
   </div>
 </body>
