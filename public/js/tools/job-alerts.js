@@ -144,8 +144,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const titleEl = document.createElement('a');
       titleEl.className = 'ja-job-title';
       titleEl.textContent = job.title;
-      if (job.url) {
-        titleEl.href = job.url;
+      const safeJobUrl = (() => {
+        try { const u = new URL(job.url); return (u.protocol === 'https:' || u.protocol === 'http:') ? job.url : null; } catch { return null; }
+      })();
+      if (safeJobUrl) {
+        titleEl.href = safeJobUrl;
         titleEl.target = '_blank';
         titleEl.rel = 'noopener noreferrer';
       } else {
