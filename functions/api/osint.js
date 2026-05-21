@@ -552,7 +552,7 @@ async function checkUsername(username) {
           data: {
             karma:   j.karma,
             created: j.created ? new Date(j.created * 1000).toISOString().substring(0, 10) : null,
-            about:   j.about ? j.about.replace(/<[^>]*>/g, '').substring(0, 200) : null,
+            about:   j.about ? j.about.replace(/<[^>]*>?/g, '').substring(0, 200) : null,
           },
         };
       },

@@ -38,8 +38,21 @@ document.addEventListener('DOMContentLoaded', () => {
       return textarea.innerHTML;
     },
     'html-decode': (str) => {
-      const doc = new DOMParser().parseFromString(str, 'text/html');
-      return doc.body.textContent;
+      const named = {
+        amp: '&', lt: '<', gt: '>', quot: '"', apos: "'",
+        nbsp: ' ', copy: '©', reg: '®', trade: '™',
+        mdash: '—', ndash: '–', hellip: '…',
+        laquo: '«', raquo: '»',
+        ldquo: '“', rdquo: '”', lsquo: '‘', rsquo: '’',
+        euro: '€', pound: '£', yen: '¥', cent: '¢',
+        deg: '°', plusmn: '±', times: '×', divide: '÷',
+        frac14: '¼', frac12: '½', frac34: '¾',
+        hearts: '♥', spades: '♠', clubs: '♣', diams: '♦',
+      };
+      return str
+        .replace(/&#x([0-9a-fA-F]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16)))
+        .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(Number(d)))
+        .replace(/&([a-z]+);/gi, (m, n) => named[n.toLowerCase()] ?? m);
     }
   };
 
