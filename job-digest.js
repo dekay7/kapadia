@@ -226,7 +226,7 @@ function buildJobRows(newJobs) {
         return Array.isArray(locs) && locs.length ? locs.slice(0, 2).map(esc).join(' &middot; ') : 'Remote / Multiple';
       } catch { return 'Remote / Multiple'; }
     })();
-    const applyHref  = job.url ? esc(job.url) : '#';
+    const applyHref  = (() => { try { const u = new URL(job.url); return (u.protocol === 'https:' || u.protocol === 'http:') ? esc(job.url) : '#'; } catch { return '#'; } })();
     const closedBadge = job.active === 1 ? '' : ' <span style="color:#cf6f6f;font-size:11px;">[Closed]</span>';
     const dateStr    = fmtEmailDate(job.date_posted);
     const metaLine   = dateStr ? `${esc(dateStr)} &middot; ${locations}` : locations;
