@@ -45,10 +45,10 @@ export async function onRequestPost(context) {
 
   for (const sub of subscriptions) {
     if (!VALID_CATEGORIES.has(sub?.category)) {
-      return cors({ error: `Invalid category: ${sub?.category}` }, 400);
+      return cors({ error: 'Invalid category.' }, 400);
     }
     if (!VALID_TYPES.has(sub?.listing_type)) {
-      return cors({ error: `Invalid listing_type: ${sub?.listing_type}` }, 400);
+      return cors({ error: 'Invalid listing_type.' }, 400);
     }
   }
 
@@ -131,7 +131,6 @@ export async function onRequestPost(context) {
   });
 
   if (!res.ok) {
-    console.error('Resend error:', res.status);
     return cors({ error: 'Failed to send verification email. Please try again.' }, 502);
   }
 

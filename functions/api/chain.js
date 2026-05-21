@@ -21,7 +21,8 @@ import { enforceRateLimit } from '../lib/rate-limit.js';
 const DOH_BASE       = 'https://cloudflare-dns.com/dns-query';
 const SERVICE_UA     = 'kapadia.org-chain/1.0 (https://kapadia.org/tools/chain/)';
 
-const MAX_RESOURCES  = 20;
+const MAX_RESOURCES    = 20;
+const MAX_HTML_REDIRECTS = 5;
 const HTML_TIMEOUT   = 8000;
 const RES_TIMEOUT    = 6000;
 const DOH_TIMEOUT    = 4000;
@@ -101,6 +102,34 @@ async function ssrfCheck(url) {
     return await checkHostnameSSRF(host);
   }
   return null;
+}
+
+// Fetches target HTML following redirects manually so each hop is SSRF-checked.
+async function fetchHtml(startUrl) {
+  let current = startUrl;
+  for (let hop = 0; hop <= MAX_HTML_REDIRECTS; hop++) {
+    const ssrfErr = await ssrfCheck(current);
+    if (ssrfErr) throw Object.assign(new Error(ssrfErr), { ssrf: true });
+
+    const res = await fetch(current, {
+      signal: AbortSignal.timeout(HTML_TIMEOUT),
+      redirect: 'manual',
+      headers: { 'User-Agent': SERVICE_UA, Accept: 'text/html,*/*' },
+    });
+
+    if (res.status >= 300 && res.status < 400) {
+      const location = res.headers.get('location');
+      await res.body?.cancel();
+      if (!location) throw new Error('Redirect with no Location header.');
+      let next;
+      try { next = new URL(location, current).href; } catch { throw new Error('Invalid redirect URL.'); }
+      current = next;
+      continue;
+    }
+
+    return { res, finalUrl: current };
+  }
+  throw new Error('Too many redirects.');
 }
 
 // ── Streaming body reader with cap ────────────────────────────────────────────
@@ -310,26 +339,26 @@ function checkSri(hashes, sriValue) {
 
 // ── Per-resource risk scoring ─────────────────────────────────────────────────
 
-function scoreResource(sri_present, sri_match, npm_info, consensus_match) {
+// hashes: the result of computeHashes() for the fetched resource content.
+// cdnjs returns exact per-file SRI, so we can verify it directly via checkSri().
+// jsDelivr/unpkg return tarball integrity — not comparable to file hash, ignored here.
+function scoreResource(sri_present, sri_match, npm_info, consensus_match, hashes) {
   let score = 0;
+
+  const cdnMatch = (hashes && npm_info?.integrity && npm_info.integrity_type === 'file')
+    ? checkSri(hashes, npm_info.integrity)
+    : null;
 
   if (!sri_present)                        score += 10;
   if (sri_present && sri_match === false)  score += 40;
-  if (npm_info?.integrity && npm_info.integrity_type === 'file' && !npmIntegrityMatch(npm_info)) score += 20;
+  if (cdnMatch === false)                  score += 20;
   if (consensus_match === false)           score += 25;
-  if (npm_info?.integrity && npm_info.integrity_type === 'file' && npmIntegrityMatch(npm_info) && !sri_present) score -= 5;
+  if (cdnMatch === true && !sri_present)   score -= 5;
 
   if (score >= 40) return { score, level: 'critical' };
   if (score >= 20) return { score, level: 'high' };
   if (score >= 10) return { score, level: 'medium' };
   return { score: Math.max(0, score), level: 'low' };
-}
-
-function npmIntegrityMatch(npm_info) {
-  // cdnjs returns exact file SRI — we can compare directly
-  // npm registry returns tarball integrity — not directly comparable to file hash
-  // Only mark npm_match=true for cdnjs (file-level) since we can verify exactly
-  return false; // resource hash vs tarball hash is apples-to-oranges; always inconclusive for npm
 }
 
 // ── Analyze a single resource ─────────────────────────────────────────────────
@@ -385,7 +414,7 @@ async function analyzeResource(resourceUrl, sriMap) {
   // npm registry cross-reference
   const npmInfo = await npmResolve(resourceUrl);
 
-  const { score, level } = scoreResource(sriPresent, sriMatch, npmInfo, consensusMatch);
+  const { score, level } = scoreResource(sriPresent, sriMatch, npmInfo, consensusMatch, hashes1);
 
   return {
     src: resourceUrl,
@@ -434,33 +463,21 @@ export async function onRequestGet(context) {
     return cors({ error: 'Missing required parameter: url' }, 400);
   }
 
-  // Validate and SSRF-check the target page URL
+  // Validate the target URL scheme and static properties before any network calls.
   const validErr = validateUrl(rawUrl);
   if (validErr) return cors({ error: validErr }, 400);
 
-  const parsedInput = new URL(rawUrl);
-  if (!isIPv4Host(parsedInput.hostname) && !isIPv6Host(parsedInput.hostname)) {
-    const ssrfErr = await checkHostnameSSRF(parsedInput.hostname);
-    if (ssrfErr) return cors({ error: ssrfErr }, 400);
-  }
-
-  // Fetch the target page HTML
+  // Fetch the target page HTML; fetchHtml follows redirects manually and SSRF-checks each hop.
   let html, fetchedUrl;
   let truncated = false;
   try {
-    const res = await fetch(rawUrl, {
-      signal: AbortSignal.timeout(HTML_TIMEOUT),
-      // redirect: 'follow' is intentional here — we want the final HTML, not the redirect chain.
-      // Cloudflare Workers block fetches to private IP ranges at the network level, so redirect
-      // targets that resolve to private IPs are rejected by the platform without further SSRF checks.
-      redirect: 'follow',
-      headers: { 'User-Agent': SERVICE_UA, Accept: 'text/html,*/*' },
-    });
-    fetchedUrl = res.url;
+    const { res, finalUrl } = await fetchHtml(rawUrl);
+    fetchedUrl = finalUrl;
     const { buf, truncated: t } = await readCapped(res, HTML_CAP_BYTES);
     truncated = t;
     html = new TextDecoder('utf-8', { fatal: false }).decode(buf);
-  } catch {
+  } catch (err) {
+    if (err.ssrf) return cors({ error: 'The target URL resolves to a restricted address.' }, 400);
     return cors({ error: 'Failed to fetch the target URL. It may be unreachable or blocking automated requests.' }, 502);
   }
 

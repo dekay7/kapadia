@@ -26,16 +26,35 @@ export async function enforceRateLimit(env, endpoint, ip) {
 
   const [max, ttl] = LIMITS[endpoint] ?? [30, 60];
   const key = `${endpoint}:${ip}`;
+  const now = Math.floor(Date.now() / 1000);
 
-  const current = await env.RATE_LIMIT.get(key);
-  if (current === null) {
-    await env.RATE_LIMIT.put(key, '1', { expirationTtl: ttl });
+  const raw = await env.RATE_LIMIT.get(key);
+
+  // Parse stored {count, until} or treat as a fresh window if absent/stale/old-format.
+  let parsed = null;
+  if (raw !== null) {
+    try {
+      const obj = JSON.parse(raw);
+      if (typeof obj?.count === 'number' && typeof obj?.until === 'number') parsed = obj;
+    } catch { /* old plain-number format — start a fresh window */ }
+  }
+
+  if (!parsed || now > parsed.until) {
+    // First request in a new window
+    await env.RATE_LIMIT.put(key, JSON.stringify({ count: 1, until: now + ttl }), { expirationTtl: ttl });
     return null;
   }
-  const count = parseInt(current, 10);
-  if (count >= max) {
+
+  if (parsed.count >= max) {
     return cors({ error: 'Too many requests. Please wait before trying again.' }, 429);
   }
-  await env.RATE_LIMIT.put(key, String(count + 1), { expirationTtl: ttl });
+
+  // Increment count; preserve the original window expiry so the window stays fixed.
+  const remaining = Math.max(1, parsed.until - now);
+  await env.RATE_LIMIT.put(
+    key,
+    JSON.stringify({ count: parsed.count + 1, until: parsed.until }),
+    { expirationTtl: remaining },
+  );
   return null;
 }

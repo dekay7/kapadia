@@ -790,12 +790,12 @@ export async function onRequestGet(context) {
           }
         }
 
-        // IP format validation — parseIPv4 enforces 0-255 range per octet
+        // IP format validation — parseIPv4 enforces 0-255 range per octet;
+        // IPv6 is validated by attempting to parse it as a URL host bracket.
         const ipv4 = parseIPv4(resolvedIP) !== null;
-        // RFC 5952 / RFC 4291 — accepts full and compressed IPv6 (must contain at least one ':')
-        const ipv6 = /^[0-9a-f:]{2,39}$/i.test(resolvedIP) && resolvedIP.includes(':');
+        const ipv6 = (() => { try { new URL(`http://[${resolvedIP}]`); return true; } catch { return false; } })();
         if (!ipv4 && !ipv6) {
-          return cors({ error: `Invalid IP address format: "${resolvedIP}"` }, 400);
+          return cors({ error: 'Invalid IP address format.' }, 400);
         }
 
         data = await checkIP(resolvedIP, cfData);
