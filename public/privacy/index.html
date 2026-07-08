@@ -6,15 +6,15 @@
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="description"
-    content="Privacy Policy for kapadia.org — Our commitment to data transparency and minimalist infrastructure." />
+    content="Privacy Policy for kapadia.org — my commitment to data transparency and minimalist infrastructure." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://kapadia.org/privacy/" />
   <meta property="og:title" content="Privacy Policy — kapadia.org" />
-  <meta property="og:description" content="Our commitment to data transparency and minimalist infrastructure." />
+  <meta property="og:description" content="My commitment to data transparency and minimalist infrastructure." />
   <meta property="og:site_name" content="kapadia.org" />
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Privacy Policy — kapadia.org" />
-  <meta name="twitter:description" content="Our commitment to data transparency and minimalist infrastructure." />
+  <meta name="twitter:description" content="My commitment to data transparency and minimalist infrastructure." />
   <title>Privacy Policy — kapadia.org</title>
   <link rel="canonical" href="https://kapadia.org/privacy/" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -48,30 +48,39 @@
       <header class="page-header">
         <p class="page-eyebrow">Legal &amp; Ethics</p>
         <h1 class="page-title">Privacy Policy</h1>
-        <p class="privacy-updated">Last Updated: May 13, 2026</p>
+        <p class="privacy-updated">Last Updated: July 7, 2026</p>
       </header>
 
       <div class="privacy-content">
         <section>
           <h2>Philosophy</h2>
           <p>
-            kapadia.org is built on the principle of <strong>minimalist data processing</strong>. We believe that
+            kapadia.org is built on the principle of <strong>minimalist data processing</strong>. I believe that
             privacy is the default state, not an optional feature. This site does not use tracking pixels, marketing
             cookies, or behavioral analytics.
           </p>
         </section>
 
         <section>
-          <h2>Data We Process</h2>
+          <h2>Data I Process</h2>
           <p>
-            We do not collect personal information like names, email addresses, or phone numbers. However, by nature of
-            how the web works, some technical data is processed:
+            I do not collect personal information like names, email addresses, or phone numbers. Many of the tools on
+            this site — the Hash Generator, Payload Encoder, JWT Decoder, EXIF Inspector, Subnet Calculator, and Email
+            Header Analyzer — run entirely in your browser and send nothing at all. For the tools that require the edge
+            network, some technical data is processed by nature of how the web works:
           </p>
           <ul>
             <li>
-              <strong>IP Addresses:</strong> Your IP address is used transiently to provide the networking tools on
-              this site (such as the Speed Test, DNS Analyzer, Browser Fingerprint, and the Homepage Terminal). We do
-              not store these IP addresses in any database.
+              <strong>IP Addresses:</strong> Your IP address is used transiently to power the networking and OSINT
+              tools on this site (such as the Speed Test, DNS Analyzer, Link Inspector, Supply Chain Auditor, OSINT
+              Footprint Checker, Browser Fingerprint, and the homepage terminal). It is never written to a long-term
+              database or used to build a profile.
+            </li>
+            <li>
+              <strong>Rate Limiting:</strong> To prevent abuse, requests to the edge tools are rate-limited per IP
+              address. Your IP is held transiently in an edge key-value store (keyed per tool) purely to count requests
+              within a short rolling window. These entries expire automatically after about a minute and are never used
+              for tracking, analytics, or profiling.
             </li>
             <li>
               <strong>Edge Logs:</strong> This site runs on a global edge network. Standard server logs (which may
@@ -82,42 +91,44 @@
         </section>
 
         <section>
-          <h2>Cookies</h2>
+          <h2>Cookies &amp; Local Storage</h2>
           <p>
-            kapadia.org does not use any non-essential or tracking cookies. Some tools may use local browser storage
-            (sessionStorage) to maintain state while you are using them, but this data never leaves your machine.
+            kapadia.org uses no cookies whatsoever — not for tracking, not for sessions, not for preferences. It also
+            does not use <code>localStorage</code> or <code>sessionStorage</code>. Tools that need to keep state while
+            you work hold it only in memory, and it is discarded the moment you reload or close the tab.
           </p>
         </section>
 
         <section>
           <h2>Third-Party Services</h2>
           <p>
-            To maintain high performance and provide advanced diagnostic features, we use a small number of trusted
-            third-party providers. We distinguish between services that your browser connects to directly and those
-            where your request is <strong>proxied</strong> through our network to protect your identity.
+            To maintain high performance and provide advanced diagnostic features, I rely on a small number of trusted
+            third-party providers. I distinguish between services that your browser connects to directly and those
+            where your request is <strong>proxied</strong> through my edge network to protect your identity.
           </p>
           <h3>Direct Connections (Sees your IP)</h3>
           <ul>
             <li><strong>Google Fonts:</strong> Provides the site's typography.</li>
             <li><strong>Cloudflare:</strong> Powers the global edge network and DDoS protection.</li>
             <li><strong>speed.cloudflare.com:</strong> Used by the Speed Test for ping, download, and upload measurements. Your browser connects to this service directly.</li>
-            <li><strong>cdnjs:</strong> Delivers optimized JavaScript libraries like SparkMD5 and Marked.js.</li>
-            <li><strong>OpenStreetMap:</strong> Provides mapping links for geolocation coordinates.</li>
+            <li><strong>cdnjs:</strong> Delivers the SparkMD5 library used by the Hash Generator, loaded with Subresource Integrity (SRI) so the exact pinned file is verified before it runs.</li>
+            <li><strong>OpenStreetMap:</strong> When you click a geolocation coordinate in the OSINT Footprint Checker or EXIF Inspector, a map link opens in a new tab and your browser connects to OpenStreetMap directly.</li>
           </ul>
 
           <h3>Proxied Investigations (Shields your IP)</h3>
           <p>
-            When using our OSINT and networking tools, your IP address is never shared with the following providers.
-            They only see the address of our edge network:
+            When using the OSINT, networking, and supply chain tools, your IP address is never shared with the following
+            providers. They only see the address of my edge network:
           </p>
           <ul>
             <li><strong>ipwho.is:</strong> Used for IP geolocation and ASN data (primary provider).</li>
             <li><strong>ipapi.co:</strong> Used as a fallback IP geolocation provider if ipwho.is is unavailable.</li>
-            <li><strong>rdap.org:</strong> Used for domain registration lookups (OSINT and Link Inspector).</li>
-            <li><strong>crt.sh:</strong> Used for Certificate Transparency security audits.</li>
+            <li><strong>rdap.org:</strong> Used for domain registration lookups (OSINT Footprint Checker and Link Inspector).</li>
+            <li><strong>crt.sh:</strong> Used for Certificate Transparency lookups to discover subdomains during a domain audit.</li>
             <li><strong>Platform APIs:</strong> Used for username lookups across GitHub, GitLab, Hacker News, Docker Hub, and npm. npm's public CouchDB registry may include an account's email address in its API response if the owner made it public on npm — this tool surfaces it only when present in that public response.</li>
-            <li><strong>Link destinations:</strong> When using the Link Inspector, the URL under investigation is fetched by our edge network to trace redirect chains and surface security signals. Your browser never connects to the target URL directly.</li>
-            <li><strong>Public DNS:</strong> All DNS lookups are performed via Cloudflare (1.1.1.1) via Secure DoH.</li>
+            <li><strong>Link destinations:</strong> When using the Link Inspector, the URL under investigation is fetched by my edge network to trace redirect chains and surface security signals. Your browser never connects to the target URL directly.</li>
+            <li><strong>Page &amp; script sources:</strong> When using the Supply Chain Auditor, the page you submit and its third-party scripts and stylesheets are fetched by my edge network so they can be hashed and integrity-checked. Package integrity is cross-referenced against the npm registry (<code>registry.npmjs.org</code>) and the cdnjs API (<code>api.cdnjs.com</code>). Your browser never connects to the audited page or its resources directly.</li>
+            <li><strong>Public DNS:</strong> All DNS lookups are performed via Cloudflare (1.1.1.1) over Secure DoH.</li>
           </ul>
         </section>
 
