@@ -190,7 +190,10 @@ function initInput(staticCursor) {
   hidden.setAttribute('autocapitalize', 'off');
   hidden.setAttribute('spellcheck', 'false');
   hidden.setAttribute('maxlength', '60');
-  hidden.setAttribute('tabindex', '-1');
+  // Desktop keeps the input out of the tab order. On mobile it must stay
+  // navigable so the keyboard's ▲/▼ form-navigator can locate it between the
+  // two sentinel inputs created below.
+  if (!isMobile()) hidden.setAttribute('tabindex', '-1');
   hidden.setAttribute('aria-label', 'Terminal command input');
   document.body.appendChild(hidden);
 
@@ -246,6 +249,10 @@ function initInput(staticCursor) {
 
   // let-bindings so focus/blur/input closures always reference the active row
   let animating = false;
+  // Menu-completion state for the mobile keyboard's ▲/▼ form-navigator.
+  let cycleMatches = null;
+  let cycleIndex = -1;
+  let navSentinels = [];
   let { typed, cur, ghost } = newRow(true);
 
   // Print all Tab matches as a terminal output line (bash double-Tab style).
@@ -272,6 +279,7 @@ function initInput(staticCursor) {
   // already at the prefix (mirrors bash completion behaviour).
   function handleTab() {
     if (animating) return;
+    cycleMatches = null;
     const val = hidden.value;
     const matches = CMD_KEYS.filter(k => k.startsWith(val) && !k.slice(val.length).includes('/')).sort();
 
@@ -300,6 +308,7 @@ function initInput(staticCursor) {
 
   hidden.addEventListener('input', () => {
     if (animating) { hidden.value = ''; return; }
+    cycleMatches = null; // typing invalidates the ▲/▼ completion cycle
     const safe = sanitizeInput(hidden.value);
     hidden.value = safe;
     typed.textContent = safe;
@@ -310,6 +319,7 @@ function initInput(staticCursor) {
     if (animating) { e.preventDefault(); return; }
     if (e.key === 'Enter') {
       e.preventDefault();
+      cycleMatches = null;
       const raw = hidden.value.trim();
 
       // Freeze the current row: drop cursor, lock in the trimmed text
@@ -358,8 +368,13 @@ function initInput(staticCursor) {
     const row = cur.closest('.term-input-row');
     if (!row) return;
     const rect = row.getBoundingClientRect();
-    hidden.style.top  = (rect.top  + window.scrollY) + 'px';
-    hidden.style.left = (rect.left + window.scrollX) + 'px';
+    const top  = (rect.top  + window.scrollY) + 'px';
+    const left = (rect.left + window.scrollX) + 'px';
+    hidden.style.top  = top;
+    hidden.style.left = left;
+    // Pin the ▲/▼ sentinels to the same spot so focusing them (which iOS
+    // scrolls into view) never jumps the page away from the active row.
+    for (const s of navSentinels) { s.style.top = top; s.style.left = left; }
   }
 
   // Tapping anywhere in the terminal focuses the hidden input (mobile + desktop).
@@ -368,7 +383,59 @@ function initInput(staticCursor) {
     scrollRowIntoView();
   });
 
+  // ── Mobile form-navigator (keyboard ▲/▼) menu-completion ────────────────────
+  // The soft-keyboard's previous/next arrows only surface when the page has
+  // several focusable form fields, and they navigate by moving focus between
+  // fields — they never dispatch a key event. We flank the real input with two
+  // zero-size sentinel inputs: focusing one is our signal to step backward
+  // (prev/▲) or forward (next/▼) through the matching commands (same match set
+  // as Tab), autofill the result, then immediately return focus to the real
+  // input so typing continues uninterrupted and the arrows stay available.
+  function cycleCompletion(direction) {
+    if (animating) return;
+    if (cycleMatches === null) {
+      const base = hidden.value;
+      cycleMatches = CMD_KEYS
+        .filter(k => k.startsWith(base) && !k.slice(base.length).includes('/'))
+        .sort();
+      cycleIndex = -1;
+    }
+    if (cycleMatches.length === 0) { cycleMatches = null; return; }
+    cycleIndex = cycleIndex === -1
+      ? (direction === 1 ? 0 : cycleMatches.length - 1)
+      : (cycleIndex + direction + cycleMatches.length) % cycleMatches.length;
+    const completed = sanitizeInput(cycleMatches[cycleIndex] + '/');
+    hidden.value = completed;
+    typed.textContent = completed;
+    ghost.textContent = '';
+  }
 
+  if (isMobile()) {
+    const makeSentinel = (label) => {
+      const s = document.createElement('input');
+      s.type = 'text';
+      s.className = 'term-hidden-input';
+      s.setAttribute('autocomplete', 'off');
+      s.setAttribute('autocorrect', 'off');
+      s.setAttribute('autocapitalize', 'off');
+      s.setAttribute('spellcheck', 'false');
+      s.setAttribute('aria-label', label);
+      return s;
+    };
+    const prevNav = makeSentinel('Previous navigation option');
+    const nextNav = makeSentinel('Next navigation option');
+    // DOM order (prevNav → hidden → nextNav) defines the ▲/▼ traversal order.
+    hidden.insertAdjacentElement('beforebegin', prevNav);
+    hidden.insertAdjacentElement('afterend', nextNav);
+    navSentinels = [prevNav, nextNav];
+    syncHiddenPos();
+
+    // Return focus after the browser settles the focus change, so the keyboard
+    // (already open) stays up and the accessory arrows recompute around hidden.
+    const returnFocus = () => setTimeout(() => hidden.focus({ preventScroll: true }), 0);
+    prevNav.addEventListener('focus', () => { cycleCompletion(-1); returnFocus(); });
+    nextNav.addEventListener('focus', () => { cycleCompletion(1);  returnFocus(); });
+  }
 }
 
 async function init() {
