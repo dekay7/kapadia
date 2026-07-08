@@ -44,7 +44,9 @@ kapadia-site/
 ├── functions/
 │   ├── _middleware.js        ← curl detection on HTTPS (returns IP for curl/wget)
 │   ├── lib/
-│   │   └── ip.js             ← shared SSRF-prevention helpers; imported by edge Workers
+│   │   ├── ip.js             ← shared SSRF-prevention helpers; imported by edge Workers
+│   │   ├── cors.js           ← shared CORS helpers (cors / corsOptions) for all /api/* handlers
+│   │   └── rate-limit.js     ← KV-backed per-IP fixed-window rate limiter (RATE_LIMIT binding)
 │   └── api/
 │       ├── info.js           ← GET /api/info — visitor data JSON
 │       └── <name>.js         ← GET /api/<name> — one file per edge-side tool
@@ -244,6 +246,7 @@ const COMMANDS = Object.freeze({
 
 - Edge Hosting + Serverless Functions (Cloudflare Pages + Workers)
 - GitHub integration for automatic CI/CD deploys on push to `master`
+- Per-IP, per-endpoint rate limiting on network-facing `/api/*` handlers via a KV namespace bound as `RATE_LIMIT` (degrades to a no-op locally when the binding is absent)
 - Markdown rendered at build time via `scripts/render.js` (uses `marked`)
 - No npm build step for static assets — pure HTML/CSS/JS
 - No tracking, no analytics, no cookies
