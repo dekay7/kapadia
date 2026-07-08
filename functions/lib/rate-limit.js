@@ -18,7 +18,6 @@ const LIMITS = {
   chain:     [5,  60],
   osint:     [5,  60],
   leak:      [30, 60],
-  subscribe: [5,  3600],
 };
 
 export async function enforceRateLimit(env, endpoint, ip) {

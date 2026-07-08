@@ -5,15 +5,11 @@
  *   isCliClient, ipVersion, getConnectingIP must be identical between
  *   functions/_middleware.js and http-handler.js.
  *
- * Check 2 — Job filter:
- *   KEYWORDS and categorize() must be identical between
- *   functions/lib/jobs-filter.js and job-digest.js.
- *
- * Check 3 — curl-ip self-host template (http-handler):
+ * Check 2 — curl-ip self-host template (http-handler):
  *   ipVersion, getConnectingIP in public/curl-ip/http-handler.js must match
  *   those in http-handler.js (root).
  *
- * Check 4 — curl-ip self-host template (middleware):
+ * Check 3 — curl-ip self-host template (middleware):
  *   ipVersion, getConnectingIP in public/curl-ip/middleware.js must match
  *   those in functions/_middleware.js.
  *
@@ -47,23 +43,6 @@ function extractFunction(src, name) {
   throw new Error(`Could not extract function "${name}"`);
 }
 
-function extractConst(src, name) {
-  // Match `const name = ...` up to the first semicolon at depth 0
-  const marker = `const ${name} =`;
-  const start = src.indexOf(marker);
-  if (start === -1) throw new Error(`Const "${name}" not found`);
-  let depth = 0;
-  let i = start;
-  while (i < src.length) {
-    const ch = src[i];
-    if (ch === '{' || ch === '[') depth++;
-    else if (ch === '}' || ch === ']') depth--;
-    else if (ch === ';' && depth === 0) return src.slice(start, i + 1).replace(/\s+/g, ' ').trim();
-    i++;
-  }
-  throw new Error(`Could not extract const "${name}"`);
-}
-
 function hash(str) {
   return createHash('sha256').update(str).digest('hex');
 }
@@ -86,26 +65,7 @@ for (const name of ['isCliClient', 'ipVersion', 'getConnectingIP']) {
   }
 }
 
-// ── Check 2: Job filter ──────────────────────────────────────────────────────
-
-const filterSrc = readFileSync(join(root, 'functions/lib/jobs-filter.js'), 'utf-8');
-const digestSrc = readFileSync(join(root, 'job-digest.js'),                 'utf-8');
-
-const kwA = extractConst(filterSrc, 'KEYWORDS');
-const kwB = extractConst(digestSrc, 'KEYWORDS');
-if (hash(kwA) !== hash(kwB)) {
-  console.error('\n[check-sync] FAIL: KEYWORDS differs between functions/lib/jobs-filter.js and job-digest.js');
-  failed = true;
-}
-
-const catA = extractFunction(filterSrc, 'categorize');
-const catB = extractFunction(digestSrc, 'categorize');
-if (hash(catA) !== hash(catB)) {
-  console.error('\n[check-sync] FAIL: categorize() differs between functions/lib/jobs-filter.js and job-digest.js');
-  failed = true;
-}
-
-// ── Check 3: curl-ip template — http-handler ─────────────────────────────────
+// ── Check 2: curl-ip template — http-handler ─────────────────────────────────
 // public/curl-ip/http-handler.js is a simplified self-hosting template. Its
 // ipVersion and getConnectingIP helpers must stay in sync with the production
 // copy in http-handler.js.
@@ -123,7 +83,7 @@ for (const name of ['ipVersion', 'getConnectingIP']) {
   }
 }
 
-// ── Check 4: curl-ip template — middleware ───────────────────────────────────
+// ── Check 3: curl-ip template — middleware ───────────────────────────────────
 // public/curl-ip/middleware.js is a simplified self-hosting template. Its
 // ipVersion and getConnectingIP helpers must stay in sync with the production
 // copy in functions/_middleware.js.
@@ -146,5 +106,5 @@ for (const name of ['ipVersion', 'getConnectingIP']) {
 if (failed) {
   process.exit(1);
 } else {
-  console.log('[check-sync] OK: isCliClient, ipVersion, getConnectingIP, KEYWORDS, categorize, and curl-ip templates are in sync.');
+  console.log('[check-sync] OK: isCliClient, ipVersion, getConnectingIP, and curl-ip templates are in sync.');
 }

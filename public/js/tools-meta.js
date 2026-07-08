@@ -22,73 +22,66 @@ export const toolsMeta = [
     "order": 2
   },
   {
-    "slug": "osint",
-    "title": "OSINT Footprint Checker",
-    "desc": "Look up IPs, domains, usernames, and emails across public sources.",
+    "slug": "chain",
+    "title": "Supply Chain Auditor",
+    "desc": "Audit third-party scripts on any page for SRI integrity and supply chain risk.",
     "suffix": "Self-hosted.",
-    "order": 3
-  },
-  {
-    "slug": "exif",
-    "title": "EXIF Inspector",
-    "desc": "Extract and strip photo metadata from images.",
-    "suffix": "No data sent.",
-    "order": 4
-  },
-  {
-    "slug": "leak",
-    "title": "Browser Fingerprint",
-    "desc": "See what headers, TLS ciphers, and signals your browser is leaking.",
-    "suffix": "Self-hosted.",
-    "order": 5
-  },
-  {
-    "slug": "hash",
-    "title": "Hash Generator",
-    "desc": "Hash text with MD5, SHA-1, SHA-256, or SHA-512.",
-    "suffix": "No data sent.",
-    "order": 6
+    "order": 99
   },
   {
     "slug": "dns",
     "title": "DNS Analyzer",
     "desc": "Query DNS records over HTTPS — A, AAAA, MX, TXT, CNAME.",
     "suffix": "Self-hosted.",
-    "order": 7
-  },
-  {
-    "slug": "jwt",
-    "title": "JWT Decoder",
-    "desc": "Decode and inspect JWTs.",
-    "suffix": "No data sent.",
-    "order": 8
+    "order": 99
   },
   {
     "slug": "encode",
     "title": "Payload Encoder",
     "desc": "Encode and decode Base64, URL, and Hex strings.",
     "suffix": "No data sent.",
-    "order": 9
+    "order": 99
+  },
+  {
+    "slug": "exif",
+    "title": "EXIF Inspector",
+    "desc": "Extract and strip photo metadata from images.",
+    "suffix": "No data sent.",
+    "order": 99
+  },
+  {
+    "slug": "hash",
+    "title": "Hash Generator",
+    "desc": "Hash text with MD5, SHA-1, SHA-256, or SHA-512.",
+    "suffix": "No data sent.",
+    "order": 99
+  },
+  {
+    "slug": "jwt",
+    "title": "JWT Decoder",
+    "desc": "Decode and inspect JWTs.",
+    "suffix": "No data sent.",
+    "order": 99
+  },
+  {
+    "slug": "leak",
+    "title": "Browser Fingerprint",
+    "desc": "See what headers, TLS ciphers, and signals your browser is leaking.",
+    "suffix": "Self-hosted.",
+    "order": 99
+  },
+  {
+    "slug": "osint",
+    "title": "OSINT Footprint Checker",
+    "desc": "Look up IPs, domains, usernames, and emails across public sources.",
+    "suffix": "Self-hosted.",
+    "order": 99
   },
   {
     "slug": "subnet",
     "title": "Subnet Calculator",
     "desc": "Calculate network boundaries and host ranges from any IP/CIDR.",
     "suffix": "No data sent.",
-    "order": 10
-  },
-  {
-    "slug": "chain",
-    "title": "Supply Chain Auditor",
-    "desc": "Audit third-party scripts on any page for SRI integrity and supply chain risk.",
-    "suffix": "Self-hosted.",
-    "order": 11
-  },
-  {
-    "slug": "job-alerts",
-    "title": "Job Alerts",
-    "desc": "Subscribe to email digests for Cybersecurity and IT job listings from SimplifyJobs.",
-    "suffix": "2026 cycle.",
-    "order": 12
+    "order": 99
   }
 ];
