@@ -424,9 +424,15 @@ function initInput(staticCursor) {
     };
     const prevNav = makeSentinel('Previous navigation option');
     const nextNav = makeSentinel('Next navigation option');
-    // DOM order (prevNav → hidden → nextNav) defines the ▲/▼ traversal order.
-    hidden.insertAdjacentElement('beforebegin', prevNav);
-    hidden.insertAdjacentElement('afterend', nextNav);
+    // iOS only *enables* the keyboard's ◀ ▶ field-navigation arrows when the
+    // focused control shares a <form> with sibling controls; ungrouped fields
+    // leave the arrows greyed out. Group all three, in DOM order
+    // (prevNav → hidden → nextNav), which also defines the traversal order.
+    // The form never submits (CSP form-action 'none'); Enter is handled in JS.
+    const form = document.createElement('form');
+    form.addEventListener('submit', (e) => e.preventDefault());
+    form.append(prevNav, hidden, nextNav);
+    document.body.appendChild(form);
     navSentinels = [prevNav, nextNav];
     syncHiddenPos();
 
