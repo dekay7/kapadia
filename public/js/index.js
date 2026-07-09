@@ -368,13 +368,20 @@ function initInput(staticCursor) {
     const row = cur.closest('.term-input-row');
     if (!row) return;
     const rect = row.getBoundingClientRect();
-    const top  = (rect.top  + window.scrollY) + 'px';
-    const left = (rect.left + window.scrollX) + 'px';
-    hidden.style.top  = top;
-    hidden.style.left = left;
-    // Pin the ▲/▼ sentinels to the same spot so focusing them (which iOS
-    // scrolls into view) never jumps the page away from the active row.
-    for (const s of navSentinels) { s.style.top = top; s.style.left = left; }
+    const top  = rect.top  + window.scrollY;
+    const left = rect.left + window.scrollX;
+    hidden.style.top  = top + 'px';
+    hidden.style.left = left + 'px';
+    // Keep the sentinels near the active row (so focusing them never jumps the
+    // page) but at distinct heights: prev just above, next just below. iOS
+    // orders the ◀ ▶ arrows partly by on-screen geometry, so identical
+    // coordinates left the ▲ (prev) arrow disabled. navSentinels = [prev, next].
+    if (navSentinels.length === 2) {
+      navSentinels[0].style.left = left + 'px';
+      navSentinels[0].style.top  = (top - 22) + 'px';
+      navSentinels[1].style.left = left + 'px';
+      navSentinels[1].style.top  = (top + 22) + 'px';
+    }
   }
 
   // Tapping anywhere in the terminal focuses the hidden input (mobile + desktop).
