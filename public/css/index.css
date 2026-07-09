@@ -108,6 +108,28 @@
   color: transparent;
 }
 
+/* Sentinel inputs that flank the real command input so the mobile keyboard's
+   ◀ ▶ field-navigation arrows have somewhere to step to. Unlike the hidden
+   input, these must stay "visible" to iOS's navigation heuristic — so they use
+   transparent colors (not opacity:0) and keep pointer-events enabled, while a
+   1px footprint and transparent caret keep them invisible and un-tappable in
+   practice. font-size >=16px prevents iOS from zooming when they gain focus. */
+.term-nav-sentinel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1.25rem;
+  margin: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: transparent;
+  caret-color: transparent;
+  font-size: 1rem;
+}
+
 /* Input prompt row */
 .term-input-row {
   display: flex;

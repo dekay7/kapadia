@@ -414,7 +414,7 @@ function initInput(staticCursor) {
     const makeSentinel = (label) => {
       const s = document.createElement('input');
       s.type = 'text';
-      s.className = 'term-hidden-input';
+      s.className = 'term-nav-sentinel';
       s.setAttribute('autocomplete', 'off');
       s.setAttribute('autocorrect', 'off');
       s.setAttribute('autocapitalize', 'off');
