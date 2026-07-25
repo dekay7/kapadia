@@ -491,11 +491,15 @@ footer {
 
   0%,
   100% {
-    opacity: 1;
+    background: var(--term-cursor);
+    color: var(--bg-terminal);
+    box-shadow: 0 0 0.5rem var(--term-cursor);
   }
 
   50% {
-    opacity: 0;
+    background: transparent;
+    color: var(--term-cmd);
+    box-shadow: none;
   }
 }
 

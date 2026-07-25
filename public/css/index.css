@@ -78,15 +78,42 @@
   border-bottom: var(--border-w) solid var(--term-link);
 }
 
+/* Terminal block cursor.
+   Default form wraps the single character sitting under the caret and inverts
+   it (bg/text swap) — an authentic block cursor that stays baseline-aligned
+   with the surrounding text. The blink animation toggles the highlight, not
+   opacity, so the character underneath stays readable while the block pulses. */
 .cursor {
+  display: inline;
+  color: var(--bg-terminal);
+  background: var(--term-cursor);
+  padding: 0.0625rem 0;
+  border-radius: 0.0625rem;
+  box-shadow: 0 0 0.5rem var(--term-cursor);
+  animation: blink 1s step-end infinite;
+  white-space: pre;
+}
+
+/* End-of-line / no character under the caret: render an explicit block so the
+   cursor is still visible. Matches the original standalone-block dimensions. */
+.cursor.cursor-empty {
   display: inline-block;
   width: 0.5rem;
   height: 0.9375rem;
-  background: var(--term-cursor);
+  line-height: 0.9375rem;
+  padding: 0;
   vertical-align: middle;
   margin-left: 0.125rem;
-  animation: blink 1s step-end infinite;
-  box-shadow: 0 0 0.5rem var(--term-cursor);
+}
+
+/* Unfocused terminal: a hollow, static caret. Keeping the element in flow (vs
+   hiding it) preserves the row layout so the ghost text never collapses into
+   the typed text. */
+.cursor.cursor-blur {
+  animation: none;
+  background: transparent;
+  color: var(--term-cmd);
+  box-shadow: inset 0 0 0 var(--border-w) var(--term-cursor);
 }
 
 /* ── Terminal Input ────────────────────────────────────────────────────────── */
@@ -142,17 +169,12 @@
   white-space: pre;
 }
 
-/* Ghost/autocomplete suggestion — inline hint overlapping the cursor.
-   Negative margin pulls the text left by the cursor's width so the
-   first ghost character starts at the cursor's left edge.
+/* Ghost/autocomplete suggestion — dim inline hint trailing the cursor.
    color-mix() derives the dim color from --term-cmd (which shared.css
    already adjusts per theme), so no separate dark-mode override is needed. */
 .term-input-ghost {
   color: color-mix(in srgb, var(--term-cmd) 28%, transparent);
   white-space: pre;
-}
-.term-input-ghost:not(:empty) {
-  margin-left: -0.5rem; /* = .cursor width; aligns ghost under cursor */
 }
 
 .term-line.err { color: var(--color-error); }

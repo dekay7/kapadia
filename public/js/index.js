@@ -145,7 +145,7 @@ async function runTerminal({ ipv4, ipv6, geo }) {
   ];
 
   const cursorEl = document.createElement('span');
-  cursorEl.className = 'cursor';
+  cursorEl.className = 'cursor cursor-empty';
   cursorEl.style.animation = 'none';
   termBody.appendChild(cursorEl);
 
@@ -205,6 +205,12 @@ function initInput(staticCursor) {
   const PROMPT_TEXT = '$ cd ~/';
   const PROMPT_ANIMATE = 'cd ~/';
 
+  // Row anatomy: [prompt][pre][cursor][post][ghost]
+  //   pre    — typed text before the caret
+  //   cursor — block cursor; wraps the character under the caret (or an empty
+  //            block at end-of-line)
+  //   post   — typed text after the caret
+  //   ghost  — dim autocomplete suggestion (only shown when caret is at end)
   function newRow(animate = false) {
     const row = document.createElement('div');
     row.className = 'term-line term-input-row visible';
@@ -212,16 +218,19 @@ function initInput(staticCursor) {
     const prompt = document.createElement('span');
     prompt.className = 'term-input-prompt';
 
-    const typed = document.createElement('span');
-    typed.className = 'term-input-typed';
+    const pre = document.createElement('span');
+    pre.className = 'term-input-typed';
 
     const cur = document.createElement('span');
-    cur.className = 'cursor';
+    cur.className = 'cursor cursor-empty';
+
+    const post = document.createElement('span');
+    post.className = 'term-input-typed';
 
     const ghost = document.createElement('span');
     ghost.className = 'term-input-ghost';
 
-    row.append(prompt, typed, cur, ghost);
+    row.append(prompt, pre, cur, post, ghost);
     termBody.insertBefore(row, anchor);
 
     if (animate) {
@@ -234,7 +243,8 @@ function initInput(staticCursor) {
         if (i >= PROMPT_ANIMATE.length) {
           animating = false;
           hidden.value = '';
-          cur.style.display = document.activeElement === hidden ? '' : 'none';
+          cur.style.display = '';
+          render();
         } else {
           setTimeout(typeNext, 60 + Math.random() * 40);
         }
@@ -244,16 +254,62 @@ function initInput(staticCursor) {
       prompt.textContent = PROMPT_TEXT;
     }
 
-    return { typed, cur, ghost };
+    return { pre, cur, post, ghost };
   }
 
-  // let-bindings so focus/blur/input closures always reference the active row
+  // let-bindings so all closures always reference the active row's spans
   let animating = false;
   // Menu-completion state for the mobile keyboard's ▲/▼ form-navigator.
   let cycleMatches = null;
   let cycleIndex = -1;
   let navSentinels = [];
-  let { typed, cur, ghost } = newRow(true);
+  let pre, cur, post, ghost;
+  ({ pre, cur, post, ghost } = newRow(true));
+
+  // Mirror the hidden <input>'s value + caret position onto the visible row.
+  // The native input owns all caret logic (typing, arrows, Home/End, deletion,
+  // selection), so reading selectionStart here is what lets the block cursor
+  // track the caret. Called after every value/caret/focus change.
+  function render() {
+    if (animating) return;
+    const val = hidden.value;
+    let pos = hidden.selectionStart;
+    if (pos == null || pos > val.length) pos = val.length;
+    const focused = document.activeElement === hidden;
+
+    const before = val.slice(0, pos);
+    const after = val.slice(pos);
+
+    let caretChar, restAfter, ghostText;
+    if (after.length > 0) {
+      // Caret sits on a real character — the block wraps and inverts it.
+      caretChar = after[0];
+      restAfter = after.slice(1);
+      ghostText = '';
+    } else {
+      // Caret at end — empty block, completion suggestion trails it.
+      caretChar = '';
+      restAfter = '';
+      ghostText = getCompletion(val);
+    }
+
+    pre.textContent = before;
+    cur.textContent = caretChar;
+    post.textContent = restAfter;
+    ghost.textContent = ghostText;
+
+    cur.classList.toggle('cursor-empty', caretChar === '');
+    cur.classList.toggle('cursor-blur', !focused);
+  }
+
+  // Set the input value programmatically (Tab/menu completion), park the caret
+  // at the end, and repaint.
+  function setValue(v) {
+    hidden.value = v;
+    const end = v.length;
+    try { hidden.setSelectionRange(end, end); } catch (_) { /* detached */ }
+    render();
+  }
 
   // Print all Tab matches as a terminal output line (bash double-Tab style).
   // Freezes the current prompt row, prints the match list, then opens a fresh
@@ -267,10 +323,8 @@ function initInput(staticCursor) {
     termBody.insertBefore(line, anchor);
 
     const savedVal = hidden.value;
-    ({ typed, cur, ghost } = newRow());
-    hidden.value = savedVal;
-    typed.textContent = savedVal;
-    ghost.textContent = getCompletion(savedVal);
+    ({ pre, cur, post, ghost } = newRow());
+    setValue(savedVal);
 
     requestAnimationFrame(scrollRowIntoView);
   }
@@ -286,19 +340,14 @@ function initInput(staticCursor) {
     if (matches.length === 0) return;
 
     if (matches.length === 1) {
-      const completed = sanitizeInput(matches[0] + '/');
-      hidden.value = completed;
-      typed.textContent = completed;
-      ghost.textContent = '';
+      setValue(sanitizeInput(matches[0] + '/'));
       return;
     }
 
     const prefix = commonPrefix(matches);
     if (prefix.length > val.length) {
       const completed = CMD_KEYS.includes(prefix) ? prefix + '/' : prefix;
-      hidden.value = completed;
-      typed.textContent = completed;
-      ghost.textContent = getCompletion(completed);
+      setValue(sanitizeInput(completed));
       return;
     }
 
@@ -310,9 +359,10 @@ function initInput(staticCursor) {
     if (animating) { hidden.value = ''; return; }
     cycleMatches = null; // typing invalidates the ▲/▼ completion cycle
     const safe = sanitizeInput(hidden.value);
-    hidden.value = safe;
-    typed.textContent = safe;
-    ghost.textContent = getCompletion(safe);
+    // Only reassign when sanitisation changed something, otherwise the caret
+    // would jump to the end mid-edit.
+    if (safe !== hidden.value) hidden.value = safe;
+    render();
   });
 
   hidden.addEventListener('keydown', (e) => {
@@ -324,26 +374,39 @@ function initInput(staticCursor) {
 
       // Freeze the current row: drop cursor, lock in the trimmed text
       cur.remove();
-      typed.textContent = raw;
+      pre.textContent = raw;
+      post.textContent = '';
       ghost.textContent = '';
       hidden.value = '';
 
       const cont = executeCommand(raw, anchor);
 
       if (cont !== false) {
-        ({ typed, cur, ghost } = newRow());
+        ({ pre, cur, post, ghost } = newRow());
+        render();
       }
 
       requestAnimationFrame(scrollRowIntoView);
     } else if (e.key === 'Tab') {
       e.preventDefault();
       handleTab();
+    } else {
+      // Arrows, Home/End, Backspace/Delete etc. move or mutate the caret via
+      // the native input's default action, which runs after keydown. Repaint on
+      // the next frame so the block cursor tracks the new caret position (rAF
+      // also keeps up with held-key auto-repeat).
+      requestAnimationFrame(render);
     }
   });
 
-  // Closures capture the let-binding, so they always act on the active cursor
-  hidden.addEventListener('focus', () => { cur.style.display = ''; syncHiddenPos(); });
-  hidden.addEventListener('blur',  () => { cur.style.display = 'none'; });
+  // keyup catches the final resting position after held caret-movement keys.
+  hidden.addEventListener('keyup', render);
+
+  // Closures capture the let-binding, so they always act on the active row.
+  // render() swaps the cursor between its live (blinking) and hollow (blurred)
+  // forms while keeping it in flow, so the ghost text never collapses.
+  hidden.addEventListener('focus', () => { render(); syncHiddenPos(); });
+  hidden.addEventListener('blur',  () => { render(); });
 
   // Desktop: grab focus immediately after animation without scrolling the page
   if (!isMobile()) hidden.focus({ preventScroll: true });
@@ -411,10 +474,7 @@ function initInput(staticCursor) {
     cycleIndex = cycleIndex === -1
       ? (direction === 1 ? 0 : cycleMatches.length - 1)
       : (cycleIndex + direction + cycleMatches.length) % cycleMatches.length;
-    const completed = sanitizeInput(cycleMatches[cycleIndex] + '/');
-    hidden.value = completed;
-    typed.textContent = completed;
-    ghost.textContent = '';
+    setValue(sanitizeInput(cycleMatches[cycleIndex] + '/'));
   }
 
   if (isMobile()) {
