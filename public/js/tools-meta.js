@@ -22,6 +22,13 @@ export const toolsMeta = [
     "order": 2
   },
   {
+    "slug": "quarantine",
+    "title": "Command Quarantine",
+    "desc": "Explain risky shell commands before you run them.",
+    "suffix": "No data sent.",
+    "order": 30
+  },
+  {
     "slug": "chain",
     "title": "Supply Chain Auditor",
     "desc": "Audit third-party scripts on any page for SRI integrity and supply chain risk.",

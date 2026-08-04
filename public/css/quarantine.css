@@ -1,0 +1,102 @@
+.quarantine-input {
+  min-height: 12rem;
+}
+
+.quarantine-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.quarantine-status {
+  min-height: 1.5rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  margin: 1rem 0;
+}
+
+.quarantine-results {
+  border-top: var(--border-w) solid var(--border);
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+}
+
+.quarantine-summary,
+.quarantine-finding,
+.quarantine-limitations {
+  border: var(--border-w) solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 1rem;
+  padding: 1rem;
+}
+
+.quarantine-summary h2,
+.quarantine-finding h3,
+.quarantine-results h2 {
+  color: var(--text);
+  font-family: var(--font-display);
+  font-weight: 400;
+  margin: 0 0 0.5rem;
+}
+
+.quarantine-summary p,
+.quarantine-finding p,
+.quarantine-results li {
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  line-height: 1.55;
+}
+
+.quarantine-stage-list,
+.quarantine-guidance,
+.quarantine-limitations ul {
+  padding-left: 1.25rem;
+}
+
+.quarantine-stage-list {
+  display: flex;
+  gap: 0.5rem;
+  list-style-position: inside;
+  overflow-x: auto;
+}
+
+.quarantine-stage-list li {
+  border: var(--border-w) solid var(--border);
+  border-radius: var(--radius);
+  flex: 0 0 11rem;
+  padding: 0.75rem;
+}
+
+.quarantine-evidence {
+  background: var(--bg-code);
+  color: var(--doc-code-text);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  overflow-wrap: anywhere;
+  padding: 0.5rem;
+}
+
+.quarantine-meta {
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+}
+
+.quarantine-copy {
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 40rem) {
+  .quarantine-actions .btn {
+    width: 100%;
+  }
+
+  .quarantine-stage-list {
+    display: block;
+  }
+
+  .quarantine-stage-list li {
+    margin-bottom: 0.5rem;
+  }
+}
