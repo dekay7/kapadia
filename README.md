@@ -18,6 +18,7 @@ Personal research hub and digital laboratory focused on network diagnostics, sec
 - **JWT Decoder** — decode and inspect JSON Web Tokens; 100% offline
 - **Payload Encoder** — Base64, URL, Hex, and HTML encoding/decoding; no server involved
 - **Subnet Calculator** — CIDR subnet math; fully client-side
+- **Command Quarantine** — maps potentially risky POSIX shell command flows before execution; 100% client-side
 - **Supply Chain Auditor** — audits third-party scripts on any page; computes SHA-256/512 hashes of every external resource, validates SRI attributes, cross-references npm registry for authoritative hashes, and detects non-deterministic CDN responses (a tamper signal); all fetching happens on the edge
 - **Docs** — Markdown-authored documentation, server-side rendered at build time
 - **Writes** — technical essays rendered from Markdown
@@ -70,6 +71,8 @@ kapadia-site/
     ├── curl-ip/              ← self-hosting reference served at /curl-ip/
     ├── tools/                ← web-based diagnostic tools
     │   ├── index.html        ← tools directory page (cards pre-rendered at build time by render.js)
+    │   ├── quarantine/       ← client-side POSIX shell command analyzer
+    │   │   └── index.html
     │   └── <name>/
     │       └── index.html    ← one per tool
     ├── docs/

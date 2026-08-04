@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="Inspect POSIX-style shell commands locally for risky data flows without running them." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://kapadia.org/tools/quarantine/" />
+  <meta property="og:title" content="Command Quarantine — Tools — kapadia.org" />
+  <meta property="og:description" content="Explain risky shell command flows before you run them, entirely in your browser." />
+  <meta property="og:site_name" content="kapadia.org" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Command Quarantine — Tools — kapadia.org" />
+  <meta name="twitter:description" content="Inspect POSIX-style shell commands locally before you run them." />
+  <title>Command Quarantine — kapadia.org</title>
+  <link rel="canonical" href="https://kapadia.org/tools/quarantine/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/shared.css" />
+  <link rel="stylesheet" href="/css/tools.css" />
+  <link rel="stylesheet" href="/css/quarantine.css" />
+</head>
+<body>
+  <noscript><div class="noscript-msg">This tool requires JavaScript to function.<br>Enable JS and reload to use it.</div></noscript>
+  <nav aria-label="Main Navigation"><div class="nav-inner"><a href="/" class="nav-logo" aria-label="kapadia.org homepage">kapadia<span>.org</span></a><ul class="nav-links"><li><a href="/">~</a></li><li><a href="/tools/" aria-current="page">tools</a></li><li><a href="/docs/">docs</a></li><li><a href="/writes/">writes</a></li><li><a href="/about/">about</a></li></ul></div></nav>
+  <main><div class="container tools-page"><div class="tool-container">
+    <header class="tool-header"><h1>Command Quarantine</h1><p class="tool-desc">Map potentially risky POSIX shell data flows before you run a command.</p></header>
+    <div class="tool-disclaimer"><strong>Privacy:</strong> Your command is processed locally, never executed, transmitted, or stored. It stays in the current tab. It may contain secrets: remove them when sharing an analysis report.</div>
+    <div class="form-group"><label for="quarantine-input" class="form-label">POSIX-style shell snippet <span id="quarantine-count">(0 / 32 KiB)</span></label><textarea id="quarantine-input" class="form-textarea quarantine-input" maxlength="32768" autocomplete="off" spellcheck="false" placeholder="Paste a shell command to inspect. It will not run."></textarea></div>
+    <div class="quarantine-actions"><button id="quarantine-analyze" class="btn" type="button">Analyze</button><button id="quarantine-clear" class="btn btn-secondary" type="button">Clear</button><button id="quarantine-example" class="btn btn-secondary" type="button">Load Example</button></div>
+    <p id="quarantine-status" class="quarantine-status" role="status" aria-live="polite"></p>
+    <section id="quarantine-results" class="quarantine-results u-hidden" tabindex="-1" aria-label="Command analysis results"></section>
+  </div></div></main>
+  <footer role="contentinfo" aria-label="Site Footer"><div class="footer-inner"><span class="footer-left">© kapadia.org</span><nav class="footer-right" aria-label="Footer Navigation"><a href="/">~</a><a href="/tools/" aria-current="page">tools</a><a href="/docs/">docs</a><a href="/writes/">writes</a><a href="/about/">about</a><a href="/privacy/">privacy</a><a href="https://github.com/dekay7/kapadia" target="_blank" rel="noopener noreferrer">github</a></nav></div></footer>
+  <script type="module" src="/js/tools/quarantine.js"></script>
+</body>
+</html>
