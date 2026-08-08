@@ -1,323 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="description" content="Darsh Kapadia — CV" />
-  <title>CV — kapadia.org</title>
-  <!-- Open Graph -->
+  <meta name="description" content="Darsh Kapadia's public CV: security engineering, identity, detection, and privacy-first systems." />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="kapadia.org" />
   <meta property="og:title" content="CV — kapadia.org" />
-  <meta property="og:description" content="Darsh Kapadia — CV" />
+  <meta property="og:description" content="Darsh Kapadia's public CV: security engineering, identity, detection, and privacy-first systems." />
   <meta property="og:url" content="https://kapadia.org/about/cv/" />
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="CV — kapadia.org" />
-  <meta name="twitter:description" content="Darsh Kapadia — CV" />
+  <meta name="twitter:description" content="Darsh Kapadia's public CV: security engineering, identity, detection, and privacy-first systems." />
+  <title>CV — kapadia.org</title>
   <link rel="canonical" href="https://kapadia.org/about/cv/" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap"
-    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/shared.css" />
   <link rel="stylesheet" href="/css/cv.css" />
 </head>
-
 <body>
-  <nav aria-label="Main Navigation">
-    <div class="nav-inner">
-      <a href="/" class="nav-logo" aria-label="kapadia.org homepage">kapadia<span>.org</span></a>
-      <ul class="nav-links">
-        <li><a href="/">~</a></li>
-        <li><a href="/tools/">tools</a></li>
-        <li><a href="/docs/">docs</a></li>
-        <li><a href="/writes/">writes</a></li>
-        <li><a href="/about/">about</a></li>
-      </ul>
+  <nav aria-label="Main Navigation"><div class="nav-inner"><a href="/" class="nav-logo" aria-label="kapadia.org homepage">kapadia<span>.org</span></a><ul class="nav-links"><li><a href="/">~</a></li><li><a href="/tools/">tools</a></li><li><a href="/docs/">docs</a></li><li><a href="/writes/">writes</a></li><li><a href="/about/" aria-current="page">about</a></li></ul></div></nav>
+  <main class="cv-page">
+    <div class="container">
+      <header class="cv-hero">
+        <p class="page-eyebrow muted">kapadia.org · public CV</p>
+        <div class="cv-hero-row"><div><h1 class="page-title">Darsh Kapadia</h1><p class="cv-intro">Security engineering across detection, identity, cloud platforms, and privacy-first systems.</p><p class="cv-meta"><a href="https://linkedin.com/in/darshkapadia" target="_blank" rel="noopener noreferrer">linkedin.com/in/darshkapadia</a><span aria-hidden="true">·</span><a href="/">kapadia.org</a></p></div><div class="cv-actions"><a class="cv-button" href="/assets/cv.pdf" download>Download public CV <span aria-hidden="true">↓</span></a><button class="cv-text-button print-btn" type="button">Print this page</button></div></div>
+      </header>
+      <section class="timeline-controls" aria-label="Timeline filters">
+        <div><p class="control-label">View the chronology</p><p id="timeline-status" class="sr-only" aria-live="polite"></p></div>
+        <div class="filter-list" role="group" aria-label="Filter timeline entries"><button type="button" class="filter-button is-active" data-filter="all" aria-pressed="true">All</button><button type="button" class="filter-button" data-filter="experience" aria-pressed="false">Work</button><button type="button" class="filter-button" data-filter="project" aria-pressed="false">Projects</button><button type="button" class="filter-button" data-filter="education" aria-pressed="false">Learning</button><button type="button" class="filter-button" data-filter="leadership" aria-pressed="false">Leadership</button></div>
+      </section>
+      <section class="timeline" aria-label="Career and project chronology">
+        <div class="timeline-line" aria-hidden="true"><span class="timeline-progress"></span></div>
+        <article class="timeline-entry" data-category="project"><p class="entry-date">Apr 2017 — Present</p><div class="timeline-card"><p class="entry-kind">Project · ongoing</p><h2>Homelab</h2><p>Full-stack network, security, and platform laboratory.</p><details><summary>Explore the work</summary><ul><li>Deployed OPNsense for DHCP, DNS, firewall, VPN, and IDS/IPS; paired Wazuh SIEM/XDR custom detections with Authentik and Cloudflare Zero Trust.</li><li>Managed Proxmox and Docker environments supporting 22+ self-hosted services, reverse proxies, containerized applications, and Home Assistant devices.</li><li>Practiced red/blue-team tradecraft and digital forensics with Kali, Nmap, Metasploit, Burp Suite, Autopsy, Volatility, and FTK Imager; hosted redundant services across AWS, Azure, and GCP.</li></ul></details></div></article>
+        <article class="timeline-entry" data-category="experience"><p class="entry-date">Aug 2022 — May 2023</p><div class="timeline-card"><p class="entry-kind">Experience</p><h2>Information Technology Intern</h2><p class="entry-org">Valley View School District · Bolingbrook, IL</p><details><summary>Explore the work</summary><ul><li>Reduced manual provisioning work for a 3,600+ user district by automating device onboarding and account lifecycle across Google Admin Console and Okta LDAP.</li></ul></details></div></article>
+        <article class="timeline-entry" data-category="leadership"><p class="entry-date">Aug 2022 — Present</p><div class="timeline-card"><p class="entry-kind">Leadership · ongoing</p><h2>Technology Officer Volunteer</h2><p class="entry-org">Sanskriti · Bolingbrook, IL</p><details><summary>Explore the work</summary><ul><li>Administered Google Workspace provisioning, access control, and security for a 50-member nonprofit.</li><li>Developed and maintained the organization website, e-commerce platform, and integrations, contributing to $50K+ in donations over two years.</li></ul></details></div></article>
+        <article class="timeline-entry" data-category="education"><p class="entry-date">Apr 2023</p><div class="timeline-card"><p class="entry-kind">Certification</p><h2>CompTIA Security+</h2></div></article>
+        <article class="timeline-entry" data-category="education"><p class="entry-date">Aug 2023 — May 2027</p><div class="timeline-card"><p class="entry-kind">Education · expected</p><h2>BS, Applied Cyber Security &amp; IT</h2><p class="entry-org">Illinois Institute of Technology · GPA: 3.96</p><p>Selected coursework includes active cyber defense, cyber analytics, forensics, vulnerability analysis, coding security, digital evidence, and AI for cybersecurity.</p></div></article>
+        <article class="timeline-entry" data-category="leadership"><p class="entry-date">Aug 2023 — Present</p><div class="timeline-card"><p class="entry-kind">Leadership · ongoing</p><h2>Camras Scholars Program</h2><p class="entry-org">Scholar &amp; Volunteer</p></div></article>
+        <article class="timeline-entry" data-category="project"><p class="entry-date">Sep 2023</p><div class="timeline-card"><p class="entry-kind">Project</p><h2>Discord Bot</h2><details><summary>Explore the work</summary><ul><li>Built a Python Discord bot integrated with the Proxmox REST API for secure, self-service VM lifecycle management, real-time monitoring, and automated idle shutdown behind a permission-based portal.</li></ul></details></div></article>
+        <article class="timeline-entry" data-category="leadership"><p class="entry-date">Nov 2023 — Present</p><div class="timeline-card"><p class="entry-kind">Leadership · ongoing</p><h2>Digital Literacy Program</h2><p class="entry-org">Founder &amp; Educator</p></div></article>
+        <article class="timeline-entry" data-category="leadership"><p class="entry-date">Nov 2023 — Present</p><div class="timeline-card"><p class="entry-kind">Leadership · ongoing</p><h2>Sigma Phi Epsilon — Illinois Beta</h2><p class="entry-org">Brother Mentor · former President, VP Recruitment, and VP Programming</p></div></article>
+        <article class="timeline-entry" data-category="project"><p class="entry-date">Oct 2024</p><div class="timeline-card"><p class="entry-kind">Project</p><h2>CBORD Reverse-Engineered API</h2><details><summary>Explore the work</summary><ul><li>Reverse-engineered a private HTTPS API with Burp Suite; automated Siri-based door control through a Docker-deployed Python microservice and simplified REST API.</li></ul></details></div></article>
+        <article class="timeline-entry" data-category="education"><p class="entry-date">Jan 2025 — May 2027</p><div class="timeline-card"><p class="entry-kind">Education · expected</p><h2>MS, Cyber Forensics &amp; Security</h2><p class="entry-org">Illinois Institute of Technology · GPA: 4.00</p><p>Current coursework: IT auditing, operating system security, database security, and zero trust architecture.</p></div></article>
+        <article class="timeline-entry" data-category="experience"><p class="entry-date">May 2025 — Aug 2025</p><div class="timeline-card"><p class="entry-kind">Experience</p><h2>Identity Security Engineer Intern</h2><p class="entry-org">GE HealthCare · Waukesha, WI</p><details><summary>Explore the work</summary><ul><li>Cut privileged-access operational effort 25× and $200K+ in annual licensing spend by automating CyberArk Privilege Cloud onboarding, safe provisioning, role assignments, and license management with REST APIs, Python, Bash, and PowerShell.</li><li>Brought 2,600+ high-risk accounts under vaulted privileged-access control during an enterprise PAM rollout.</li><li>Documented identity-security processes and resolved ServiceNow tickets for provisioning, identity lifecycle management, and security incidents.</li></ul></details></div></article>
+        <article class="timeline-entry" data-category="project"><p class="entry-date">Oct 2025</p><div class="timeline-card"><p class="entry-kind">Project</p><h2>Responsible Vulnerability Disclosure</h2><details><summary>Explore the work</summary><ul><li>Protected PII and academic records for 8,000+ students by identifying a critical access-control misconfiguration, documenting FERPA impact, and driving remediation through responsible disclosure to institutional leadership.</li></ul></details></div></article>
+        <article class="timeline-entry" data-category="project"><p class="entry-date">May 2026 — Present</p><div class="timeline-card"><p class="entry-kind">Project · ongoing</p><h2>Cloud Security &amp; Networking Toolset</h2><p class="entry-org"><a href="/">kapadia.org</a></p><details><summary>Explore the work</summary><ul><li>Shipped 12 public cybersecurity and networking utilities on Cloudflare Pages, with GitHub Actions automating builds and deployments on every update to main.</li><li>Developed threat-intelligence tooling for OSINT, browser fingerprinting, HTTP header exposure, and metadata leakage.</li><li>Secured serverless edge infrastructure with strict web-security policies, optimized API routing, and safe traffic handling.</li></ul></details></div></article>
+        <article class="timeline-entry" data-category="experience"><p class="entry-date">Jun 2026 — Aug 2026</p><div class="timeline-card"><p class="entry-kind">Experience</p><h2>Cyber Security Intern</h2><p class="entry-org">Capital One · McLean, VA</p><details><summary>Explore the work</summary><ul><li>Built and validated a Databricks dashboard in Python and Apache Spark to make detection-health evaluation actionable for engineers and leadership.</li><li>Developed a forecasting dashboard and Slack bot that give a year of lead time for Detection Effectiveness Reviews across an enterprise MITRE ATT&amp;CK-mapped portfolio.</li><li>Closed coverage gaps across 8+ production detections through synthetic data and live attack simulations against macOS and Windows endpoints with CrowdStrike EDR.</li></ul></details></div></article>
+        <article class="timeline-entry" data-category="project"><p class="entry-date">Jul 2026</p><div class="timeline-card"><p class="entry-kind">Project · Capital One Intern Hackathon</p><h2>GenAI Data Loss Prevention Platform</h2><details><summary>Explore the work</summary><ul><li>Co-built a GenAI data-loss-prevention prototype spanning a Chrome extension, CLI, and Next.js web app to detect and redact sensitive content in prompts and attachments.</li><li>Developed regex and machine-learning classifiers on Microsoft Presidio for real-time redaction across Finance, Healthcare, and General PII domains.</li></ul></details></div></article>
+      </section>
+      <section class="skills-section" aria-labelledby="skills-title"><div><p class="section-kicker">Capabilities</p><h2 id="skills-title">Technical focus</h2></div><div class="skills-grid"><p><strong>Security &amp; detection</strong> Detection Engineering, MITRE ATT&amp;CK, Sigma, YARA, SIEM/XDR, CrowdStrike EDR, malware analysis, forensics, OSINT.</p><p><strong>Identity &amp; infrastructure</strong> IAM, PAM, IGA, CyberArk, Saviynt, Authentik, Okta LDAP, Cloudflare Zero Trust, ServiceNow, Ansible.</p><p><strong>Cloud &amp; platforms</strong> AWS, Azure, GCP, Cloudflare Pages, Databricks, Apache Spark, Docker, Proxmox, Terraform, GitHub Actions.</p><p><strong>Development &amp; data</strong> Python, Bash, PowerShell, Java, JavaScript, SQL, YAML, HTML/CSS, REST APIs, Next.js, Microsoft Presidio.</p></div></section>
     </div>
-  </nav>
-  <div class="page">
-    <header class="cv-header">
-      <div>
-        <h1 class="cv-name">Darsh Kapadia</h1>
-        <div class="cv-meta">
-          <span class="cv-meta-item"><a href="https://linkedin.com/in/darshkapadia" target="_blank"
-              rel="noopener noreferrer">linkedin.com/in/darshkapadia</a></span>
-          <span class="cv-meta-item"><a href="/">kapadia.org</a></span>
-        </div>
-      </div>
-      <div class="header-actions">
-        <a class="btn-download" href="/assets/cv.pdf" download>&#8595;&nbsp;&nbsp;download PDF</a>
-        <span class="print-note">or <button type="button" class="print-btn">print this page</button></span>
-      </div>
-    </header>
-
-    <div class="section">
-      <div class="section-label-wrap">
-        <p class="section-label">Education</p>
-      </div>
-      <div class="section-body">
-        <div class="entry">
-          <div class="entry-header">
-            <span class="entry-title edu-title-color">Illinois Institute of Technology</span>
-            <span class="entry-date">Jan 2025 &ndash; May 2027</span>
-          </div>
-          <p class="entry-sub">Co-Terminal MAS in Cyber Forensics &amp; Security; GPA: 4.00</p>
-        </div>
-        <div class="entry">
-          <div class="entry-header">
-            <span class="entry-title edu-title-color">Illinois Institute of Technology</span>
-            <span class="entry-date">Aug 2023 &ndash; May 2027</span>
-          </div>
-          <p class="entry-sub">BS in Applied Cyber Security &amp; IT; GPA: 3.96</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-label-wrap">
-        <p class="section-label">Experience</p>
-      </div>
-      <div class="section-body">
-        <div class="entry">
-          <div class="entry-header">
-            <span class="entry-title exp-title-color">Cyber Security Intern</span>
-            <span class="entry-date">Jun 2026 &ndash; Aug 2026</span>
-          </div>
-          <p class="entry-sub">Capital One</p>
-        </div>
-        <div class="entry">
-          <div class="entry-header">
-            <span class="entry-title exp-title-color">Identity Security Engineer Intern</span>
-            <span class="entry-date">May 2025 &ndash; Aug 2025</span>
-          </div>
-          <p class="entry-sub">GE HealthCare</p>
-        </div>
-        <div class="entry">
-          <div class="entry-header">
-            <span class="entry-title exp-title-color">Technology Officer Volunteer</span>
-            <span class="entry-date">Aug 2022 &ndash; Ongoing</span>
-          </div>
-          <p class="entry-sub">Sanskriti</p>
-        </div>
-        <div class="entry">
-          <div class="entry-header">
-            <span class="entry-title exp-title-color">Information Technology Intern</span>
-            <span class="entry-date">Aug 2022 &ndash; May 2023</span>
-          </div>
-          <p class="entry-sub">Valley View School District</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-label-wrap">
-        <p class="section-label">Certifications</p>
-      </div>
-      <div class="section-body">
-        <div class="entry">
-          <div class="entry-header">
-            <span class="entry-title cert-title-color">CompTIA Security+</span>
-            <span class="entry-date">Apr 2023</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-label-wrap">
-        <p class="section-label">Projects</p>
-      </div>
-      <div class="section-body">
-        <div class="entry">
-          <div class="entry-header">
-            <span class="entry-title proj-title-color">Cloud Security &amp; Networking Toolset</span>
-            <span class="entry-date">May 2026 &ndash; Ongoing</span>
-          </div>
-        </div>
-        <div class="entry">
-          <div class="entry-header">
-            <span class="entry-title proj-title-color">Homelab</span>
-            <span class="entry-date">Apr 2017 &ndash; Ongoing</span>
-          </div>
-        </div>
-        <div class="entry">
-          <div class="entry-header">
-            <span class="entry-title proj-title-color">GenAI Data Loss Prevention Platform</span>
-            <span class="entry-date">Jul 2026</span>
-          </div>
-          <p class="entry-sub">Capital One Intern Hackathon</p>
-        </div>
-        <div class="entry">
-          <div class="entry-header">
-            <span class="entry-title proj-title-color">Responsible Vulnerability Disclosure</span>
-            <span class="entry-date">Oct 2025</span>
-          </div>
-        </div>
-        <div class="entry">
-          <div class="entry-header">
-            <span class="entry-title proj-title-color">CBORD Reverse-Engineered API</span>
-            <span class="entry-date">Oct 2024</span>
-          </div>
-        </div>
-        <div class="entry">
-          <div class="entry-header">
-            <span class="entry-title proj-title-color">Discord Bot</span>
-            <span class="entry-date">Sep 2023</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-label-wrap">
-        <p class="section-label">Skills</p>
-      </div>
-      <div class="section-body">
-        <div class="skill-group">
-          <p class="skill-category">Operating Systems</p>
-          <div class="skill-tags">
-            <span class="skill-tag">Linux (Kali, Debian, Ubuntu, Arch, Alpine, Fedora)</span>
-            <span class="skill-tag">Windows</span><span class="skill-tag">macOS</span>
-            <span class="skill-tag">Android</span><span class="skill-tag">iOS</span>
-          </div>
-        </div>
-        <div class="skill-group">
-          <p class="skill-category">Security &amp; Identity</p>
-          <div class="skill-tags">
-            <span class="skill-tag">Authentik (IdP)</span><span class="skill-tag">Cloudflare Zero Trust (SASE)</span>
-            <span class="skill-tag">CyberArk Privilege Cloud (PAM)</span><span class="skill-tag">Suricata
-              (IDS/IPS)</span>
-            <span class="skill-tag">Okta LDAP (IAM)</span><span class="skill-tag">OPNsense (Firewall)</span>
-            <span class="skill-tag">pfSense (Firewall)</span><span class="skill-tag">Saviynt (IGA)</span>
-            <span class="skill-tag">Splunk (SIEM)</span><span class="skill-tag">Wazuh (SIEM/XDR)</span>
-            <span class="skill-tag">WireGuard (VPN)</span>
-          </div>
-        </div>
-        <div class="skill-group">
-          <p class="skill-category">Cloud &amp; Infrastructure</p>
-          <div class="skill-tags">
-            <span class="skill-tag">Ansible</span><span class="skill-tag">Apache Spark</span>
-            <span class="skill-tag">AWS</span><span class="skill-tag">Azure</span>
-            <span class="skill-tag">Blob Storage</span><span class="skill-tag">Cloudflare</span>
-            <span class="skill-tag">Databricks</span><span class="skill-tag">Serverless Computing</span>
-            <span class="skill-tag">DHCP</span>
-            <span class="skill-tag">DNS</span><span class="skill-tag">Docker</span>
-            <span class="skill-tag">GCP</span><span class="skill-tag">Git</span>
-            <span class="skill-tag">GitHub Actions (CI/CD)</span><span class="skill-tag">MDM</span>
-            <span class="skill-tag">OAuth</span><span class="skill-tag">Proxmox</span>
-            <span class="skill-tag">QUIC</span><span class="skill-tag">REST APIs</span>
-            <span class="skill-tag">ServiceNow</span><span class="skill-tag">Terraform (IaC)</span>
-            <span class="skill-tag">VMware</span>
-          </div>
-        </div>
-        <div class="skill-group">
-          <p class="skill-category">Reconnaissance &amp; Forensics</p>
-          <div class="skill-tags">
-            <span class="skill-tag">AnyRun</span><span class="skill-tag">Autopsy</span>
-            <span class="skill-tag">Burp Suite</span><span class="skill-tag">FTK Imager</span>
-            <span class="skill-tag">Gobuster</span><span class="skill-tag">Maltego</span>
-            <span class="skill-tag">Metasploit</span><span class="skill-tag">Nessus</span>
-            <span class="skill-tag">Nmap</span><span class="skill-tag">Sysmon/Windows Event Logs</span>
-            <span class="skill-tag">Volatility</span><span class="skill-tag">Wireshark</span>
-            <span class="skill-tag">YARA</span><span class="skill-tag">Web Privacy Analysis</span>
-            <span class="skill-tag">Browser Fingerprinting</span>
-          </div>
-        </div>
-        <div class="skill-group">
-          <p class="skill-category">Programming &amp; Scripting</p>
-          <div class="skill-tags">
-            <span class="skill-tag">Python</span><span class="skill-tag">Bash</span>
-            <span class="skill-tag">PowerShell</span><span class="skill-tag">Java</span>
-            <span class="skill-tag">JavaScript</span><span class="skill-tag">SQL</span>
-            <span class="skill-tag">YAML</span><span class="skill-tag">HTML</span>
-            <span class="skill-tag">CSS</span>
-            <span class="skill-tag">AI-Assisted Development (Claude Code, GitHub Copilot)</span>
-            <span class="skill-tag">Prompt Engineering</span>
-          </div>
-        </div>
-        <div class="skill-group">
-          <p class="skill-category">Concepts &amp; Frameworks</p>
-          <div class="skill-tags">
-            <span class="skill-tag">Containerization</span><span class="skill-tag">Cryptography Basics</span>
-            <span class="skill-tag">Cyber Kill Chain</span><span class="skill-tag">Detection Engineering</span>
-            <span class="skill-tag">Detection-as-Code</span><span class="skill-tag">Digital Forensics</span>
-            <span class="skill-tag">Generative AI Workflows</span><span class="skill-tag">Infrastructure-as-Code</span>
-            <span class="skill-tag">Least Privilege</span><span class="skill-tag">Malware Analysis</span>
-            <span class="skill-tag">MITRE ATT&amp;CK</span><span class="skill-tag">OSI Model</span>
-            <span class="skill-tag">OSINT</span><span class="skill-tag">Safe API Design</span>
-            <span class="skill-tag">Sigma Rules</span><span class="skill-tag">Virtualization</span>
-            <span class="skill-tag">Vulnerability Analysis</span><span class="skill-tag">Security+</span>
-            <span class="skill-tag">SOX Compliance</span><span class="skill-tag">TCP/IP</span>
-            <span class="skill-tag">Zero Trust Architecture</span>
-          </div>
-        </div>
-        <div class="skill-group">
-          <p class="skill-category">Learning Platforms</p>
-          <div class="skill-tags">
-            <span class="skill-tag">HackTheBox</span><span class="skill-tag">ImmersiveLabs</span>
-            <span class="skill-tag">LetsDefend</span><span class="skill-tag">PortSwigger Academy</span>
-            <span class="skill-tag">TryHackMe</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-label-wrap">
-        <p class="section-label">Leadership &amp; Activities</p>
-      </div>
-      <div class="section-body">
-        <div class="activity-entry">
-          <div class="activity-header">
-            <span class="activity-title">Founder &amp; Educator, Digital Literacy Program</span>
-            <span class="entry-date">Nov 2023 &ndash; Ongoing</span>
-          </div>
-        </div>
-        <div class="activity-entry">
-          <div class="activity-header">
-            <span class="activity-title">Brother Mentor, Sigma Phi Epsilon</span>
-            <span class="entry-date">Nov 2023 &ndash; Ongoing</span>
-          </div>
-        </div>
-        <div class="activity-entry">
-          <div class="activity-header">
-            <span class="activity-title">Scholar &amp; Volunteer, Camras Scholars Program</span>
-            <span class="entry-date">Aug 2023 &ndash; Ongoing</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="section cv-bottom-actions">
-      <div class="section-label-wrap"></div>
-      <div class="section-body">
-        <div class="header-actions bottom-actions">
-          <a class="btn-download" href="/assets/cv.pdf" download>&#8595;&nbsp;&nbsp;download PDF</a>
-          <span class="print-note">or <button type="button" class="print-btn">print this page</button></span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <footer role="contentinfo" aria-label="Site Footer">
-    <div class="footer-inner">
-      <span class="footer-left">© kapadia.org</span>
-      <nav class="footer-right" aria-label="Footer Navigation">
-        <a href="/">~</a>
-        <a href="/tools/">tools</a>
-        <a href="/docs/">docs</a>
-        <a href="/writes/">writes</a>
-        <a href="/about/">about</a>
-        <a href="/privacy/">privacy</a>
-        <a href="https://github.com/dekay7/kapadia" target="_blank" rel="noopener noreferrer">github</a>
-      </nav>
-    </div>
-  </footer>
+  </main>
+  <footer role="contentinfo" aria-label="Site Footer"><div class="footer-inner"><span class="footer-left">© kapadia.org</span><nav class="footer-right" aria-label="Footer Navigation"><a href="/">~</a><a href="/tools/">tools</a><a href="/docs/">docs</a><a href="/writes/">writes</a><a href="/about/">about</a><a href="/privacy/">privacy</a><a href="https://github.com/dekay7/kapadia" target="_blank" rel="noopener noreferrer">github</a></nav></div></footer>
   <script src="/js/cv.js" defer></script>
 </body>
-
 </html>
