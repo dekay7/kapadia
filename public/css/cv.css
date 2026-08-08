@@ -14,7 +14,7 @@
 .control-label, .section-kicker, .entry-kind { margin: 0; color: var(--text-faint); font-family: var(--font-mono); font-size: .625rem; letter-spacing: .1em; text-transform: uppercase; }
 .filter-list { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .375rem; }
 .filter-button { cursor: pointer; padding: .375rem .5rem; color: var(--text-muted); }
-.filter-button.is-active { background: var(--bg-terminal); border-color: var(--term-green); color: var(--term-green); }
+.filter-button.is-active { background: var(--bg-hover-green); border-color: var(--term-dim); color: var(--text); }
 .timeline { position: relative; padding: 2.5rem 0 1rem 9.5rem; }
 .timeline-line { position: absolute; top: 2.5rem; bottom: 1rem; left: 3.75rem; width: var(--border-w); background: var(--border-strong); }
 .timeline-progress { display: block; width: 100%; height: 0; background: var(--term-green); transition: height 120ms linear; }
