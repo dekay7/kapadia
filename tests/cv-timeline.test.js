@@ -21,11 +21,15 @@ test('CV timeline dots align to the progress line and fill only after progress r
     read('public/css/cv.css'),
     read('public/js/cv.js'),
   ]);
+  const lineRule = css.match(/\.timeline-line\s*\{([^}]*)\}/);
   const dotRule = css.match(/\.timeline-entry::before\s*\{([^}]*)\}/);
   const filledDotRule = css.match(/\.timeline-entry\.is-past::before\s*\{([^}]*)\}/);
 
+  assert.ok(lineRule, 'the timeline line rule must exist');
+  assert.match(lineRule[1], /transform:\s*translateX\(-50%\)/);
   assert.ok(dotRule, 'the timeline dot rule must exist');
-  assert.match(dotRule[1], /left:\s*-6\.09375rem/);
+  assert.match(dotRule[1], /left:\s*-5\.75rem/);
+  assert.match(dotRule[1], /transform:\s*translateX\(-50%\)/);
   assert.match(dotRule[1], /background:\s*var\(--bg\)/);
   assert.ok(filledDotRule, 'a completed timeline dot rule must exist');
   assert.match(filledDotRule[1], /background:\s*var\(--term-green\)/);
