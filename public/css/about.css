@@ -42,6 +42,10 @@
   border-bottom: var(--border-w) solid var(--border);
 }
 
+.cv-link-box + p {
+  margin-top: 2.5rem;
+}
+
 .cv-link-box::before {
   content: '';
   position: absolute;
