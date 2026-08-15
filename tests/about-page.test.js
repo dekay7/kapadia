@@ -27,3 +27,15 @@ test('About page describes the current site in direct, human prose', async () =>
   assert.doesNotMatch(content, /—/);
   assert.doesNotMatch(content, /not just/i);
 });
+
+test('About CV card relies on shared header spacing', async () => {
+  const css = await read('public/css/about.css');
+  const cardRule = css.match(/\.cv-link-box\s*\{([^}]*)\}/);
+
+  assert.ok(cardRule, 'the CV card rule must exist');
+  assert.doesNotMatch(
+    cardRule[1],
+    /(?:^|\n)\s*margin-top\s*:/,
+    'the card must not add space after the shared page header'
+  );
+});
