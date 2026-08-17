@@ -26,7 +26,6 @@
 
 /* ── CV Link Box ───────────────────────────────────────────────────────── */
 .cv-link-box {
-  margin-top: 4rem;
   padding: 2rem 2.5rem;
   background: var(--bg-raised);
   border: var(--border-w) solid var(--border);
