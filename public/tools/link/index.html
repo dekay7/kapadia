@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="Link Inspector. Trace redirect chains, check domain reputation, and score URL safety before you click. Powered by kapadia.org's edge network." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://kapadia.org/tools/link/" />
+  <meta property="og:title" content="Link Inspector — Tools — kapadia.org" />
+  <meta property="og:description" content="Trace redirect chains, check domain reputation, and score link safety before you click." />
+  <meta property="og:site_name" content="kapadia.org" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Link Inspector — Tools — kapadia.org" />
+  <meta name="twitter:description" content="Trace redirect chains, check domain reputation, and score link safety before you click." />
+  <title>Link Inspector — kapadia.org</title>
+  <link rel="canonical" href="https://kapadia.org/tools/link/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/shared.css" />
+  <link rel="stylesheet" href="/css/tools.css" />
+  <link rel="stylesheet" href="/css/link.css" />
+</head>
+<body>
+
+  <noscript>
+    <div class="noscript-msg">This tool requires JavaScript to function.<br>Enable JS and reload to use it.</div>
+  </noscript>
+
+  <nav aria-label="Main Navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo" aria-label="kapadia.org homepage">kapadia<span>.org</span></a>
+      <ul class="nav-links">
+        <li><a href="/">~</a></li>
+        <li><a href="/tools/" aria-current="page">tools</a></li>
+        <li><a href="/docs/">docs</a></li>
+        <li><a href="/writes/">writes</a></li>
+        <li><a href="/about/">about</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container tools-page">
+      <div class="tool-container">
+
+        <div class="tool-header">
+          <h1>Link Inspector</h1>
+          <p class="tool-desc">Inspect URL safety and trace redirect chains before you click. Fetching runs at the edge — your browser never contacts the target.</p>
+        </div>
+
+        <div class="tool-disclaimer">
+          <strong>Privacy:</strong> URLs are fetched by the Cloudflare edge — your browser never contacts the
+          target. Third-party services used server-side: Cloudflare DNS-over-HTTPS (<code>cloudflare-dns.com</code>)
+          for SSRF pre-resolution, and RDAP (<code>rdap.org</code>) for domain registration data. No URLs or
+          results are logged or stored by kapadia.org.
+        </div>
+
+        <!-- URL input -->
+        <div class="form-group">
+          <label for="link-url-input" class="form-label">URL to inspect</label>
+          <div class="form-input-group">
+            <input
+              type="text"
+              id="link-url-input"
+              class="form-input"
+              placeholder="https://example.com/some/path"
+              autocomplete="off"
+              spellcheck="false"
+              aria-label="URL to inspect"
+            />
+            <button id="link-check-btn" class="btn" type="button">Inspect</button>
+          </div>
+        </div>
+
+        <!-- Error banner -->
+        <div id="link-error" class="link-error u-hidden" role="alert" aria-live="polite"></div>
+
+        <!-- Loading -->
+        <div id="link-loading" class="u-hidden" aria-live="polite" aria-label="Loading">
+          <span class="tool-spinner" aria-hidden="true"></span>
+          <span class="u-mono u-small u-text-dim">Tracing link…</span>
+        </div>
+
+        <!-- Results -->
+        <div id="link-results" class="u-hidden" aria-live="polite"></div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer role="contentinfo" aria-label="Site Footer">
+    <div class="footer-inner">
+      <span class="footer-left">© kapadia.org</span>
+      <nav class="footer-right" aria-label="Footer Navigation">
+        <a href="/">~</a>
+        <a href="/tools/" aria-current="page">tools</a>
+        <a href="/docs/">docs</a>
+        <a href="/writes/">writes</a>
+        <a href="/about/">about</a>
+        <a href="/privacy/">privacy</a>
+        <a href="https://github.com/dekay7/kapadia" target="_blank" rel="noopener noreferrer">github</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="/js/tools/link.js" defer></script>
+</body>
+</html>

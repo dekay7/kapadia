@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="Supply Chain Auditor. Verify third-party script integrity on any web page — detect CDN tampering, validate SRI hashes, and cross-reference npm registry." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://kapadia.org/tools/chain/" />
+  <meta property="og:title" content="Supply Chain Auditor — Tools — kapadia.org" />
+  <meta property="og:description" content="Verify third-party script integrity on any web page — detect CDN tampering, validate SRI hashes, and cross-reference npm registry." />
+  <meta property="og:site_name" content="kapadia.org" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Supply Chain Auditor — Tools — kapadia.org" />
+  <meta name="twitter:description" content="Verify third-party script integrity on any web page — detect CDN tampering, validate SRI hashes, and cross-reference npm registry." />
+  <title>Supply Chain Auditor — kapadia.org</title>
+  <link rel="canonical" href="https://kapadia.org/tools/chain/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/shared.css" />
+  <link rel="stylesheet" href="/css/tools.css" />
+  <link rel="stylesheet" href="/css/link.css" />
+  <link rel="stylesheet" href="/css/chain.css" />
+</head>
+<body>
+
+  <noscript>
+    <div class="noscript-msg">This tool requires JavaScript to function.<br>Enable JS and reload to use it.</div>
+  </noscript>
+
+  <nav aria-label="Main Navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo" aria-label="kapadia.org homepage">kapadia<span>.org</span></a>
+      <ul class="nav-links">
+        <li><a href="/">~</a></li>
+        <li><a href="/tools/" aria-current="page">tools</a></li>
+        <li><a href="/docs/">docs</a></li>
+        <li><a href="/writes/">writes</a></li>
+        <li><a href="/about/">about</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container tools-page">
+      <div class="tool-container">
+
+        <div class="tool-header">
+          <h1>Supply Chain Auditor</h1>
+          <p class="tool-desc">Audit every third-party script and stylesheet on a page — verify SRI hashes, detect CDN tampering, and cross-reference published npm package integrity. All fetching runs at the edge.</p>
+        </div>
+
+        <div class="tool-disclaimer">
+          <strong>Privacy:</strong> The target page and its third-party resources are fetched server-side by a
+          Cloudflare edge function — your browser never contacts them. Third-party services used server-side:
+          Cloudflare DNS-over-HTTPS (<code>cloudflare-dns.com</code>) for SSRF prevention; npm registry
+          (<code>registry.npmjs.org</code>) and cdnjs API (<code>api.cdnjs.com</code>) for package integrity
+          cross-reference. No URLs or results are logged or stored by kapadia.org.
+        </div>
+
+        <!-- URL input -->
+        <div class="form-group">
+          <label for="chain-url-input" class="form-label">Page URL to audit</label>
+          <div class="form-input-group">
+            <input
+              type="text"
+              id="chain-url-input"
+              class="form-input"
+              placeholder="https://example.com"
+              autocomplete="off"
+              spellcheck="false"
+              aria-label="Page URL to audit"
+            />
+            <button id="chain-audit-btn" class="btn" type="button">Audit</button>
+          </div>
+        </div>
+
+        <!-- Error banner -->
+        <div id="chain-error" class="link-error u-hidden" role="alert" aria-live="polite"></div>
+
+        <!-- Progress indicator -->
+        <div id="chain-progress" class="chain-progress u-hidden" aria-live="polite">
+          <span class="link-spinner" aria-hidden="true"></span>
+          <span id="chain-progress-msg" class="u-mono u-small u-text-dim">Fetching page...</span>
+        </div>
+
+        <!-- Results -->
+        <div id="chain-results" class="u-hidden" aria-live="polite" tabindex="-1"></div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer role="contentinfo" aria-label="Site Footer">
+    <div class="footer-inner">
+      <span class="footer-left">© kapadia.org</span>
+      <nav class="footer-right" aria-label="Footer Navigation">
+        <a href="/">~</a>
+        <a href="/tools/" aria-current="page">tools</a>
+        <a href="/docs/">docs</a>
+        <a href="/writes/">writes</a>
+        <a href="/about/">about</a>
+        <a href="/privacy/">privacy</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="/js/tools/chain.js"></script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+# wrangler-http.toml — Cloudflare Worker config
+#
+# Deploys http-handler.js as a standalone Worker that intercepts
+# plain HTTP requests ONLY (not HTTPS).
+#
+# Replace "yourdomain.com" with your actual domain.
+# The http:// scheme prefix in the route pattern is critical -
+# without it, Cloudflare matches both HTTP and HTTPS.
+#
+# Deploy command:
+#   wrangler deploy --config wrangler-http.toml
+#
+# Source: https://kapadia.org/docs/#curl-ip-selfhost
+
+name               = "my-curl-ip-worker"
+main               = "http-handler.js"
+compatibility_date = "2025-05-10"
+
+[[routes]]
+pattern   = "http://yourdomain.com/*"
+zone_name = "yourdomain.com"
+
+

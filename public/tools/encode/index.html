@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="Offline Payload Encoder. Encode and decode Base64, URL, and Hex strings instantly." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://kapadia.org/tools/encode/" />
+  <meta property="og:title" content="Payload Encoder — Tools — kapadia.org" />
+  <meta property="og:description" content="Encode and decode Base64, URL, and Hex strings instantly. Runs entirely offline in your browser." />
+  <meta property="og:site_name" content="kapadia.org" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Payload Encoder — Tools — kapadia.org" />
+  <meta name="twitter:description" content="Encode and decode Base64, URL, and Hex strings instantly. Runs entirely offline in your browser." />
+  <title>Payload Encoder — kapadia.org</title>
+  <link rel="canonical" href="https://kapadia.org/tools/encode/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/shared.css" />
+  <link rel="stylesheet" href="/css/tools.css" />
+</head>
+<body>
+
+  <noscript>
+    <div class="noscript-msg">This tool requires JavaScript to function.<br>Enable JS and reload to use it.</div>
+  </noscript>
+
+  <nav aria-label="Main Navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo" aria-label="kapadia.org homepage">kapadia<span>.org</span></a>
+      <ul class="nav-links">
+        <li><a href="/">~</a></li>
+        <li><a href="/tools/" aria-current="page">tools</a></li>
+        <li><a href="/docs/">docs</a></li>
+        <li><a href="/writes/">writes</a></li>
+        <li><a href="/about/">about</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container tools-page">
+      
+      <div class="tool-container">
+        <div class="tool-header">
+          <h1>Payload Encoder</h1>
+          <p class="tool-desc">A fast, offline utility to encode and decode strings. Runs 100% in your browser — zero data is sent to a server.</p>
+        </div>
+
+        <div class="tool-disclaimer">
+          <strong>Privacy:</strong> Encoding and decoding runs 100% in your browser using built-in JavaScript —
+          no data is sent to any server or third-party service.
+        </div>
+
+        <div class="form-group form-group-narrow">
+          <label for="encode-operation" class="form-label">Operation</label>
+          <select id="encode-operation" class="form-select">
+            <option value="b64-encode">Base64 Encode</option>
+            <option value="b64-decode">Base64 Decode</option>
+            <option value="url-encode">URL Encode</option>
+            <option value="url-decode">URL Decode</option>
+            <option value="hex-encode">Hex Encode</option>
+            <option value="hex-decode">Hex Decode</option>
+            <option value="html-encode">HTML Entity Encode</option>
+            <option value="html-decode">HTML Entity Decode</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="encode-input" class="form-label">Input</label>
+            <textarea id="encode-input" class="form-textarea" placeholder="Enter text here..."></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label for="encode-output" class="form-label">Output</label>
+            <textarea id="encode-output" class="form-textarea form-textarea-output" readonly></textarea>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <footer role="contentinfo" aria-label="Site Footer">
+    <div class="footer-inner">
+      <span class="footer-left">© kapadia.org</span>
+      <nav class="footer-right" aria-label="Footer Navigation">
+        <a href="/">~</a>
+        <a href="/tools/" aria-current="page">tools</a>
+        <a href="/docs/">docs</a>
+        <a href="/writes/">writes</a>
+        <a href="/about/">about</a>
+        <a href="/privacy/">privacy</a>
+        <a href="https://github.com/dekay7/kapadia" target="_blank" rel="noopener noreferrer">github</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="/js/tools/encode.js" defer></script>
+</body>
+</html>

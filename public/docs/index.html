@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="kapadia.org — documentation" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://kapadia.org/docs/" />
+  <meta property="og:title" content="Docs — kapadia.org" />
+  <meta property="og:description" content="Technical references, guides, and notes." />
+  <meta property="og:site_name" content="kapadia.org" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Docs — kapadia.org" />
+  <meta name="twitter:description" content="Technical references, guides, and notes." />
+  <title>Docs — kapadia.org</title>
+  <link rel="canonical" href="https://kapadia.org/docs/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="/css/shared.css" />
+  <link rel="stylesheet" href="/css/docs.css" />
+</head>
+
+<body>
+
+  <noscript>
+    <div class="noscript-msg">JavaScript is required to render documentation.<br>Enable JS and reload to read the
+      content.</div>
+  </noscript>
+
+  <div class="sidebar-scrim" id="sidebar-scrim"></div>
+
+  <nav aria-label="Main Navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo" aria-label="kapadia.org homepage">kapadia<span>.org</span></a>
+      <ul class="nav-links">
+        <li><a href="/">~</a></li>
+        <li><a href="/tools/">tools</a></li>
+        <li><a href="/docs/" aria-current="page">docs</a></li>
+        <li><a href="/writes/">writes</a></li>
+        <li><a href="/about/">about</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="page-wrap">
+
+    <!-- Sidebar — populated by docs.js from content/docs frontmatter -->
+    <aside class="sidebar" id="docs-sidebar" aria-label="Table of Contents Sidebar">
+    </aside>
+
+    <!-- Main doc area -->
+    <main class="doc-main doc-animate" id="doc-main">
+      <div class="mobile-nav-bar">
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-expanded="false" aria-controls="docs-sidebar">
+          <span class="toggle-icon" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </span>
+          Table of Contents
+        </button>
+        <div id="breadcrumb-current" class="u-hidden"></div>
+      </div>
+      <div class="markdown-body" id="markdown-body">
+        <!-- Rendered markdown injected here -->
+      </div>
+    </main>
+
+  </div>
+
+  <footer role="contentinfo" aria-label="Site Footer">
+    <div class="footer-inner">
+      <span class="footer-left">© kapadia.org</span>
+      <nav class="footer-right" aria-label="Footer Navigation">
+        <a href="/">~</a>
+        <a href="/tools/">tools</a>
+        <a href="/docs/" aria-current="page">docs</a>
+        <a href="/writes/">writes</a>
+        <a href="/about/">about</a>
+        <a href="/privacy/">privacy</a>
+        <a href="https://github.com/dekay7/kapadia" target="_blank" rel="noopener noreferrer">github</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="/js/vendor/dompurify.min.js"></script>
+  <script type="module" src="/js/docs.js"></script>
+</body>
+
+</html>

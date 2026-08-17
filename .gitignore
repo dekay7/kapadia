@@ -1,0 +1,11 @@
+.wrangler/
+node_modules/
+package-lock.json
+public/js/*-content.js
+.env
+.env.*
+*.local
+.dev.vars
+.claude/
+.hermes/
+.worktrees/

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="kapadia.org tools - Privacy-first security and network utilities: link inspection, EXIF stripping, OSINT, DNS, browser fingerprint, hashing, and more." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://kapadia.org/tools/" />
+  <meta property="og:title" content="Tools - kapadia.org" />
+  <meta property="og:description" content="Privacy-first security and network utilities: link inspection, EXIF stripping, OSINT, DNS analysis, browser fingerprint, hashing, and more." />
+  <meta property="og:site_name" content="kapadia.org" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Tools - kapadia.org" />
+  <meta name="twitter:description" content="Privacy-first security and network utilities: link inspection, EXIF stripping, OSINT, DNS analysis, browser fingerprint, hashing, and more." />
+  <title>Tools - kapadia.org</title>
+  <link rel="canonical" href="https://kapadia.org/tools/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="/css/shared.css" />
+  <link rel="stylesheet" href="/css/tools.css" />
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav aria-label="Main Navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo" aria-label="kapadia.org homepage">kapadia<span>.org</span></a>
+      <ul class="nav-links">
+        <li><a href="/">~</a></li>
+        <li><a href="/tools/" aria-current="page">tools</a></li>
+        <li><a href="/docs/">docs</a></li>
+        <li><a href="/writes/">writes</a></li>
+        <li><a href="/about/">about</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container tools-page">
+
+      <header class="page-header page-header-center">
+        <p class="page-eyebrow">kapadia.org &middot; tools</p>
+        <h1 class="page-title">Security &amp; Networking</h1>
+        <p class="page-sub page-sub-center">
+          Lightweight, edge-native utilities for security, diagnostics, and operational privacy.
+        </p>
+      </header>
+
+      <div class="tools-grid" id="tools-grid">
+        <a href="/tools/speed/" class="tool-card">
+          <span class="tool-icon">~/speed</span>
+          <h2 class="tool-title">Speed Test</h2>
+          <p class="tool-desc">Measure network throughput and latency.</p>
+        </a>
+        <a href="/tools/link/" class="tool-card">
+          <span class="tool-icon">~/link</span>
+          <h2 class="tool-title">Link Inspector</h2>
+          <p class="tool-desc">Trace redirects and surface safety signals before you click. Self-hosted.</p>
+        </a>
+        <a href="/tools/email/" class="tool-card">
+          <span class="tool-icon">~/email</span>
+          <h2 class="tool-title">Email Header Analyzer</h2>
+          <p class="tool-desc">Check if an email is genuine and spot spoofing. No data sent.</p>
+        </a>
+        <a href="/tools/quarantine/" class="tool-card">
+          <span class="tool-icon">~/quarantine</span>
+          <h2 class="tool-title">Command Quarantine</h2>
+          <p class="tool-desc">Explain risky shell commands before you run them. No data sent.</p>
+        </a>
+        <a href="/tools/chain/" class="tool-card">
+          <span class="tool-icon">~/chain</span>
+          <h2 class="tool-title">Supply Chain Auditor</h2>
+          <p class="tool-desc">Audit third-party scripts on any page for SRI integrity and supply chain risk. Self-hosted.</p>
+        </a>
+        <a href="/tools/dns/" class="tool-card">
+          <span class="tool-icon">~/dns</span>
+          <h2 class="tool-title">DNS Analyzer</h2>
+          <p class="tool-desc">Query DNS records over HTTPS — A, AAAA, MX, TXT, CNAME. Self-hosted.</p>
+        </a>
+        <a href="/tools/encode/" class="tool-card">
+          <span class="tool-icon">~/encode</span>
+          <h2 class="tool-title">Payload Encoder</h2>
+          <p class="tool-desc">Encode and decode Base64, URL, and Hex strings. No data sent.</p>
+        </a>
+        <a href="/tools/exif/" class="tool-card">
+          <span class="tool-icon">~/exif</span>
+          <h2 class="tool-title">EXIF Inspector</h2>
+          <p class="tool-desc">Extract and strip photo metadata from images. No data sent.</p>
+        </a>
+        <a href="/tools/hash/" class="tool-card">
+          <span class="tool-icon">~/hash</span>
+          <h2 class="tool-title">Hash Generator</h2>
+          <p class="tool-desc">Hash text with MD5, SHA-1, SHA-256, or SHA-512. No data sent.</p>
+        </a>
+        <a href="/tools/jwt/" class="tool-card">
+          <span class="tool-icon">~/jwt</span>
+          <h2 class="tool-title">JWT Decoder</h2>
+          <p class="tool-desc">Decode and inspect JWTs. No data sent.</p>
+        </a>
+        <a href="/tools/leak/" class="tool-card">
+          <span class="tool-icon">~/leak</span>
+          <h2 class="tool-title">Browser Fingerprint</h2>
+          <p class="tool-desc">See what headers, TLS ciphers, and signals your browser is leaking. Self-hosted.</p>
+        </a>
+        <a href="/tools/osint/" class="tool-card">
+          <span class="tool-icon">~/osint</span>
+          <h2 class="tool-title">OSINT Footprint Checker</h2>
+          <p class="tool-desc">Look up IPs, domains, usernames, and emails across public sources. Self-hosted.</p>
+        </a>
+        <a href="/tools/subnet/" class="tool-card">
+          <span class="tool-icon">~/subnet</span>
+          <h2 class="tool-title">Subnet Calculator</h2>
+          <p class="tool-desc">Calculate network boundaries and host ranges from any IP/CIDR. No data sent.</p>
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <footer role="contentinfo" aria-label="Site Footer">
+    <div class="footer-inner">
+      <span class="footer-left">© kapadia.org</span>
+      <nav class="footer-right" aria-label="Footer Navigation">
+        <a href="/">~</a>
+        <a href="/tools/" aria-current="page">tools</a>
+        <a href="/docs/">docs</a>
+        <a href="/writes/">writes</a>
+        <a href="/about/">about</a>
+        <a href="/privacy/">privacy</a>
+        <a href="https://github.com/dekay7/kapadia" target="_blank" rel="noopener noreferrer">github</a>
+      </nav>
+    </div>
+  </footer>
+
+</body>
+
+</html>

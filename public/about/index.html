@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description"
+    content="A personal site for security tools, research notes, technical writing, and command-line friendly experiments." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://kapadia.org/about/" />
+  <meta property="og:title" content="About — kapadia.org" />
+  <meta property="og:description" content="A personal site for security tools, research notes, technical writing, and command-line friendly experiments." />
+  <meta property="og:site_name" content="kapadia.org" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="About — kapadia.org" />
+  <meta name="twitter:description" content="A personal site for security tools, research notes, technical writing, and command-line friendly experiments." />
+  <title>About — kapadia.org</title>
+  <link rel="canonical" href="https://kapadia.org/about/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="/css/shared.css" />
+  <link rel="stylesheet" href="/css/about.css" />
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav aria-label="Main Navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo" aria-label="kapadia.org homepage">kapadia<span>.org</span></a>
+      <ul class="nav-links">
+        <li><a href="/">~</a></li>
+        <li><a href="/tools/">tools</a></li>
+        <li><a href="/docs/">docs</a></li>
+        <li><a href="/writes/">writes</a></li>
+        <li><a href="/about/" aria-current="page">about</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container about-page">
+
+      <header class="page-header page-header-center">
+        <p class="page-eyebrow muted">kapadia.org &nbsp;·&nbsp; about</p>
+        <h1 class="page-title">About This Project</h1>
+        <p class="page-sub page-sub-center">The mission, philosophy, and background behind this project.</p>
+      </header>
+
+      <div class="about-content">
+        <a href="/about/cv/" class="cv-link-box">
+          <div class="cv-info">
+            <h3>Professional Experience</h3>
+            <p>View my CV, skills, and professional background.</p>
+          </div>
+          <span class="cv-arrow">&rarr;</span>
+        </a>
+
+        <p>
+          kapadia.org is where I publish the security tools, research notes, and technical writing that grow out of my
+          work in detection engineering, identity security, and cloud platforms. The site includes browser-based
+          diagnostics, documentation, essays, and a terminal interface for people who prefer the command line.
+        </p>
+        <p>
+          It runs on Cloudflare's edge network and keeps the mechanics plain with semantic HTML, CSS, and small
+          JavaScript files. There are no cookies, trackers, or advertising. Some tools work entirely in your browser;
+          the ones that need network data use carefully scoped edge functions. You can browse normally or run
+          <code>curl kapadia.org</code> to see the site's terminal-facing side.
+        </p>
+        <p>
+          I use AI assistance while building it, but each change is reviewed, tested, and kept understandable. That
+          discipline has made this a practical place to try ideas, document what I learn, and share tools that respect
+          the people using them.
+        </p>
+        <p>
+          The <a href="/tools/">diagnostic tools</a>, <a href="/docs/">technical documentation</a>, and
+          <a href="/writes/">writing</a> are here to be used and picked apart.
+        </p>
+        <p>
+          I also curate a terminal-based job board for Cybersecurity and IT roles at
+          <a href="https://www.itseclist.com/" target="_blank" rel="noopener noreferrer">itseclist.com</a>.
+          Browse the latest postings straight from your shell with <code>ssh itseclist.com</code>.
+        </p>
+      </div>
+
+    </div>
+  </main>
+
+  <footer role="contentinfo" aria-label="Site Footer">
+    <div class="footer-inner">
+      <span class="footer-left">© kapadia.org</span>
+      <nav class="footer-right" aria-label="Footer Navigation">
+        <a href="/">~</a>
+        <a href="/tools/">tools</a>
+        <a href="/docs/">docs</a>
+        <a href="/writes/">writes</a>
+        <a href="/about/">about</a>
+        <a href="/privacy/">privacy</a>
+        <a href="https://github.com/dekay7/kapadia" target="_blank" rel="noopener noreferrer">github</a>
+      </nav>
+    </div>
+  </footer>
+
+</body>
+
+</html>

@@ -1,0 +1,10 @@
+name               = "kapadia-http"
+main               = "http-handler.js"
+compatibility_date = "2025-05-10"
+
+# Only intercept plain HTTP — HTTPS is handled by Pages + _middleware.js.
+# The http:// scheme prefix in the pattern is what makes this work;
+# without it Cloudflare matches both protocols.
+[[routes]]
+pattern   = "http://kapadia.org/*"
+zone_name = "kapadia.org"

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="Email Header Analyzer. Paste raw email headers to score authentication (SPF/DKIM/DMARC), detect spoofing signals, and trace the relay chain. 100% client-side." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://kapadia.org/tools/email/" />
+  <meta property="og:title" content="Email Header Analyzer — Tools — kapadia.org" />
+  <meta property="og:description" content="Paste raw email headers to detect spoofing, score authentication (SPF/DKIM/DMARC), and trace the relay chain. 100% client-side." />
+  <meta property="og:site_name" content="kapadia.org" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Email Header Analyzer — Tools — kapadia.org" />
+  <meta name="twitter:description" content="Paste raw email headers to detect spoofing, score authentication (SPF/DKIM/DMARC), and trace the relay chain. 100% client-side." />
+  <title>Email Header Analyzer — kapadia.org</title>
+  <link rel="canonical" href="https://kapadia.org/tools/email/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/shared.css" />
+  <link rel="stylesheet" href="/css/tools.css" />
+  <link rel="stylesheet" href="/css/link.css" />
+  <link rel="stylesheet" href="/css/email.css" />
+</head>
+<body>
+
+  <noscript>
+    <div class="noscript-msg">This tool requires JavaScript to function.<br>Enable JS and reload to use it.</div>
+  </noscript>
+
+  <nav aria-label="Main Navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo" aria-label="kapadia.org homepage">kapadia<span>.org</span></a>
+      <ul class="nav-links">
+        <li><a href="/">~</a></li>
+        <li><a href="/tools/" aria-current="page">tools</a></li>
+        <li><a href="/docs/">docs</a></li>
+        <li><a href="/writes/">writes</a></li>
+        <li><a href="/about/">about</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container tools-page">
+      <div class="tool-container">
+
+        <div class="tool-header">
+          <h1>Email Header Analyzer</h1>
+          <p class="tool-desc">Check if an email is genuine. Paste headers or full source to spot spoofing and trace the relay chain. No data sent.</p>
+        </div>
+
+        <div class="tool-disclaimer">
+          <strong>Privacy:</strong> All header analysis runs 100% in your browser — no header data is sent to any server. Optionally, clicking <em>Run OSINT Analysis</em> sends the originating IP and sender domain to the site's OSINT API for server-side enrichment; no email body or personal data is included.
+        </div>
+
+        <details class="email-how-to">
+          <summary>How to get email headers or source</summary>
+          <p class="email-source-note">Paste the <strong>full email source</strong> or just the <strong>headers</strong> — the tool only needs the headers and will ignore the body automatically.</p>
+          <ul>
+            <li><strong>Gmail</strong> — open email → ⋮ → <strong>Show original</strong> → <strong>Copy to clipboard</strong></li>
+            <li><strong>Outlook (web)</strong> — open email → ⋮ → <strong>View</strong> → <strong>View message source</strong> → Ctrl+A, Ctrl+C</li>
+            <li><strong>Outlook (desktop)</strong> — File → Properties → <strong>Internet headers</strong> box → Ctrl+A, Ctrl+C</li>
+            <li><strong>Apple Mail</strong> — View → Message → <strong>Raw Source</strong> → ⌘A, ⌘C</li>
+            <li><strong>Thunderbird</strong> — Ctrl+U to open message source → Ctrl+A, Ctrl+C</li>
+          </ul>
+        </details>
+
+        <div class="form-group">
+          <label for="email-input" class="form-label">Email headers or full source</label>
+          <textarea
+            id="email-input"
+            class="form-textarea email-textarea"
+            placeholder="Paste email headers or full email source here — only the headers are needed, the body is ignored…"
+            autocomplete="off"
+            spellcheck="false"
+            aria-label="Email headers or full source"
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <button id="email-analyze-btn" class="btn" type="button">Analyze</button>
+        </div>
+
+        <div id="email-error" class="link-error u-hidden" role="alert" aria-live="polite"></div>
+
+        <div id="email-results" class="u-hidden" aria-live="polite" tabindex="-1"></div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer role="contentinfo" aria-label="Site Footer">
+    <div class="footer-inner">
+      <span class="footer-left">© kapadia.org</span>
+      <nav class="footer-right" aria-label="Footer Navigation">
+        <a href="/">~</a>
+        <a href="/tools/" aria-current="page">tools</a>
+        <a href="/docs/">docs</a>
+        <a href="/writes/">writes</a>
+        <a href="/about/">about</a>
+        <a href="/privacy/">privacy</a>
+        <a href="https://github.com/dekay7/kapadia" target="_blank" rel="noopener noreferrer">github</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="/js/tools/email.js" defer></script>
+</body>
+</html>

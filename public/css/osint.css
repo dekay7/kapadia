@@ -1,0 +1,223 @@
+/* ── OSINT-specific styles ────────────────────────────────────────────── */
+
+/* Mode tabs */
+.osint-tabs {
+  display: flex;
+  gap: 0.125rem;
+  margin-bottom: 1.75rem;
+  border-bottom: var(--border-w) solid var(--border);
+  padding-bottom: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.osint-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.osint-tab {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  border-bottom: 0.125rem solid transparent;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: color var(--transition), border-color var(--transition);
+  white-space: nowrap;
+  margin-bottom: -0.0625rem;
+}
+
+.osint-tab:hover {
+  color: var(--text);
+}
+
+.osint-tab.active {
+  color: var(--term-green);
+  border-bottom-color: var(--term-green);
+}
+
+/* Mode panels */
+.mode-panel {
+  display: none !important;
+}
+
+.mode-panel.active {
+  display: block !important;
+}
+
+.mode-panel-desc {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--text-faint);
+  margin-top: -0.875rem;
+  margin-bottom: 2rem;
+}
+
+/* Self-check strip */
+.osint-self-strip {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg);
+  border: var(--border-w) solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 1.75rem;
+}
+
+.self-strip-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  flex: 1;
+}
+
+.self-strip-label span {
+  color: var(--term-green);
+}
+
+/* Loading state */
+.osint-loading {
+  display: none;
+  align-items: center;
+  gap: 0.625rem;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--term-dim);
+  margin: 1.25rem 0;
+}
+
+
+/* Error */
+.osint-error {
+  display: none;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--color-error);
+  margin: 0.75rem 0;
+  padding: 0.625rem 0.875rem;
+  border: var(--border-w) solid var(--color-error-border);
+  border-radius: var(--radius);
+  background: var(--color-error-bg);
+}
+
+/* Results */
+.osint-results {
+  display: none;
+  margin-top: 0.75rem;
+}
+
+.tool-container a {
+  color: var(--term-link);
+  text-decoration: none;
+  transition: opacity var(--transition);
+}
+
+.tool-container a:hover {
+  text-decoration: underline;
+  opacity: 0.8;
+}
+
+.osint-section {
+  margin-bottom: 1.5rem;
+}
+
+.osint-section-title {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--term-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.625rem;
+}
+
+.osint-rec-type {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--term-green);
+  margin: 0.875rem 0 0.375rem;
+  letter-spacing: 0.05em;
+}
+
+.osint-label {
+  text-align: left !important;
+  white-space: nowrap;
+  min-width: 8.125rem;
+}
+
+/* Value color variants */
+.osint-val-data {
+  color: var(--term-data);
+}
+
+.osint-val-link {
+  color: var(--term-link);
+  text-decoration: none;
+}
+
+.osint-val-link:hover {
+  text-decoration: underline;
+}
+
+.osint-val-faint {
+  color: var(--text-faint);
+}
+
+.osint-val-good {
+  color: var(--term-green);
+}
+
+.osint-val-warn {
+  color: var(--color-warning);
+}
+
+.osint-timestamp {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--text-faint);
+  margin-top: 1.25rem;
+  text-align: right;
+}
+
+/* Privacy note */
+.osint-privacy {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--text-faint);
+  line-height: 1.6;
+  padding: 0.75rem 1rem;
+  border: var(--border-w) solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 1.75rem;
+}
+
+.osint-privacy strong {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Output grid override for OSINT */
+.osint-section .output-grid {
+  grid-template-columns: minmax(8.125rem, auto) 1fr;
+  gap: 0.375rem 1.25rem;
+}
+
+@media (max-width: 40rem) {
+  .osint-tab {
+    padding: 0.5rem 0.625rem;
+    font-size: 0.6875rem;
+  }
+
+  .osint-section .output-grid {
+    grid-template-columns: 1fr;
+    gap: 0.125rem;
+  }
+
+  .osint-label {
+    min-width: unset;
+    font-size: 0.625rem;
+    color: var(--text-faint);
+  }
+}

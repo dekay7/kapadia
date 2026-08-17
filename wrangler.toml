@@ -1,0 +1,9 @@
+name                   = "kapadia"
+compatibility_date     = "2025-05-10"
+pages_build_output_dir = "./public"
+
+[[kv_namespaces]]
+binding    = "RATE_LIMIT"
+id         = "798b4fe0c67941bea4b02942f588b696"
+preview_id = "f927940e20204ebdbb9959e12aec95ed"
+

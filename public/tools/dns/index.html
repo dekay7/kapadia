@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="DNS Analyzer. Retrieve DNS records (A, AAAA, MX, TXT) instantly using a secure edge network." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://kapadia.org/tools/dns/" />
+  <meta property="og:title" content="DNS Analyzer — Tools — kapadia.org" />
+  <meta property="og:description" content="Retrieve DNS records (A, AAAA, MX, TXT) instantly using a secure edge network." />
+  <meta property="og:site_name" content="kapadia.org" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="DNS Analyzer — Tools — kapadia.org" />
+  <meta name="twitter:description" content="Retrieve DNS records (A, AAAA, MX, TXT) instantly using a secure edge network." />
+  <title>DNS Analyzer — kapadia.org</title>
+  <link rel="canonical" href="https://kapadia.org/tools/dns/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/shared.css" />
+  <link rel="stylesheet" href="/css/tools.css" />
+</head>
+<body>
+
+  <noscript>
+    <div class="noscript-msg">This tool requires JavaScript to function.<br>Enable JS and reload to use it.</div>
+  </noscript>
+
+  <nav aria-label="Main Navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo" aria-label="kapadia.org homepage">kapadia<span>.org</span></a>
+      <ul class="nav-links">
+        <li><a href="/">~</a></li>
+        <li><a href="/tools/" aria-current="page">tools</a></li>
+        <li><a href="/docs/">docs</a></li>
+        <li><a href="/writes/">writes</a></li>
+        <li><a href="/about/">about</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container tools-page">
+      
+      <div class="tool-container">
+        <div class="tool-header">
+          <h1>DNS Analyzer</h1>
+          <p class="tool-desc">Query DNS records over a secure DoH resolver — encrypted, private, and instant.</p>
+        </div>
+
+        <div class="tool-disclaimer">
+          <strong>Privacy:</strong> DNS queries are resolved server-side by a Cloudflare edge function via
+          Cloudflare DNS-over-HTTPS (<code>cloudflare-dns.com</code>). The edge server's IP reaches Cloudflare —
+          not yours. No queries or results are logged or stored by kapadia.org.
+        </div>
+
+        <div class="form-row">
+          <div class="form-group u-flex-1">
+            <label for="dns-input" class="form-label">Domain Name</label>
+            <div class="form-input-group">
+              <input type="text" id="dns-input" class="form-input" placeholder="example.com" />
+              <button type="button" id="dns-btn" class="btn">Lookup</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="dns-loading" class="u-hidden u-text-dim u-mono u-small">Querying resolver...</div>
+        <div id="dns-error" class="u-hidden u-text-error u-mono u-small"></div>
+
+        <div id="dns-results" class="u-hidden u-mt-24">
+          <div class="output-block" id="dns-records-container">
+            <!-- Records injected here -->
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <footer role="contentinfo" aria-label="Site Footer">
+    <div class="footer-inner">
+      <span class="footer-left">© kapadia.org</span>
+      <nav class="footer-right" aria-label="Footer Navigation">
+        <a href="/">~</a>
+        <a href="/tools/" aria-current="page">tools</a>
+        <a href="/docs/">docs</a>
+        <a href="/writes/">writes</a>
+        <a href="/about/">about</a>
+        <a href="/privacy/">privacy</a>
+        <a href="https://github.com/dekay7/kapadia" target="_blank" rel="noopener noreferrer">github</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="/js/tools/dns.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="Client-side hash generator. Calculate MD5, SHA-1, SHA-256, and SHA-512 entirely in your browser." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://kapadia.org/tools/hash/" />
+  <meta property="og:title" content="Hash Generator — kapadia.org" />
+  <meta property="og:description" content="Client-side hash generator. Calculate MD5, SHA-1, SHA-256, and SHA-512 entirely in your browser." />
+  <meta property="og:site_name" content="kapadia.org" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Hash Generator — kapadia.org" />
+  <meta name="twitter:description" content="Client-side hash generator. Calculate MD5, SHA-1, SHA-256, and SHA-512 entirely in your browser." />
+  <title>Hash Generator — kapadia.org</title>
+  <link rel="canonical" href="https://kapadia.org/tools/hash/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/shared.css" />
+  <link rel="stylesheet" href="/css/tools.css" />
+</head>
+<body>
+
+  <noscript>
+    <div class="noscript-msg">This tool requires JavaScript to function.<br>Enable JS and reload to use it.</div>
+  </noscript>
+
+  <!-- Navigation -->
+  <nav aria-label="Main Navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo" aria-label="kapadia.org homepage">kapadia<span>.org</span></a>
+      <ul class="nav-links">
+        <li><a href="/">~</a></li>
+        <li><a href="/tools/" aria-current="page">tools</a></li>
+        <li><a href="/docs/">docs</a></li>
+        <li><a href="/writes/">writes</a></li>
+        <li><a href="/about/">about</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container tools-page">
+      
+      <div class="tool-container">
+        <div class="tool-header">
+          <h1>Hash Generator</h1>
+          <p class="tool-desc">Calculate hashes for text or files. Runs 100% in your browser — zero data is sent to a server.</p>
+        </div>
+
+        <div class="tool-disclaimer">
+          <strong>Privacy:</strong> Hashing runs 100% in your browser — no data is sent to any server.
+          SHA-1 / SHA-256 / SHA-512 use the browser's built-in Web Crypto API. MD5 uses
+          SparkMD5, loaded from <code>cdnjs.cloudflare.com</code> with integrity verification (SRI).
+          No text or file contents leave your device.
+        </div>
+
+        <div class="form-group">
+          <label for="hash-input-text" class="form-label">Input Text</label>
+          <textarea id="hash-input-text" class="form-textarea" placeholder="Type or paste text here..."></textarea>
+        </div>
+
+        <div class="drop-zone" id="hash-drop-zone">
+          <input type="file" id="hash-file-input" />
+          <div class="drop-label">
+            <span class="drop-icon">↓</span>
+            <span class="drop-primary">Drop a file here or click to select</span>
+            <span class="drop-secondary">Calculated 100% in-browser</span>
+          </div>
+        </div>
+
+        <div id="hash-file-info" class="form-group u-hidden">
+          <span class="form-label u-text-green">File Loaded</span>
+          <p class="output-text" id="hash-file-name"></p>
+          <button type="button" class="btn btn-secondary u-mt-8" id="hash-clear-file">Clear File</button>
+        </div>
+
+        <div class="form-group">
+          <label for="hash-compare" class="form-label">Compare Hash (Optional)</label>
+          <input type="text" id="hash-compare" class="form-input" placeholder="Paste expected hash..." />
+        </div>
+
+        <div class="output-block">
+          <div class="output-grid">
+            <span class="output-label">MD5</span>
+            <span class="output-value" id="out-md5">...</span>
+
+            <span class="output-label">SHA-1</span>
+            <span class="output-value" id="out-sha1">...</span>
+
+            <span class="output-label">SHA-256</span>
+            <span class="output-value" id="out-sha256">...</span>
+
+            <span class="output-label">SHA-512</span>
+            <span class="output-value" id="out-sha512">...</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <footer role="contentinfo" aria-label="Site Footer">
+    <div class="footer-inner">
+      <span class="footer-left">© kapadia.org</span>
+      <nav class="footer-right" aria-label="Footer Navigation">
+        <a href="/">~</a>
+        <a href="/tools/" aria-current="page">tools</a>
+        <a href="/docs/">docs</a>
+        <a href="/writes/">writes</a>
+        <a href="/about/">about</a>
+        <a href="/privacy/">privacy</a>
+        <a href="https://github.com/dekay7/kapadia" target="_blank" rel="noopener noreferrer">github</a>
+      </nav>
+    </div>
+  </footer>
+
+  <!-- SparkMD5 for pure JS MD5 (Web Crypto API doesn't support MD5) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/spark-md5/3.0.2/spark-md5.min.js" integrity="sha512-iWbxiCA4l1WTD0rRctt/BfDEmDC5PiVqFc6c1Rhj/GKjuj6tqrjrikTw3Sypm/eEgMa7jSOS9ydmDlOtxJKlSQ==" crossorigin="anonymous"></script>
+  <script src="/js/tools/hash.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description"
+    content="kapadia.org — A personal digital laboratory for high-performance network diagnostics, security exploration, and minimalist software design." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://kapadia.org/" />
+  <meta property="og:title" content="kapadia.org" />
+  <meta property="og:description"
+    content="A personal digital laboratory for high-performance network diagnostics, security exploration, and minimalist software design." />
+  <meta property="og:site_name" content="kapadia.org" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="kapadia.org" />
+  <meta name="twitter:description"
+    content="A personal research hub for high-performance network diagnostics, security exploration, and minimalist software design." />
+  <title>kapadia.org</title>
+  <link rel="canonical" href="https://kapadia.org/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="/css/shared.css" />
+  <link rel="stylesheet" href="/css/index.css" />
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav aria-label="Main Navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo" aria-label="kapadia.org homepage">kapadia<span>.org</span></a>
+      <ul class="nav-links">
+        <li><a href="/" aria-current="page">~</a></li>
+        <li><a href="/tools/">tools</a></li>
+        <li><a href="/docs/">docs</a></li>
+        <li><a href="/writes/">writes</a></li>
+        <li><a href="/about/">about</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container">
+
+      <!-- Hero Section (Reader Mode friendly) -->
+      <div class="hero-spacer">
+        <header class="page-header page-header-center hero-header">
+          <p class="page-eyebrow muted">kapadia.org</p>
+          <h1 class="page-title">A Digital <em>Lab</em></h1>
+          <p class="page-sub page-sub-center">New here? Start with the <a href="/docs/#getting-started">Getting Started guide</a>.</p>
+        </header>
+
+        <section class="terminal-container">
+          <!-- Terminal -->
+          <div class="terminal" id="terminal">
+            <div class="terminal-bar">
+              <div class="dot dot-red"></div>
+              <div class="dot dot-yellow"></div>
+              <div class="dot dot-green"></div>
+              <span class="terminal-title">visitor@kapadia.org — bash</span>
+            </div>
+            <div class="terminal-body" id="term-body">
+              <!-- Lines injected by JS -->
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Section cards -->
+      <section class="sections">
+        <a href="/tools/" class="section-card">
+          <span class="card-icon">01 &nbsp;/tools</span>
+          <h2 class="card-title">Security &amp; Networking</h2>
+          <p class="card-desc">Lightweight, edge-native utilities for security professionals and network engineers.</p>
+          <span class="card-arrow">&rarr;</span>
+        </a>
+        <a href="/docs/" class="section-card">
+          <span class="card-icon">02 &nbsp;/docs</span>
+          <h2 class="card-title">Documentation</h2>
+          <p class="card-desc">Technical references, guides, and research notes written in Markdown.</p>
+          <span class="card-arrow">&rarr;</span>
+        </a>
+        <a href="/writes/" class="section-card">
+          <span class="card-icon">03 &nbsp;/writes</span>
+          <h2 class="card-title">Write-ups</h2>
+          <p class="card-desc">Essays, explorations, and longer-form technical writing.</p>
+          <span class="card-arrow">&rarr;</span>
+        </a>
+        <a href="/about/" class="section-card">
+          <span class="card-icon">04 &nbsp;/about</span>
+          <h2 class="card-title">Background</h2>
+          <p class="card-desc">The mission, philosophy, and professional background of the project.</p>
+          <span class="card-arrow">&rarr;</span>
+        </a>
+      </section>
+
+    </div>
+  </main>
+
+  <footer role="contentinfo" aria-label="Site Footer">
+    <div class="footer-inner">
+      <span class="footer-left">© kapadia.org</span>
+      <nav class="footer-right" aria-label="Footer Navigation">
+        <a href="/">~</a>
+        <a href="/tools/">tools</a>
+        <a href="/docs/">docs</a>
+        <a href="/writes/">writes</a>
+        <a href="/about/">about</a>
+        <a href="/privacy/">privacy</a>
+        <a href="https://github.com/dekay7/kapadia" target="_blank" rel="noopener noreferrer">github</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script type="module" src="/js/index.js"></script>
+</body>
+
+</html>
